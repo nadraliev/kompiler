@@ -97,6 +97,12 @@
                         <argument>-visitor</argument>
                     </arguments>
                 </configuration>
+                <executions>
+                    <execution>
+                        <id>antlr</id>
+                        <goals><goal>antlr4</goal></goals>
+                    </execution>
+                </executions>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
