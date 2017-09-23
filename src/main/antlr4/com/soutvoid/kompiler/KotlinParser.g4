@@ -2,6 +2,16 @@ parser grammar KotlinParser;
 
 options {tokenVocab=KotlinLexer; }
 
+classDeclaration
+    : modifiers 'class' SimpleName
+    classBody
+    ;
+
+classBody
+    : '{' (propertyDeclaration
+    | functionDeclaration)* '}'
+    ;
+
 functionDeclaration
     : modifiers 'fun' SimpleName
     functionParameters
