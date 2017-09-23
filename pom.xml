@@ -51,6 +51,12 @@
             <artifactId>antlr4</artifactId>
             <version>${antlr.version}</version>
         </dependency>
+        <dependency>
+            <groupId>org.ow2.asm</groupId>
+            <artifactId>asm</artifactId>
+            <version>5.2</version>
+        </dependency>
+
     </dependencies>
 
     <build>
@@ -91,12 +97,6 @@
                 <groupId>org.antlr</groupId>
                 <artifactId>antlr4-maven-plugin</artifactId>
                 <version>${antlr.version}</version>
-                <configuration>
-                    <arguments>
-                        <argument>-no-listener</argument>
-                        <argument>-visitor</argument>
-                    </arguments>
-                </configuration>
                 <executions>
                     <execution>
                         <id>antlr</id>
