@@ -8,9 +8,9 @@ import javax.swing.JFrame
 fun main(args: Array<String>) {
     val expression =
             "class Test{" +
-            "open fun test()" +
-            "{var name = 5;" +
-            "var name1;" +
+            "fun test()" +
+            "{var name: Int = 5;" +
+            "var name1: Int;" +
             "name1 = 10;}" +
                     "}"
     val stream = CharStreams.fromString(expression)

@@ -3,7 +3,7 @@ parser grammar KotlinParser;
 options {tokenVocab=KotlinLexer; }
 
 classDeclaration
-    : modifiers 'class' SimpleName
+    : 'class' SimpleName
     classBody
     ;
 
@@ -13,7 +13,7 @@ classBody
     ;
 
 functionDeclaration
-    : modifiers 'fun' SimpleName
+    : 'fun' SimpleName
     functionParameters
     (':' type)?
     functionBody
@@ -24,7 +24,7 @@ functionParameters
     ;
 
 functionParameter
-    : modifiers ('val' | 'var')? parameter ('=' expression)?
+    : ('val' | 'var')? parameter ('=' expression)?
     ;
 
 parameter
@@ -32,20 +32,9 @@ parameter
     ;
 
 type
-    : userType '?'?
-    | 'dynamic' '?'?
-    ;
-
-userType
-    : simpleUserType ('.' simpleUserType)*
-    ;
-
-simpleUserType
-    : SimpleName ('<' simpleUserType_typeParam (',' simpleUserType_typeParam)* '>')?
-    ;
-
-simpleUserType_typeParam
-    : ('*' | type)
+    : 'Int'
+    | 'Boolean'
+    | 'Double'
     ;
 
 functionBody
@@ -67,17 +56,14 @@ declaration
     ;
 
 propertyDeclaration
-    : modifiers ('var' | 'val') SimpleName
-    (':' type)?
+    : ('var' | 'val') SimpleName
+    (':' type)
     ('=' expression)?
     ;
 
 expression
-    : atomicExpression ('=' atomicExpression)*
-    ;
-
-atomicExpression
     : '(' expression ')'
+    | expression '=' expression
     | identifier
     | literalConstant
     ;
@@ -90,34 +76,3 @@ literalConstant
     : IntegerLiteral
     | 'true' | 'false'
     ;
-
-modifiers
-    : modifier*
-    ;
-
-modifier
-    : visibilityModifier
-    | hierarchyModifier
-    | classModifier
-    ;
-
-visibilityModifier
-    : 'public'
-    | 'private'
-    | 'internal'
-    | 'protected'
-    ;
-
-hierarchyModifier
-    : 'abstract'
-    | 'open'
-    | 'final'
-    | 'override'
-    ;
-
-classModifier
-    : 'data'
-    | 'enum'
-    | 'annotation'
-    ;
-
