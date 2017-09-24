@@ -46,6 +46,7 @@ functionBody
 statement
     : declaration
     | expression
+    | ifStatement
     ;
 
 statements
@@ -68,17 +69,27 @@ expression
     | functionCall
     | identifier
     | literalConstant
-    | ifExpression
+    | comparison
     ;
 
 functionCall
     : SimpleName '(' identifiers ')' ';'*
     ;
 
-ifExpression
+ifStatement
     : 'if' '(' expression ')'
     statement
     | ('{' statements '}')
+    ;
+
+comparison
+    : (functionCall
+    | identifier
+    | literalConstant)
+    ('==' | '<' | '>' | '<=' | '>=')
+    (functionCall
+    | identifier
+    | literalConstant)
     ;
 
 identifiers

@@ -38,9 +38,13 @@ SEMICOLON: ';';
 COLON : ':';
 
 EQ: '=';
+EQEQ: '==';
 
 LT: '<';
 GT: '>';
+
+LTE: '<=';
+GTE: '>=';
 
 OPEN_BLOCK
     : '{' -> pushMode(DEFAULT_MODE)
