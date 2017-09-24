@@ -13,6 +13,7 @@ KEYWORD_function: 'fun';
 TYPE_Int: 'Int';
 TYPE_Boolean: 'Boolean';
 TYPE_Double: 'Double';
+TYPE_String: 'String';
 
 LITERAL_true: 'true';
 LITERAL_false: 'false';
@@ -57,6 +58,8 @@ DOT: '.';
 STAR: '*';
 QUESTION: '?';
 
+DOUBLE_QUOTES: '"';
+
 fragment
 LETTER
     : 'a' .. 'z'
@@ -67,3 +70,11 @@ LETTER
 SimpleName
     : LETTER (LETTER | DIGIT)*
     ;
+
+StringLiteral
+  : UnterminatedStringLiteral DOUBLE_QUOTES
+  ;
+
+UnterminatedStringLiteral
+  : DOUBLE_QUOTES (~["\\\r\n] | '\\' (. | EOF))*
+  ;

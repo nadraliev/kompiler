@@ -17,6 +17,7 @@ fun main(args: Array<String>) {
                     "fun testType(number: Double = 0.1) {" +
                     "if (true)" +
                     "var d: Double = 0.12" +
+                    "var str: String = \"this is string\"" +
                     "}" +
                     "}"
     val stream = CharStreams.fromString(expression)

@@ -35,6 +35,7 @@ type
     : 'Int'
     | 'Boolean'
     | 'Double'
+    | 'String'
     ;
 
 functionBody
@@ -92,4 +93,5 @@ literalConstant
     : IntegerLiteral
     | 'true' | 'false'
     | DoubleLiteral
+    | StringLiteral
     ;
