@@ -47,6 +47,7 @@ statement
     : declaration
     | expression
     | ifStatement
+    | loop
     ;
 
 statements
@@ -78,6 +79,16 @@ functionCall
 
 ifStatement
     : 'if' '(' expression ')'
+    statement
+    | ('{' statements '}')
+    ;
+
+loop
+    : whileLoop
+    ;
+
+whileLoop
+    : 'while' '(' expression ')'
     statement
     | ('{' statements '}')
     ;

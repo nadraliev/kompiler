@@ -11,7 +11,10 @@ fun main(args: Array<String>) {
             "fun test()" +
             "{var name: Int = 5;" +
             "var name1: Int;" +
-            "name1 = 10;}" +
+            "name1 = 10;" +
+                    "while (true) {" +
+                    "var try: Int = 1;" +
+                    "}}" +
                     "" +
                     "" +
                     "fun testType(number: Double = 0.1) {" +

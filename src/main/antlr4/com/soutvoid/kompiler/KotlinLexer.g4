@@ -20,6 +20,9 @@ LITERAL_false: 'false';
 
 KEYWORD_if: 'if';
 
+KEYWORD_while: 'while';
+KEYWORD_for: 'for';
+
 fragment
 DIGIT
     : '0' .. '9'
