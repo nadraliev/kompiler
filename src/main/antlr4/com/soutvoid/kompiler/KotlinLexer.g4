@@ -17,6 +17,8 @@ TYPE_Double: 'Double';
 LITERAL_true: 'true';
 LITERAL_false: 'false';
 
+KEYWORD_if: 'if';
+
 fragment
 DIGIT
     : '0' .. '9'
@@ -26,6 +28,9 @@ DIGIT
 IntegerLiteral
     : ('0' | '1' .. '9' DIGIT*)
     ;
+
+DoubleLiteral
+    : (IntegerLiteral'.'IntegerLiteral);
 
 SEMICOLON: ';';
 

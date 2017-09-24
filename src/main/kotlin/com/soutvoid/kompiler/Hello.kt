@@ -12,6 +12,12 @@ fun main(args: Array<String>) {
             "{var name: Int = 5;" +
             "var name1: Int;" +
             "name1 = 10;}" +
+                    "" +
+                    "" +
+                    "fun testType(number: Double = 0.1) {" +
+                    "if (true)" +
+                    "var d: Double = 0.12" +
+                    "}" +
                     "}"
     val stream = CharStreams.fromString(expression)
     val lexer = KotlinLexer(stream)

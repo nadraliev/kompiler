@@ -24,7 +24,7 @@ functionParameters
     ;
 
 functionParameter
-    : ('val' | 'var')? parameter ('=' expression)?
+    : parameter ('=' expression)?
     ;
 
 parameter
@@ -64,8 +64,24 @@ propertyDeclaration
 expression
     : '(' expression ')'
     | expression '=' expression
+    | functionCall
     | identifier
     | literalConstant
+    | ifExpression
+    ;
+
+functionCall
+    : SimpleName '(' identifiers ')' ';'*
+    ;
+
+ifExpression
+    : 'if' '(' expression ')'
+    statement
+    | ('{' statements '}')
+    ;
+
+identifiers
+    : (identifier (',' identifier)*)?
     ;
 
 identifier
@@ -75,4 +91,5 @@ identifier
 literalConstant
     : IntegerLiteral
     | 'true' | 'false'
+    | DoubleLiteral
     ;
