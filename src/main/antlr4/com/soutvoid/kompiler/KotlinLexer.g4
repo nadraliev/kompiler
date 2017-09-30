@@ -36,6 +36,11 @@ IntegerLiteral
 DoubleLiteral
     : (IntegerLiteral'.'IntegerLiteral);
 
+BooleanLiteral
+    : LITERAL_true
+    | LITERAL_false
+    ;
+
 SEMICOLON: ';';
 
 COLON : ':';

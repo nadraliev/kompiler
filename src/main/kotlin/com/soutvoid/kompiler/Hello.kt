@@ -8,22 +8,11 @@ import javax.swing.JFrame
 fun main(args: Array<String>) {
     val expression =
             "class Test{" +
-            "fun test()" +
-            "{var name: Int = 5;" +
-            "var name1: Int;" +
-            "name1 = 10;" +
-                    "while (true) {" +
-                    "var try: Int = 1;" +
-                    "}}" +
+            "fun test() {" +
                     "" +
-                    "" +
-                    "fun testType(number: Double = 0.1) {" +
-                    "if (5 < 3)" +
-                    "var d: Double = 0.12" +
-                    "var str: String = \"this is string\"" +
-                    "test()" +
                     "}" +
                     "}"
+
     val stream = CharStreams.fromString(expression)
     val lexer = KotlinLexer(stream)
     val tokenStream = CommonTokenStream(lexer)
@@ -37,5 +26,7 @@ fun main(args: Array<String>) {
     frame.add(treeViewer)
     frame.setSize(640, 480)
     frame.isVisible = true
+
+    val treeAst = tree.toAst()
 }
 

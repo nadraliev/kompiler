@@ -24,7 +24,7 @@ functionParameters
     ;
 
 functionParameter
-    : parameter ('=' expression)?
+    : parameter
     ;
 
 parameter
@@ -40,12 +40,12 @@ type
 
 functionBody
     : ('{' statements '}')
-    | ('=' statement)
     ;
 
 statement
     : declaration
     | expression
+    | assignment
     | ifStatement
     | loop
     ;
@@ -61,16 +61,19 @@ declaration
 propertyDeclaration
     : ('var' | 'val') SimpleName
     (':' type)
-    ('=' expression)?
+    ('=' expression)
+    ;
+
+assignment
+    : identifier '=' expression
     ;
 
 expression
-    : '(' expression ')'
-    | expression '=' expression
-    | functionCall
-    | identifier
-    | literalConstant
-    | comparison
+    : '(' expression ')' #parenExpression
+    | functionCall      #funcCall
+    | identifier        #id
+    | literalConstant   #literal
+    | left=expression operator=('==' | '<' | '>' | '<=' | '>=') right=expression #binaryOperation
     ;
 
 functionCall
@@ -93,15 +96,6 @@ whileLoop
     | ('{' statements '}')
     ;
 
-comparison
-    : (functionCall
-    | identifier
-    | literalConstant)
-    ('==' | '<' | '>' | '<=' | '>=')
-    (functionCall
-    | identifier
-    | literalConstant)
-    ;
 
 identifiers
     : (identifier (',' identifier)*)?
@@ -112,8 +106,24 @@ identifier
     ;
 
 literalConstant
+    : intLit
+    | doubleLit
+    | booleanLit
+    | stringLit
+    ;
+
+intLit
     : IntegerLiteral
-    | 'true' | 'false'
-    | DoubleLiteral
-    | StringLiteral
+    ;
+
+doubleLit
+    : DoubleLiteral
+    ;
+
+booleanLit
+    : BooleanLiteral
+    ;
+
+stringLit
+    : StringLiteral
     ;
