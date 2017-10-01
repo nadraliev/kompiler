@@ -1,0 +1,15 @@
+class Test {
+    fun test() {
+        var foo: Int = 5
+        foo = 7
+        if (1 < 0) {
+            var wrong: Boolean = true
+        }
+    }
+
+    fun test2(param: Double) {
+        var boo: Boolean = 5 < 3
+        if (boo)
+        var right: Int = 3
+    }
+}
