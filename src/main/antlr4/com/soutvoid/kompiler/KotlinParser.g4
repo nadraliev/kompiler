@@ -16,7 +16,7 @@ functionDeclaration
     : 'fun' SimpleName
     functionParameters
     (':' type)?
-    functionBody
+    block
     ;
 
 functionParameters
@@ -38,16 +38,12 @@ type
     | 'String'
     ;
 
-functionBody
-    : ('{' statements '}')
-    ;
-
 statement
-    : declaration
-    | expression
-    | assignment
-    | ifStatement
-    | loop
+    : declaration   #declarationStatement
+    | expression    #expressionStatement
+    | assignment    #assignmentStatement
+    | ifSt           #ifStatement
+    | loop          #loopStatement
     ;
 
 statements
@@ -70,9 +66,9 @@ assignment
 
 expression
     : '(' expression ')' #parenExpression
+    | literalConstant   #literal
     | functionCall      #funcCall
     | identifier        #id
-    | literalConstant   #literal
     | left=expression operator=('==' | '<' | '>' | '<=' | '>=') right=expression #binaryOperation
     ;
 
@@ -80,11 +76,16 @@ functionCall
     : SimpleName '(' identifiers ')' ';'*
     ;
 
-ifStatement
+ifSt
     : 'if' '(' expression ')'
-    statement
-    | ('{' statements '}')
+    (statement
+    | block)
     ;
+
+block
+    : '{' statements '}'
+    ;
+
 
 loop
     : whileLoop
@@ -92,8 +93,15 @@ loop
 
 whileLoop
     : 'while' '(' expression ')'
-    statement
-    | ('{' statements '}')
+    (statement
+    | block)
+    ;
+
+literalConstant
+    : IntegerLiteral    #intLit
+    | DoubleLiteral     #doubleLit
+    | BooleanLiteral    #booleanLit
+    | StringLiteral     #stringLit
     ;
 
 
@@ -103,27 +111,4 @@ identifiers
 
 identifier
     : SimpleName
-    ;
-
-literalConstant
-    : intLit
-    | doubleLit
-    | booleanLit
-    | stringLit
-    ;
-
-intLit
-    : IntegerLiteral
-    ;
-
-doubleLit
-    : DoubleLiteral
-    ;
-
-booleanLit
-    : BooleanLiteral
-    ;
-
-stringLit
-    : StringLiteral
     ;

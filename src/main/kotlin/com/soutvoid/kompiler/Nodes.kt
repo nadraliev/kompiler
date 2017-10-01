@@ -40,4 +40,5 @@ data class StringLit(val value: String): Expression
 
 //Statements
 data class VarDeclaration(val varName: String, val type: Type, val value: Expression): Statement
-data class Assignment(val varName: String, val right: Expression): Statement
+data class Assignment(val varName: String, val value: Expression): Statement
+data class IfStatement(val expression: Expression, val statements: List<Statement>): Statement

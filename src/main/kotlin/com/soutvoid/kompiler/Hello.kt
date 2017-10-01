@@ -7,11 +7,21 @@ import javax.swing.JFrame
 
 fun main(args: Array<String>) {
     val expression =
-            "class Test{" +
-            "fun test() {" +
-                    "" +
-                    "}" +
-                    "}"
+            "class Test{\n" +
+            "fun test() {\n" +
+                    "var foo: Int = 5\n" +
+                    "foo =7\n" +
+                    "if (1 < 0) {\n" +
+                    "var wrong: Boolean = true\n" +
+                    "}\n" +
+                    "}\n" +
+                    "\n" +
+                    "fun test2(param: Double) {\n" +
+                    "var boo: Boolean = 5 < 3\n" +
+                    "if (boo)\n" +
+                    "var right: Int = 3\n" +
+                    "}\n" +
+                    "}\n"
 
     val stream = CharStreams.fromString(expression)
     val lexer = KotlinLexer(stream)

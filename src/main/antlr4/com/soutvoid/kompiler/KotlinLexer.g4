@@ -1,9 +1,8 @@
 lexer grammar KotlinLexer;
 
 WHITESPACE
-    : [\t\n\r\f ]+ -> skip
+    : [\t\n\r\f ]+ -> channel(HIDDEN)
     ;
-
 
 KEYWORD_var: 'var';
 KEYWORD_val: 'val';
@@ -14,9 +13,6 @@ TYPE_Int: 'Int';
 TYPE_Boolean: 'Boolean';
 TYPE_Double: 'Double';
 TYPE_String: 'String';
-
-LITERAL_true: 'true';
-LITERAL_false: 'false';
 
 KEYWORD_if: 'if';
 
@@ -37,8 +33,8 @@ DoubleLiteral
     : (IntegerLiteral'.'IntegerLiteral);
 
 BooleanLiteral
-    : LITERAL_true
-    | LITERAL_false
+    : 'true'
+    | 'false'
     ;
 
 SEMICOLON: ';';

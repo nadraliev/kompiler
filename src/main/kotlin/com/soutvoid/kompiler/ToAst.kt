@@ -13,7 +13,7 @@ fun FunctionDeclarationContext.toAst(): FunctionDeclaration =
                 SimpleName().text,
                 functionParameters()?.functionParameter()?.map { it.parameter().toAst() },
                 type()?.toAst(),
-                functionBody().statements()?.statement()?.map { it.toAst() })
+                block().statements()?.statement()?.map { it.toAst() })
 
 fun ParameterContext.toAst(): Parameter =
         Parameter(SimpleName().text, type().toAst())
@@ -27,11 +27,12 @@ fun TypeContext.toAst(): Type = when(text) {
 }
 
 fun StatementContext.toAst(): Statement = when(this) {
-    is DeclarationContext -> propertyDeclaration().toAst()
-    is AssignmentContext -> Assignment(
+    is DeclarationStatementContext -> declaration().propertyDeclaration().toAst()
+    is AssignmentStatementContext -> Assignment(
             assignment().identifier().SimpleName().text,
             assignment().expression().toAst())
-    is ExpressionContext -> expression().toAst()
+    is ExpressionStatementContext -> expression().toAst()
+    is IfStatementContext -> ifSt().toAst()
     else -> throw UnsupportedOperationException(this.javaClass.canonicalName)
 }
 
@@ -56,10 +57,10 @@ fun IdentifierContext.toAst(): VarReference
         = VarReference(SimpleName().text)
 
 fun LiteralConstantContext.toAst(): Expression = when(this) {
-    is IntLitContext -> IntLit(intLit().text)
-    is DoubleLitContext -> DoubleLit(doubleLit().text)
-    is BooleanLitContext -> BooleanLit(booleanLit().text)
-    is StringLitContext -> StringLit(stringLit().text)
+    is IntLitContext -> IntLit(IntegerLiteral().text)
+    is DoubleLitContext -> DoubleLit(DoubleLiteral().text)
+    is BooleanLitContext -> BooleanLit(BooleanLiteral().text)
+    is StringLitContext -> StringLit(StringLiteral().text)
     else -> throw UnsupportedOperationException(this.javaClass.canonicalName)
 }
 
@@ -71,3 +72,7 @@ fun BinaryOperationContext.toAst(): Expression = when(operator.text) {
     ">=" -> GreaterOrEqualsExpression(left.toAst(), right.toAst())
     else -> throw UnsupportedOperationException(this.javaClass.canonicalName)
 }
+
+fun IfStContext.toAst(): Statement = IfStatement(
+        expression().toAst(),
+        block()?.statements()?.statement()?.map { it.toAst() }?: listOf(statement().toAst()))
