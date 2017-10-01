@@ -1,5 +1,6 @@
 package com.soutvoid.kompiler
 
+import io.bretty.console.tree.TreePrinter
 import org.antlr.v4.gui.TreeViewer
 import org.antlr.v4.runtime.CharStreams
 import org.antlr.v4.runtime.CommonTokenStream
@@ -38,5 +39,6 @@ fun main(args: Array<String>) {
     frame.isVisible = true
 
     val treeAst = tree.toAst()
+    println(TreePrinter.toString(treeAst))
 }
 
