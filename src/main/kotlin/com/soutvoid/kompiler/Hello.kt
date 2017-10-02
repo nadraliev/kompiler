@@ -5,6 +5,8 @@ import org.antlr.v4.gui.TreeViewer
 import org.antlr.v4.runtime.CharStreams
 import org.antlr.v4.runtime.CommonTokenStream
 import org.antlr.v4.runtime.tree.Tree
+import java.io.File
+import java.nio.file.Files
 import javax.swing.JFileChooser
 import javax.swing.JFrame
 
@@ -29,6 +31,7 @@ fun main(args: Array<String>) {
 
 fun openSource(): String {
     val jFileChooser = JFileChooser()
+    jFileChooser.currentDirectory = File(System.getProperty("user.dir"))
     val returnVal = jFileChooser.showOpenDialog(null)
     if (returnVal == JFileChooser.APPROVE_OPTION)
         return jFileChooser.selectedFile.absolutePath
