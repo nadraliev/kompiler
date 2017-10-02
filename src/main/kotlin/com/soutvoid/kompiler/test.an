@@ -11,5 +11,6 @@ class Test {
         var boo: Boolean = 5 < 3
         if (boo)
         var right: Int = 3
+        var arr: Array<Int> = Array<Int>(5)
     }
 }

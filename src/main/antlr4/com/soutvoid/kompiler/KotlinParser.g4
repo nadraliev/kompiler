@@ -32,10 +32,11 @@ parameter
     ;
 
 type
-    : 'Int'
-    | 'Boolean'
-    | 'Double'
-    | 'String'
+    : 'Int'     #int
+    | 'Boolean' #bool
+    | 'Double'  #double
+    | 'String'  #string
+    | ('Array''<'type'>')   #array
     ;
 
 statement
@@ -70,6 +71,11 @@ expression
     | functionCall      #funcCall
     | identifier        #id
     | left=expression operator=('==' | '<' | '>' | '<=' | '>=') right=expression #binaryOperation
+    | arrayInitExpr     #arrayInit
+    ;
+
+arrayInitExpr
+    : 'Array''<'type'>''('IntegerLiteral')'
     ;
 
 functionCall

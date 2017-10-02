@@ -44,6 +44,9 @@ object IntType: Type()
 object DoubleType: Type()
 object BooleanType: Type()
 object StringType: Type()
+data class ArrayType(val type: Type): Type() {
+    override fun children(): MutableList<out PrintableTreeNode> = mutableListOf()
+    override fun name(): String = "Array<${type.name()}>" }
 
 
 
@@ -63,6 +66,10 @@ data class VarReference(val varName: String): Expression {
     override fun children(): MutableList<out PrintableTreeNode> = mutableListOf()
     override fun name(): String = varName }
 
+//---Array initialization
+data class ArrayInit(val type: Type, val size: Int): Expression {
+    override fun children(): MutableList<out PrintableTreeNode> = mutableListOf()
+    override fun name(): String = "Array<${type.name()}($size)>" }
 
 
 //---Binary expressions

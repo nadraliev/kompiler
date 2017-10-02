@@ -13,6 +13,7 @@ TYPE_Int: 'Int';
 TYPE_Boolean: 'Boolean';
 TYPE_Double: 'Double';
 TYPE_String: 'String';
+TYPE_Array: 'Array';
 
 KEYWORD_if: 'if';
 

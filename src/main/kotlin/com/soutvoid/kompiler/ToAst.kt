@@ -18,11 +18,12 @@ fun FunctionDeclarationContext.toAst(): FunctionDeclaration =
 fun ParameterContext.toAst(): Parameter =
         Parameter(SimpleName().text, type().toAst())
 
-fun TypeContext.toAst(): Type = when(text) {
-    "Int" -> IntType
-    "Double" -> DoubleType
-    "Boolean" -> BooleanType
-    "String" -> StringType
+fun TypeContext.toAst(): Type = when(this) {
+    is IntContext -> IntType
+    is DoubleContext -> DoubleType
+    is BoolContext -> BooleanType
+    is StringContext -> StringType
+    is ArrayContext -> ArrayType(type().toAst())
     else -> throw UnsupportedOperationException(this.javaClass.canonicalName)
 }
 
@@ -50,6 +51,7 @@ fun ExpressionContext.toAst(): Expression = when(this) {
     is LiteralContext -> literalConstant().toAst()
     is ParenExpressionContext -> expression().toAst()
     is BinaryOperationContext -> toAst()
+    is ArrayInitContext -> ArrayInit(arrayInitExpr().type().toAst(), arrayInitExpr().IntegerLiteral().text.toInt())
     else -> throw UnsupportedOperationException(this.javaClass.canonicalName)
 }
 
