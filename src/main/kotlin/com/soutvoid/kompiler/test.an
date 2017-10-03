@@ -7,7 +7,7 @@ class Test {
         }
     }
 
-    fun test2(param: Double) {
+    fun test2(param: Double, param2: Int) {
         var boo: Boolean = 5 < 3
         if (boo)
         var right: Int = 3

@@ -25,9 +25,8 @@ data class FunctionDeclaration(val name: String,
                                val parameters: List<Parameter>?,
                                val returnType: Type?,
                                val statements: List<Statement>?): Node {
-    override fun children(): MutableList<out PrintableTreeNode> = parameters.join(statements).map { it as Node }.toMutableList()
-
-    override fun name(): String = "function $name : ${returnType?.name()?:"Unit"}" }
+    override fun children(): MutableList<out PrintableTreeNode> = listOf<Statement>().join(statements).map { it as Node }.toMutableList()
+    override fun name(): String = "function $name(${parameters?.map { it.name + ": " + it.type.name() }?.joinToString(",")}) : ${returnType?.name()?:"Unit"}" }
 
 
 
@@ -58,8 +57,8 @@ interface BinaryExpression: Expression {
 
 //---FunctionCall
 data class FunctionCall(val name: String, val parameters: List<VarReference>?): Expression {
-    override fun children(): MutableList<out PrintableTreeNode> = parameters?.toMutableList()?: mutableListOf<Node>()
-    override fun name(): String = name}
+    override fun children(): MutableList<out PrintableTreeNode> = mutableListOf()
+    override fun name(): String = "$name(${parameters?.map { it.varName }?.joinToString(",")})"}
 
 //---Variable reference
 data class VarReference(val varName: String): Expression {
