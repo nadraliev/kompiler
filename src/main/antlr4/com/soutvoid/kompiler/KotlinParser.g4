@@ -94,7 +94,7 @@ block
 
 
 loop
-    : whileLoop
+    : whileLoop     #whileStatement
     ;
 
 whileLoop

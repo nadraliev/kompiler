@@ -34,6 +34,13 @@ fun StatementContext.toAst(): Statement = when(this) {
             assignment().expression().toAst())
     is ExpressionStatementContext -> expression().toAst()
     is IfStatementContext -> ifSt().toAst()
+    is LoopStatementContext -> loop().toAst()
+    else -> throw UnsupportedOperationException(this.javaClass.canonicalName)
+}
+
+fun LoopContext.toAst(): Statement = when(this) {
+    is WhileStatementContext -> WhileLoop(whileLoop().expression().toAst(),
+            whileLoop().block()?.statements()?.statement()?.map { it.toAst() }?: listOf(whileLoop().statement().toAst()))
     else -> throw UnsupportedOperationException(this.javaClass.canonicalName)
 }
 

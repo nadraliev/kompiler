@@ -134,3 +134,10 @@ data class Assignment(val varName: String, val value: Expression): Statement {
 data class IfStatement(val expression: Expression, val statements: List<Statement>): Statement {
     override fun children(): MutableList<out PrintableTreeNode> = mutableListOf(expression).join(statements).map { it as Node }.toMutableList()
     override fun name(): String = "if" }
+
+//---Loops
+
+//------While loop
+data class WhileLoop(val factor: Expression, val statements: List<Statement>): Statement {
+    override fun children(): MutableList<out PrintableTreeNode> = listOf(factor).join(statements).map { it as Node }.toMutableList()
+    override fun name(): String = "while" }
