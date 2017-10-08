@@ -13,7 +13,7 @@ class Test {
         var right: Int = 3
         var arr: Array<Int> = Array<Int>(5)
         while (true) {
-            var integer: Double = 1.25
+            arr[0] = 1;
         }
     }
 }

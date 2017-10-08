@@ -62,7 +62,8 @@ propertyDeclaration
     ;
 
 assignment
-    : identifier '=' expression
+    : identifier '=' expression     #simpleIdentAssign
+    | arrayAccessExpr '=' expression    #arrayAssign
     ;
 
 expression
@@ -72,10 +73,15 @@ expression
     | identifier        #id
     | left=expression operator=('==' | '<' | '>' | '<=' | '>=') right=expression #binaryOperation
     | arrayInitExpr     #arrayInit
+    | arrayAccessExpr   #arrayAccess
     ;
 
 arrayInitExpr
     : 'Array''<'type'>''('IntegerLiteral')'
+    ;
+
+arrayAccessExpr
+    : identifier '[' IntegerLiteral ']'
     ;
 
 functionCall

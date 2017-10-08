@@ -62,6 +62,9 @@ CLOSE_BLOCK
 LPAREN: '(';
 RPAREN: ')';
 
+LSQBR: '[';
+RSQBR: ']';
+
 COMMA: ',';
 DOT: '.';
 STAR: '*';

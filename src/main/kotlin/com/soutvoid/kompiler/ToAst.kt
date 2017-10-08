@@ -29,12 +29,21 @@ fun TypeContext.toAst(): Type = when(this) {
 
 fun StatementContext.toAst(): Statement = when(this) {
     is DeclarationStatementContext -> declaration().propertyDeclaration().toAst()
-    is AssignmentStatementContext -> Assignment(
-            assignment().identifier().SimpleName().text,
-            assignment().expression().toAst())
+    is AssignmentStatementContext -> assignment().toAst()
     is ExpressionStatementContext -> expression().toAst()
     is IfStatementContext -> ifSt().toAst()
     is LoopStatementContext -> loop().toAst()
+    else -> throw UnsupportedOperationException(this.javaClass.canonicalName)
+}
+
+fun AssignmentContext.toAst(): Statement = when(this) {
+    is SimpleIdentAssignContext -> SimpleAssignment(
+            identifier().SimpleName().text,
+            expression().toAst())
+    is ArrayAssignContext -> ArrayAssignment(
+            ArrayAccess(arrayAccessExpr().identifier().text, arrayAccessExpr().IntegerLiteral().text.toInt()),
+            expression().toAst()
+    )
     else -> throw UnsupportedOperationException(this.javaClass.canonicalName)
 }
 
@@ -59,6 +68,7 @@ fun ExpressionContext.toAst(): Expression = when(this) {
     is ParenExpressionContext -> expression().toAst()
     is BinaryOperationContext -> toAst()
     is ArrayInitContext -> ArrayInit(arrayInitExpr().type().toAst(), arrayInitExpr().IntegerLiteral().text.toInt())
+    is ArrayAccessContext -> ArrayAccess(arrayAccessExpr().identifier().text, arrayAccessExpr().IntegerLiteral().text.toInt())
     else -> throw UnsupportedOperationException(this.javaClass.canonicalName)
 }
 

@@ -70,6 +70,11 @@ data class ArrayInit(val type: Type, val size: Int): Expression {
     override fun children(): MutableList<out PrintableTreeNode> = mutableListOf()
     override fun name(): String = "Array<${type.name()}($size)>" }
 
+//---Array access
+data class ArrayAccess(val arrayName: String, val index: Int): Expression {
+    override fun children(): MutableList<out PrintableTreeNode> = mutableListOf()
+    override fun name(): String = "$arrayName[$index]"}
+
 
 //---Binary expressions
 
@@ -127,8 +132,11 @@ data class StringLit(val value: String): Expression {
 data class VarDeclaration(val varName: String, val type: Type, val value: Expression): Statement  {
     override fun children(): MutableList<out PrintableTreeNode> = mutableListOf(VarReference(varName), value)
     override fun name(): String = "=" }
-data class Assignment(val varName: String, val value: Expression): Statement {
+data class SimpleAssignment(val varName: String, val value: Expression): Statement {
     override fun children(): MutableList<out PrintableTreeNode> = mutableListOf(VarReference(varName), value)
+    override fun name(): String = "=" }
+data class ArrayAssignment(val arrayElement: ArrayAccess, val value: Expression): Statement {
+    override fun children(): MutableList<out PrintableTreeNode> = mutableListOf(arrayElement, value)
     override fun name(): String = "=" }
 data class IfStatement(val expression: Expression, val statements: List<Statement>): Statement {
     override fun children(): MutableList<out PrintableTreeNode> = mutableListOf(expression).join(statements).map { it as Node }.toMutableList()
