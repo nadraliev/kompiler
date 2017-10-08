@@ -20,6 +20,8 @@ KEYWORD_if: 'if';
 KEYWORD_while: 'while';
 KEYWORD_for: 'for';
 
+KEYWORD_in: 'in';
+
 fragment
 DIGIT
     : '0' .. '9'
@@ -73,6 +75,7 @@ RSQBR: ']';
 
 COMMA: ',';
 DOT: '.';
+DOTDOT: '..';
 QUESTION: '?';
 
 DOUBLE_QUOTES: '"';

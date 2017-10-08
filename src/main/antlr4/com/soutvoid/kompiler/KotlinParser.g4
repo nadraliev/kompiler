@@ -76,6 +76,7 @@ expression
     | left=expression operator=('==' | '<' | '>' | '<=' | '>=') right=expression #binaryOperation
     | arrayInitExpr     #arrayInit
     | arrayAccessExpr   #arrayAccess
+    | rangeExpression   #range
     ;
 
 arrayInitExpr
@@ -103,12 +104,23 @@ block
 
 loop
     : whileLoop     #whileStatement
+    | forLoop       #forStatement
     ;
 
 whileLoop
     : 'while' '(' expression ')'
     (statement
     | block)
+    ;
+
+forLoop
+    : 'for' '(' identifier 'in' expression ')'
+    ( statement
+    | block )
+    ;
+
+rangeExpression
+    : IntegerLiteral '..' IntegerLiteral
     ;
 
 literalConstant

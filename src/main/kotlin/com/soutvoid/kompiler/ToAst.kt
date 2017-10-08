@@ -50,6 +50,9 @@ fun AssignmentContext.toAst(): Statement = when(this) {
 fun LoopContext.toAst(): Statement = when(this) {
     is WhileStatementContext -> WhileLoop(whileLoop().expression().toAst(),
             whileLoop().block()?.statements()?.statement()?.map { it.toAst() }?: listOf(whileLoop().statement().toAst()))
+    is ForStatementContext -> ForLoop(forLoop().identifier().text,
+            forLoop().expression().toAst(),
+            forLoop().block()?.statements()?.statement()?.map { it.toAst() }?: listOf(forLoop().statement().toAst()))
     else -> throw UnsupportedOperationException(this.javaClass.canonicalName)
 }
 
@@ -69,6 +72,7 @@ fun ExpressionContext.toAst(): Expression = when(this) {
     is BinaryOperationContext -> toAst()
     is ArrayInitContext -> ArrayInit(arrayInitExpr().type().toAst(), arrayInitExpr().IntegerLiteral().text.toInt())
     is ArrayAccessContext -> ArrayAccess(arrayAccessExpr().identifier().text, arrayAccessExpr().IntegerLiteral().text.toInt())
+    is RangeContext -> Range(rangeExpression().IntegerLiteral(0).text.toInt(), rangeExpression().IntegerLiteral(1).text.toInt())
     else -> throw UnsupportedOperationException(this.javaClass.canonicalName)
 }
 

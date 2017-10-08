@@ -75,6 +75,11 @@ data class ArrayAccess(val arrayName: String, val index: Int): Expression {
     override fun children(): MutableList<out PrintableTreeNode> = mutableListOf()
     override fun name(): String = "$arrayName[$index]"}
 
+//---Range
+data class Range(val start: Int, val endInclusive: Int): Expression {
+    override fun children(): MutableList<out PrintableTreeNode>  = mutableListOf()
+    override fun name(): String = "$start..$endInclusive" }
+
 
 //---Binary expressions
 
@@ -168,3 +173,8 @@ data class IfStatement(val expression: Expression, val statements: List<Statemen
 data class WhileLoop(val factor: Expression, val statements: List<Statement>): Statement {
     override fun children(): MutableList<out PrintableTreeNode> = listOf(factor).join(statements).map { it as Node }.toMutableList()
     override fun name(): String = "while" }
+
+//------For loop
+data class ForLoop(val iteratorName: String, val iterable: Expression, val statements: List<Statement>?): Statement {
+    override fun children(): MutableList<out PrintableTreeNode> = listOf(iterable).join(statements).map { it as Node }.toMutableList()
+    override fun name(): String = "for" }
