@@ -26,15 +26,14 @@ data class FunctionDeclaration(val name: String,
                                val returnType: Type?,
                                val statements: List<Statement>?): Node {
     override fun children(): MutableList<out PrintableTreeNode> = listOf<Statement>().join(statements).map { it as Node }.toMutableList()
-    override fun name(): String = "function $name(${parameters?.map { it.name + ": " + it.type.name() }?.joinToString(",")}) : ${returnType?.name()?:"Unit"}" }
+    override fun name(): String = "function $name(${parameters.toStringNames()}) : ${returnType?.name()?:"Unit"}" }
 
 
 
 //Parameter
 data class Parameter(val name: String, val type: Type): Node {
     override fun children(): MutableList<out PrintableTreeNode> = mutableListOf()
-
-    override fun name(): String = "$name ${type.name()}" }
+    override fun name(): String = "$name : ${type.name()}" }
 
 
 
