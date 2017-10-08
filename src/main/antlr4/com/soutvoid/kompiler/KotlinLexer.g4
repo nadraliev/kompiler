@@ -42,6 +42,12 @@ SEMICOLON: ';';
 
 COLON : ':';
 
+MUL: '*';
+DIV: '/';
+
+ADD: '+';
+SUB: '-';
+
 EQ: '=';
 EQEQ: '==';
 
@@ -67,7 +73,6 @@ RSQBR: ']';
 
 COMMA: ',';
 DOT: '.';
-STAR: '*';
 QUESTION: '?';
 
 DOUBLE_QUOTES: '"';

@@ -84,6 +84,10 @@ fun LiteralConstantContext.toAst(): Expression = when(this) {
 }
 
 fun BinaryOperationContext.toAst(): Expression = when(operator.text) {
+    "*" -> Multiplication(left.toAst(), right.toAst())
+    "/" -> Division(left.toAst(), right.toAst())
+    "+" -> Addition(left.toAst(), right.toAst())
+    "-" -> Substruction(left.toAst(), right.toAst())
     "==" -> EqualsExpression(left.toAst(), right.toAst())
     "<" -> LessExpression(left.toAst(), right.toAst())
     ">" -> GreaterExpression(left.toAst(), right.toAst())

@@ -103,6 +103,26 @@ data class GreaterOrEqualsExpression(override val left: Expression, override val
     override fun children(): MutableList<out PrintableTreeNode> = mutableListOf(left, right)
     override fun name(): String = ">=" }
 
+//------"*"
+data class Multiplication(override val left: Expression, override val right: Expression): BinaryExpression {
+    override fun children(): MutableList<out PrintableTreeNode> = mutableListOf(left, right)
+    override fun name(): String = "*" }
+
+//------"/"
+data class Division(override val left: Expression, override val right: Expression): BinaryExpression {
+    override fun children(): MutableList<out PrintableTreeNode> = mutableListOf(left, right)
+    override fun name(): String = "/" }
+
+//------"+"
+data class Addition(override val left: Expression, override val right: Expression): BinaryExpression {
+    override fun children(): MutableList<out PrintableTreeNode> = mutableListOf(left, right)
+    override fun name(): String = "+" }
+
+//------"-"
+data class Substruction(override val left: Expression, override val right: Expression): BinaryExpression {
+    override fun children(): MutableList<out PrintableTreeNode> = mutableListOf(left, right)
+    override fun name(): String = "-" }
+
 
 
 //---Literals

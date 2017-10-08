@@ -71,6 +71,8 @@ expression
     | literalConstant   #literal
     | functionCall      #funcCall
     | identifier        #id
+    | left=expression operator=('*' | '/') right=expression     #binaryOperation
+    | left=expression operator=('+' | '-') right=expression     #binaryOperation
     | left=expression operator=('==' | '<' | '>' | '<=' | '>=') right=expression #binaryOperation
     | arrayInitExpr     #arrayInit
     | arrayAccessExpr   #arrayAccess
