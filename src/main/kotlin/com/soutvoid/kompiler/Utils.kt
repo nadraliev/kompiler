@@ -9,6 +9,9 @@ fun List<Any>?.join(list: List<Any>?): List<Any> {
     return firstList.plus(secondList)
 }
 
+fun List<Any>.plusNotNull(newElement: Any?): List<Any> =
+        if (newElement != null) this.plus(newElement) else this
+
 fun List<PrintableTreeNode>?.toStringNames(separator: CharSequence = ","): String {
     if (this == null) return ""
     return map { it.name() }.joinToString(separator)

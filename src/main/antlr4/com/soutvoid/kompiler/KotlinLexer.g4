@@ -22,6 +22,8 @@ KEYWORD_for: 'for';
 
 KEYWORD_in: 'in';
 
+KEYWORD_return: 'return';
+
 fragment
 DIGIT
     : '0' .. '9'

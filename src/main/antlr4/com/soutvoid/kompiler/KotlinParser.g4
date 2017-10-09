@@ -16,7 +16,7 @@ functionDeclaration
     : 'fun' SimpleName
     functionParameters
     (':' type)?
-    block
+    '{' statements ('return' expression)? '}'
     ;
 
 functionParameters

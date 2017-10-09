@@ -14,7 +14,8 @@ fun FunctionDeclarationContext.toAst(): FunctionDeclaration =
                 SimpleName().text,
                 functionParameters()?.functionParameter()?.map { it.parameter().toAst() },
                 type()?.toAst(),
-                block().statements()?.statement()?.map { it.toAst() },
+                statements()?.statement()?.map { it.toAst() },
+                expression()?.toAst(),
                 considerPosition())
 
 fun ParameterContext.toAst(): Parameter =

@@ -26,8 +26,9 @@ data class FunctionDeclaration(val name: String,
                                val parameters: List<Parameter>?,
                                val returnType: Type?,
                                val statements: List<Statement>?,
+                               val returnExpression: Expression?,
                                val position: Position): Node {
-    override fun children(): MutableList<out PrintableTreeNode> = listOf<Statement>().join(statements).map { it as Node }.toMutableList()
+    override fun children(): MutableList<out PrintableTreeNode> = listOf<Statement>().join(statements).plusNotNull(returnExpression).map { it as Node }.toMutableList()
     override fun name(): String = "function $name(${parameters.toStringNames()}) : ${returnType?.name()?:"Unit"}" }
 
 
