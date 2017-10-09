@@ -1,4 +1,8 @@
 class Test {
+
+    var duplicate: Int = true
+    var duplicate: Double = 3.0
+
     fun test() {
         var foo: Int = 5
         foo = 7

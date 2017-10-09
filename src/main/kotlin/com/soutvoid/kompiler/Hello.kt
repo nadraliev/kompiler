@@ -26,6 +26,7 @@ fun main(args: Array<String>) {
     showSyntaxTree(parser, tree)
 
     val treeAst = tree.toAst()
+    treeAst.analyze()
     println(TreePrinter.toString(treeAst))
 }
 
