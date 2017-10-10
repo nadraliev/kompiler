@@ -101,6 +101,80 @@ fun Expression.exploreType(): Type? = when(this) {
 }
 
 fun resolveType(type1: Type?, type2: Type?): Type? {
-    //TODO implement
-    return null
+    if (type1 == null && type2 == null) return null
+    if (type1 == null) return type2
+    if (type2 == null) return type1
+    var result: Type? = null
+    ifNotNull(type1, type2) { t1, t2 ->
+        result = when(t1) {
+            is IntType -> resolveByInt(t2)
+            is DoubleType -> resolveByDouble(t2)
+            is BooleanType -> resolveByBoolean(t2)
+            is StringType -> resolveByString(t2)
+            is UnitType -> resolveByUnit(t2)
+            is RangeType -> resolveByRange(t2)
+            else -> throw IllegalArgumentException(t1.javaClass.canonicalName)
+        }
+    }
+    return result
+}
+
+fun resolveByInt(type: Type): Type? = when(type) {
+    is IntType -> IntType
+    is DoubleType -> DoubleType
+    is BooleanType -> null
+    is StringType -> null
+    is UnitType -> null
+    is RangeType -> null
+    else -> throw IllegalArgumentException(type.javaClass.canonicalName)
+}
+
+fun resolveByDouble(type: Type): Type? = when(type) {
+    is IntType -> DoubleType
+    is DoubleType -> DoubleType
+    is BooleanType -> null
+    is StringType -> null
+    is UnitType -> null
+    is RangeType -> null
+    else -> throw IllegalArgumentException(type.javaClass.canonicalName)
+}
+
+fun resolveByBoolean(type: Type): Type? = when(type) {
+    is IntType -> null
+    is DoubleType -> null
+    is BooleanType -> BooleanType
+    is StringType -> null
+    is UnitType -> null
+    is RangeType -> null
+    else -> throw IllegalArgumentException(type.javaClass.canonicalName)
+}
+
+fun resolveByString(type: Type): Type? = when(type) {
+    is IntType -> null
+    is DoubleType -> null
+    is BooleanType -> null
+    is StringType -> StringType
+    is UnitType -> null
+    is RangeType -> null
+    else -> throw IllegalArgumentException(type.javaClass.canonicalName)
+}
+
+fun resolveByUnit(type: Type): Type? = when(type) {
+    is IntType -> null
+    is DoubleType -> null
+    is BooleanType -> null
+    is StringType -> null
+    is UnitType -> UnitType
+    is RangeType -> null
+    else -> throw IllegalArgumentException(type.javaClass.canonicalName)
+}
+
+fun resolveByRange(type: Type): Type? = when(type) {
+    is IntType -> null
+    is DoubleType -> null
+    is BooleanType -> null
+    is StringType -> null
+    is UnitType -> null
+    is RangeType -> RangeType
+    else -> throw IllegalArgumentException(type.javaClass.canonicalName)
 }

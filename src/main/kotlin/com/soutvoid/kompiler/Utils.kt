@@ -10,6 +10,11 @@ fun List<Any>?.join(list: List<Any>?): List<Any> {
     return firstList.plus(secondList)
 }
 
+fun <T,R> ifNotNull(param1: T?, param2: R?, action: (param1: T, param2: R) -> Unit) {
+    if (param1 != null && param2 != null)
+        action(param1, param2)
+}
+
 fun List<Any>.plusNotNull(newElement: Any?): List<Any> =
         if (newElement != null) this.plus(newElement) else this
 
