@@ -34,11 +34,53 @@ fun FunctionDeclaration.analyze() {
 }
 
 fun Statement.analyze() {
-    //TODO implement
+    when(this) {
+        is VarDeclaration -> analyze()
+        is SimpleAssignment -> analyze()
+        is ArrayAssignment -> analyze()
+        is IfStatement -> analyze()
+        is WhileLoop -> analyze()
+        is ForLoop -> analyze()
+    }
 }
 
 fun Expression.analyze() {
     //TODO implement
+}
+
+fun SimpleAssignment.analyze() {
+    val expectedType = getVisibleVarDeclarations().find { it.varName == varName }?.type
+    val actualType = value.exploreType()
+    if (expectedType != actualType)
+        printTypeMismatchError(position.line, position.indexInLine, expectedType, actualType)
+}
+
+fun ArrayAssignment.analyze() {
+    val expectedType = getVisibleVarDeclarations().find { it.varName == arrayElement.arrayName }?.type
+    val actualType = value.exploreType()
+    if (expectedType != actualType)
+        printTypeMismatchError(position.line, position.indexInLine, expectedType, actualType)
+}
+
+fun IfStatement.analyze() {
+    expression.analyze()
+    val actualType = expression.exploreType()
+    if (actualType != BooleanType)
+        printTypeMismatchError(expression.position.line, expression.position.indexInLine, BooleanType, actualType)
+    statements.forEach { it.analyze() }
+}
+
+fun WhileLoop.analyze() {
+    factor.analyze()
+    val actualType = factor.exploreType()
+    if (actualType != BooleanType)
+        printTypeMismatchError(factor.position.line, factor.position.indexInLine, BooleanType, actualType)
+    statements.forEach { it.analyze() }
+}
+
+fun ForLoop.analyze() {
+    iterable.analyze()
+    statements?.forEach { it.analyze() }
 }
 
 fun Expression.exploreType(): Type? = when(this) {

@@ -215,16 +215,16 @@ data class VarDeclaration(var varName: String,
     override fun children(): MutableList<out PrintableTreeNode> = mutableListOf(VarReference(varName, position, this), value)
     override fun name(): String = "=" }
 data class SimpleAssignment(var varName: String,
-                            var varue: Expression,
+                            var value: Expression,
                             override var position: Position,
                             override var parent: Node? = null): Statement {
-    override fun children(): MutableList<out PrintableTreeNode> = mutableListOf(VarReference(varName, position, this), varue)
+    override fun children(): MutableList<out PrintableTreeNode> = mutableListOf(VarReference(varName, position, this), value)
     override fun name(): String = "=" }
 data class ArrayAssignment(var arrayElement: ArrayAccess,
-                           var varue: Expression,
+                           var value: Expression,
                            override var position: Position,
                            override var parent: Node? = null): Statement {
-    override fun children(): MutableList<out PrintableTreeNode> = mutableListOf(arrayElement, varue)
+    override fun children(): MutableList<out PrintableTreeNode> = mutableListOf(arrayElement, value)
     override fun name(): String = "=" }
 data class IfStatement(var expression: Expression,
                        var statements: List<Statement>,
