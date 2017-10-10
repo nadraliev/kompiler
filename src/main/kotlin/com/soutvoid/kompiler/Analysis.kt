@@ -22,11 +22,25 @@ fun VarDeclaration.analyze() {
 }
 
 fun FunctionDeclaration.analyze() {
+    statements?.forEach { it.analyze() }
+    returnExpression?.analyze()
+    val returnExpressionType = returnExpression?.exploreType() ?: UnitType
+    if (returnExpressionType != returnType)
+        printlnError("Type mismatch at: ${returnExpression?.position?.line}:${returnExpression?.position?.indexInLine}. " +
+                "Expected: ${returnType.name()}, but got: ${returnExpressionType.name()}")
+}
+
+fun Statement.analyze() {
+    //TODO implement
+}
+
+fun Expression.analyze() {
     //TODO implement
 }
 
 fun Expression.exploreType(): Type? = when(this) {
     is FunctionCall -> closestParentIs<ClassDeclaration>()?.functions?.find { it.name == name }?.returnType
+    is VarReference -> getVisibleVarDeclarations().find { it.varName == varName }?.type
     is ArrayInit -> ArrayType(type, position, parent)
     is Range -> RangeType
     is EqualsExpression, is LessExpression, is GreaterExpression, is LessOrEqualsExpression, is GreaterOrEqualsExpression -> BooleanType
@@ -39,6 +53,11 @@ fun Expression.exploreType(): Type? = when(this) {
     is BooleanLit -> BooleanType
     is StringLit -> StringType
     else -> throw UnsupportedOperationException(this.javaClass.canonicalName)
+}
+
+fun resolveType(type1: Type?, type2: Type?): Type? {
+    //TODO implement
+    return null
 }
 
 fun printDuplicatesError(elementName: String, positions: List<Position>) {

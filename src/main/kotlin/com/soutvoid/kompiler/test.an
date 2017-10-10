@@ -3,8 +3,10 @@ class Test {
     var duplicate: Int = true
     var duplicate: Double = 3.0
 
-    fun test() {
-        var foo: Int = 5
+    var integer: Int = 1
+
+    fun test(): Double {
+        var foo: Int = integer
         foo = 7
         if (1 < 0) {
             var wrong: Boolean = true
@@ -13,6 +15,7 @@ class Test {
         for (i in 0..25) {
             test3(i)
         }
+        return test3()
     }
 
     fun test2(param: Double, param2: Int) {

@@ -60,7 +60,12 @@ inline fun <reified T> Node.closestParentIs(): T? {
     else null
 }
 
-fun resolveType(type1: Type?, type2: Type?): Type? {
-    //TODO implement
-    return null
+fun Node.getVisibleVarDeclarations(): List<VarDeclaration> {
+    val result = mutableListOf<VarDeclaration>()
+    var parentNode: Node? = parent
+    while (parentNode != null) {
+        result.addAll(parentNode.children().filterIsInstance<VarDeclaration>())
+        parentNode = parentNode.parent
+    }
+    return result
 }
