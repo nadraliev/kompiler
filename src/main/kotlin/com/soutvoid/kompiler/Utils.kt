@@ -40,10 +40,6 @@ fun <T> List<T>.findDuplicatesBy(predicate: (element1: T, element2: T) -> Boolea
     return result
 }
 
-fun printlnError(errorMessage: String) {
-    println("\u001B[31m $errorMessage \u001B[0m")
-}
-
 fun Node.closestParent(predicate: (parent: Node) -> Boolean): Node? {
     parent?.let {
         return if (predicate(it))

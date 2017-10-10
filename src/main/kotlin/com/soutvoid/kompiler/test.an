@@ -29,6 +29,6 @@ class Test {
     }
 
     fun test3(param: Int): Int {
-        return 2
+
     }
 }

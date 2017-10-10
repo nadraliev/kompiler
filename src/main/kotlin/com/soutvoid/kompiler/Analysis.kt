@@ -18,16 +18,19 @@ fun ClassDeclaration.analyze() {
 fun VarDeclaration.analyze() {
     val exploredValueType = value.exploreType()
     if (type != exploredValueType)
-        printlnError("Type mismatch at: ${position.line}:${position.indexInLine}. Expected: ${type.name()}, but got: ${exploredValueType?.name()}")
+        printTypeMismatchError(position.line, position.indexInLine, type, exploredValueType)
 }
 
 fun FunctionDeclaration.analyze() {
     statements?.forEach { it.analyze() }
     returnExpression?.analyze()
     val returnExpressionType = returnExpression?.exploreType() ?: UnitType
-    if (returnExpressionType != returnType)
-        printlnError("Type mismatch at: ${returnExpression?.position?.line}:${returnExpression?.position?.indexInLine}. " +
-                "Expected: ${returnType.name()}, but got: ${returnExpressionType.name()}")
+    if (returnExpression == null && returnType != UnitType)
+        printTypeMismatchError(position.line, position.indexInLine, returnType, UnitType)
+    returnExpression?.let {
+        if (returnExpressionType != returnType)
+            printTypeMismatchError(it.position.line, it.position.indexInLine, returnType, returnExpressionType)
+    }
 }
 
 fun Statement.analyze() {
@@ -58,9 +61,4 @@ fun Expression.exploreType(): Type? = when(this) {
 fun resolveType(type1: Type?, type2: Type?): Type? {
     //TODO implement
     return null
-}
-
-fun printDuplicatesError(elementName: String, positions: List<Position>) {
-    printlnError("Duplicating $elementName at positions: " +
-            positions.map { it.line.toString() + ":" + it.indexInLine }.joinToString(","))
 }
