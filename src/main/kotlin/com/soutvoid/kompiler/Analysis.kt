@@ -45,7 +45,91 @@ fun Statement.analyze() {
 }
 
 fun Expression.analyze() {
-    //TODO implement
+    when(this) {
+        is FunctionCall -> analyze()
+        is VarReference -> analyze()
+        is ArrayInit -> analyze()
+        is Range -> analyze()
+        is Comparison -> analyze()
+        is Multiplication -> analyze()
+        is Division -> analyze()
+        is Addition -> analyze()
+        is Subtraction -> analyze()
+        is IntLit, is DoubleLit, is BooleanLit, is StringLit -> {}//nothing to analyze here
+        else -> throw UnsupportedOperationException(this.javaClass.canonicalName)
+    }
+}
+
+fun FunctionCall.analyze() {
+
+}
+
+fun VarReference.analyze() {
+    if (getVisibleVarDeclarations().find { it.varName == varName } == null)
+        printUnresolvedReference(position.line, position.indexInLine, varName)
+}
+
+fun ArrayInit.analyze() {
+    //nothing to analyze
+}
+
+fun Range.analyze() {
+    //nothing to analyze
+}
+
+fun Comparison.analyze() {
+    val leftType = left.exploreType()
+    val rightType = right.exploreType()
+    if (resolveType(leftType, rightType) == null)
+        printIncompatibleTypesError(position.line, position.indexInLine, leftType, rightType)
+}
+
+fun Multiplication.analyze() {
+    val leftType = left.exploreType()
+    val rightType = right.exploreType()
+    val resolvedType = resolveType(leftType, rightType)
+    if (resolvedType == null)
+        printIncompatibleTypesError(position.line, position.indexInLine, leftType, rightType)
+    else {
+        if (resolvedType == BooleanType || resolvedType == StringType || resolvedType == RangeType || resolvedType == UnitType)
+            printOperationDoesNotSupportError(position.line, position.indexInLine, name(), resolvedType)
+    }
+}
+
+fun Division.analyze() {
+    val leftType = left.exploreType()
+    val rightType = right.exploreType()
+    val resolvedType = resolveType(leftType, rightType)
+    if (resolvedType == null)
+        printIncompatibleTypesError(position.line, position.indexInLine, leftType, rightType)
+    else {
+        if (resolvedType == BooleanType || resolvedType == StringType || resolvedType == RangeType || resolvedType == UnitType)
+            printOperationDoesNotSupportError(position.line, position.indexInLine, name(), resolvedType)
+    }
+}
+
+fun Addition.analyze() {
+    val leftType = left.exploreType()
+    val rightType = right.exploreType()
+    val resolvedType =resolveType(leftType, rightType)
+    if (resolvedType == null)
+        printIncompatibleTypesError(position.line, position.indexInLine, leftType, rightType)
+    else {
+        if (resolvedType == BooleanType || resolvedType == RangeType || resolvedType == UnitType)
+            printOperationDoesNotSupportError(position.line, position.indexInLine, name(), resolvedType)
+    }
+}
+
+fun Subtraction.analyze() {
+    val leftType = left.exploreType()
+    val rightType = right.exploreType()
+    val resolvedType =resolveType(leftType, rightType)
+    if (resolvedType == null)
+        printIncompatibleTypesError(position.line, position.indexInLine, leftType, rightType)
+    else {
+        if (resolvedType == BooleanType || resolvedType == StringType || resolvedType == RangeType || resolvedType == UnitType)
+            printOperationDoesNotSupportError(position.line, position.indexInLine, name(), resolvedType)
+    }
 }
 
 fun SimpleAssignment.analyze() {
