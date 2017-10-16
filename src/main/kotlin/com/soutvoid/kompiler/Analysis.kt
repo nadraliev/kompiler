@@ -172,7 +172,7 @@ fun Expression.exploreType(): Type? = when(this) {
     is VarReference -> getVisibleVarDeclarations().find { it.varName == varName }?.type
     is ArrayInit -> ArrayType(type, position, parent)
     is Range -> RangeType
-    is EqualsExpression, is LessExpression, is GreaterExpression, is LessOrEqualsExpression, is GreaterOrEqualsExpression -> BooleanType
+    is EqualsExpression, is NotEqualsExpression, is LessExpression, is GreaterExpression, is LessOrEqualsExpression, is GreaterOrEqualsExpression -> BooleanType
     is Multiplication -> resolveType(left.exploreType(), right.exploreType())
     is Division -> resolveType(left.exploreType(), right.exploreType())
     is Addition -> resolveType(left.exploreType(), right.exploreType())

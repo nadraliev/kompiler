@@ -118,6 +118,15 @@ data class EqualsExpression(override var left: Expression,
     override fun children(): MutableList<out PrintableTreeNode> = mutableListOf(left, right)
     override fun name(): String = "==" }
 
+//------"!="
+data class NotEqualsExpression(override var left: Expression,
+                               override var right: Expression,
+                               override var position: Position,
+                               override var parent: Node? = null): Comparison {
+    override fun children(): MutableList<out PrintableTreeNode> = mutableListOf(left, right)
+    override fun name(): String = "!="
+}
+
 //------"<"
 data class LessExpression(override var left: Expression,
                           override var right: Expression,

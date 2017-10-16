@@ -109,6 +109,7 @@ fun BinaryOperationContext.toAst(): Expression = when (operator.text) {
     "/" -> Division(left.toAst(), right.toAst(), considerPosition()).fillInParents()
     "+" -> Addition(left.toAst(), right.toAst(), considerPosition()).fillInParents()
     "-" -> Subtraction(left.toAst(), right.toAst(), considerPosition()).fillInParents()
+    "!=" -> NotEqualsExpression(left.toAst(), right.toAst(), considerPosition()).fillInParents()
     "==" -> EqualsExpression(left.toAst(), right.toAst(), considerPosition()).fillInParents()
     "<" -> LessExpression(left.toAst(), right.toAst(), considerPosition()).fillInParents()
     ">" -> GreaterExpression(left.toAst(), right.toAst(), considerPosition()).fillInParents()
