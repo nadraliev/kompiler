@@ -84,7 +84,7 @@ arrayInitExpr
     ;
 
 arrayAccessExpr
-    : identifier '[' IntegerLiteral ']'
+    : identifier '[' expression ']'
     ;
 
 functionCall

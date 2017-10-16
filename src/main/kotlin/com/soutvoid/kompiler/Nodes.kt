@@ -93,11 +93,11 @@ data class ArrayInit(var type: Type,
 
 //---Array access
 data class ArrayAccess(var arrayName: String,
-                       var index: Int,
+                       var index: Expression,
                        override var position: Position,
                        override var parent: Node? = null): Expression {
-    override fun children(): MutableList<out PrintableTreeNode> = mutableListOf()
-    override fun name(): String = "$arrayName[$index]"}
+    override fun children(): MutableList<out PrintableTreeNode> = mutableListOf(index)
+    override fun name(): String = "$arrayName[]"}
 
 //---Range
 data class Range(var start: Int,

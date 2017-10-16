@@ -46,7 +46,7 @@ fun AssignmentContext.toAst(): Statement = when (this) {
             expression().toAst(), considerPosition()).fillInParents()
     is ArrayAssignContext -> ArrayAssignment(
             ArrayAccess(arrayAccessExpr().identifier().text,
-                    arrayAccessExpr().IntegerLiteral().text.toInt(),
+                    arrayAccessExpr().expression().toAst(),
                     considerPosition()).fillInParents(),
             expression().toAst(),
             considerPosition()
@@ -85,7 +85,7 @@ fun ExpressionContext.toAst(): Expression = when (this) {
             arrayInitExpr().IntegerLiteral().text.toInt(),
             considerPosition()).fillInParents()
     is ArrayAccessContext -> ArrayAccess(arrayAccessExpr().identifier().text,
-            arrayAccessExpr().IntegerLiteral().text.toInt(),
+            arrayAccessExpr().expression().toAst(),
             considerPosition()).fillInParents()
     is RangeContext -> Range(rangeExpression().IntegerLiteral(0).text.toInt(),
             rangeExpression().IntegerLiteral(1).text.toInt(),

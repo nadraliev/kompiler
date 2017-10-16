@@ -24,7 +24,7 @@ class Test {
         var right: Int = 3
         var arr: Array<Int> = Array<Int>(5)
         while (true) {
-            arr[0] = 1;
+            arr[1+1] = 1;
         }
     }
 
