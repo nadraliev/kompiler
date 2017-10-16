@@ -70,11 +70,11 @@ interface Comparison: BinaryExpression
 
 //---FunctionCall
 data class FunctionCall(var name: String,
-                        var parameters: List<VarReference>?,
+                        var parameters: List<Expression>?,
                         override var position: Position,
                         override var parent: Node? = null): Expression {
-    override fun children(): MutableList<out PrintableTreeNode> = mutableListOf()
-    override fun name(): String = "$name(${parameters?.map { it.varName }?.joinToString(",")})"}
+    override fun children(): MutableList<out PrintableTreeNode> = listOf<Node>().join(parameters).map { it as Node }.toMutableList()
+    override fun name(): String = "$name()"}
 
 //---Variable reference
 data class VarReference(var varName: String,

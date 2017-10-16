@@ -76,7 +76,7 @@ fun ExpressionContext.toAst(): Expression = when (this) {
     is IdContext -> identifier().toAst()
     is FuncCallContext -> FunctionCall(
             functionCall().SimpleName().text,
-            functionCall().identifiers()?.identifier()?.map { it.toAst() },
+            functionCall().expressions()?.expression()?.map { it.toAst() },
             considerPosition()).fillInParents()
     is LiteralContext -> literalConstant().toAst()
     is ParenExpressionContext -> expression().toAst()

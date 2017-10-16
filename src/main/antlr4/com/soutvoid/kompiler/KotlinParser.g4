@@ -88,7 +88,7 @@ arrayAccessExpr
     ;
 
 functionCall
-    : SimpleName '(' identifiers ')' ';'*
+    : SimpleName '(' expressions ')' ';'*
     ;
 
 ifSt
@@ -133,6 +133,10 @@ literalConstant
 
 identifiers
     : (identifier (',' identifier)*)?
+    ;
+
+expressions
+    : (expression (',' expression)*)?
     ;
 
 identifier
