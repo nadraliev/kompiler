@@ -15,6 +15,7 @@ class Test {
         for (i in 0..25) {
             test3(i)
         }
+        var nofunc: Int = nosuchfunction()
         return test3()
     }
 

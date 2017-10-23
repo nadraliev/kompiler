@@ -21,6 +21,10 @@ fun printOperationDoesNotSupportError(line: Int, charInLine: Int, operation: Str
     printlnError("Operation $operation does not support ${type.name()}: $line:$charInLine")
 }
 
-fun printUnresolvedReference(line: Int, charInLine: Int, reference: String) {
+fun printUnresolvedReferenceError(line: Int, charInLine: Int, reference: String) {
     printlnError("Can't resolve reference \"$reference\" at $line:$charInLine")
+}
+
+fun printNoSuchFunctionError(line: Int, charInLine: Int, funcCall: FunctionCall) {
+    printlnError("Can't find function with name ${funcCall.name} and parameters \"${funcCall.parameters?.toStringNames()}\" called at $line:$charInLine")
 }

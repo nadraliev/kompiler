@@ -56,19 +56,24 @@ fun Expression.analyze() {
         is Division -> analyze()
         is Addition -> analyze()
         is Subtraction -> analyze()
-        is IntLit, is DoubleLit, is BooleanLit, is StringLit -> {
-        }//nothing to analyze here
+        is IntLit, is DoubleLit, is BooleanLit, is StringLit -> { }//nothing to analyze here
         else -> throw UnsupportedOperationException(this.javaClass.canonicalName)
     }
 }
 
 fun FunctionCall.analyze() {
-
+    val declaration = closestParentIs<ClassDeclaration>()
+            ?.children()
+            ?.filterIsInstance<FunctionDeclaration>()
+            ?.filter { it.name == name && it.parameters == parameters }
+            ?.firstOrNull()
+    if (declaration == null)
+        printNoSuchFunctionError(position.startLine, position.startIndexInLine, this)
 }
 
 fun VarReference.analyze() {
     if (getVisibleVarDeclarations().find { it.varName == varName } == null)
-        printUnresolvedReference(position.startLine, position.startIndexInLine, varName)
+        printUnresolvedReferenceError(position.startLine, position.startIndexInLine, varName)
 }
 
 fun ArrayInit.analyze() {
