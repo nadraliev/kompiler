@@ -57,7 +57,9 @@ object UnitType: Type()
 object RangeType: Type()
 data class ArrayType(var type: Type, override var position: Position, override var parent: Node? = null): Type() {
     override fun children(): MutableList<out PrintableTreeNode> = mutableListOf()
-    override fun name(): String = "Array<${type.name()}>" }
+    override fun name(): String = "Array<${type.name()}>"
+    override fun equals(other: Any?): Boolean = type == type
+}
 
 
 
