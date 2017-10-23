@@ -6,7 +6,9 @@ interface Node : PrintableTreeNode {
     var parent: Node?
     var position: Position
 }
-interface Expression: Node, Statement
+interface Expression: Node, Statement {
+    var castTo: Type?
+}
 interface Statement: Node
 
 abstract class Type(override var position: Position = Position(0,0, 0, 0), override var parent: Node? = null): Node {
@@ -74,14 +76,16 @@ interface Comparison: BinaryExpression
 data class FunctionCall(var name: String,
                         var parameters: List<Expression>?,
                         override var position: Position,
-                        override var parent: Node? = null): Expression {
+                        override var parent: Node? = null,
+                        override var castTo: Type? = null): Expression {
     override fun children(): MutableList<out PrintableTreeNode> = listOf<Node>().join(parameters).map { it as Node }.toMutableList()
     override fun name(): String = "$name()"}
 
 //---Variable reference
 data class VarReference(var varName: String,
                         override var position: Position,
-                        override var parent: Node? = null): Expression {
+                        override var parent: Node? = null,
+                        override var castTo: Type? = null): Expression {
     override fun children(): MutableList<out PrintableTreeNode> = mutableListOf()
     override fun name(): String = varName }
 
@@ -89,7 +93,8 @@ data class VarReference(var varName: String,
 data class ArrayInit(var type: Type,
                      var size: Int,
                      override var position: Position,
-                     override var parent: Node? = null): Expression {
+                     override var parent: Node? = null,
+                     override var castTo: Type? = null): Expression {
     override fun children(): MutableList<out PrintableTreeNode> = mutableListOf()
     override fun name(): String = "Array<${type.name()}($size)>" }
 
@@ -97,7 +102,8 @@ data class ArrayInit(var type: Type,
 data class ArrayAccess(var arrayName: String,
                        var index: Expression,
                        override var position: Position,
-                       override var parent: Node? = null): Expression {
+                       override var parent: Node? = null,
+                       override var castTo: Type? = null): Expression {
     override fun children(): MutableList<out PrintableTreeNode> = mutableListOf(index)
     override fun name(): String = "$arrayName[]"}
 
@@ -105,7 +111,8 @@ data class ArrayAccess(var arrayName: String,
 data class Range(var start: Int,
                  var endInclusive: Int,
                  override var position: Position,
-                 override var parent: Node? = null): Expression {
+                 override var parent: Node? = null,
+                 override var castTo: Type? = null): Expression {
     override fun children(): MutableList<out PrintableTreeNode>  = mutableListOf()
     override fun name(): String = "$start..$endInclusive" }
 
@@ -116,7 +123,8 @@ data class Range(var start: Int,
 data class EqualsExpression(override var left: Expression,
                             override var right: Expression,
                             override var position: Position,
-                            override var parent: Node? = null): Comparison {
+                            override var parent: Node? = null,
+                            override var castTo: Type? = null): Comparison {
     override fun children(): MutableList<out PrintableTreeNode> = mutableListOf(left, right)
     override fun name(): String = "==" }
 
@@ -124,7 +132,8 @@ data class EqualsExpression(override var left: Expression,
 data class NotEqualsExpression(override var left: Expression,
                                override var right: Expression,
                                override var position: Position,
-                               override var parent: Node? = null): Comparison {
+                               override var parent: Node? = null,
+                               override var castTo: Type? = null): Comparison {
     override fun children(): MutableList<out PrintableTreeNode> = mutableListOf(left, right)
     override fun name(): String = "!="
 }
@@ -133,7 +142,8 @@ data class NotEqualsExpression(override var left: Expression,
 data class LessExpression(override var left: Expression,
                           override var right: Expression,
                           override var position: Position,
-                          override var parent: Node? = null): Comparison {
+                          override var parent: Node? = null,
+                          override var castTo: Type? = null): Comparison {
     override fun children(): MutableList<out PrintableTreeNode> = mutableListOf(left, right)
     override fun name(): String = "<" }
 
@@ -141,7 +151,8 @@ data class LessExpression(override var left: Expression,
 data class GreaterExpression(override var left: Expression,
                              override var right: Expression,
                              override var position: Position,
-                             override var parent: Node? = null): Comparison {
+                             override var parent: Node? = null,
+                             override var castTo: Type? = null): Comparison {
     override fun children(): MutableList<out PrintableTreeNode> = mutableListOf(left, right)
     override fun name(): String = ">" }
 
@@ -149,7 +160,8 @@ data class GreaterExpression(override var left: Expression,
 data class LessOrEqualsExpression(override var left: Expression,
                                   override var right: Expression,
                                   override var position: Position,
-                                  override var parent: Node? = null): Comparison {
+                                  override var parent: Node? = null,
+                                  override var castTo: Type? = null): Comparison {
     override fun children(): MutableList<out PrintableTreeNode> = mutableListOf(left, right)
     override fun name(): String = "<=" }
 
@@ -157,7 +169,8 @@ data class LessOrEqualsExpression(override var left: Expression,
 data class GreaterOrEqualsExpression(override var left: Expression,
                                      override var right: Expression,
                                      override var position: Position,
-                                     override var parent: Node? = null): Comparison {
+                                     override var parent: Node? = null,
+                                     override var castTo: Type? = null): Comparison {
     override fun children(): MutableList<out PrintableTreeNode> = mutableListOf(left, right)
     override fun name(): String = ">=" }
 
@@ -165,7 +178,8 @@ data class GreaterOrEqualsExpression(override var left: Expression,
 data class Multiplication(override var left: Expression,
                           override var right: Expression,
                           override var position: Position,
-                          override var parent: Node? = null): BinaryExpression {
+                          override var parent: Node? = null,
+                          override var castTo: Type? = null): BinaryExpression {
     override fun children(): MutableList<out PrintableTreeNode> = mutableListOf(left, right)
     override fun name(): String = "*" }
 
@@ -173,7 +187,8 @@ data class Multiplication(override var left: Expression,
 data class Division(override var left: Expression,
                     override var right: Expression,
                     override var position: Position,
-                    override var parent: Node? = null): BinaryExpression {
+                    override var parent: Node? = null,
+                    override var castTo: Type? = null): BinaryExpression {
     override fun children(): MutableList<out PrintableTreeNode> = mutableListOf(left, right)
     override fun name(): String = "/" }
 
@@ -181,7 +196,8 @@ data class Division(override var left: Expression,
 data class Addition(override var left: Expression,
                     override var right: Expression,
                     override var position: Position,
-                    override var parent: Node? = null): BinaryExpression {
+                    override var parent: Node? = null,
+                    override var castTo: Type? = null): BinaryExpression {
     override fun children(): MutableList<out PrintableTreeNode> = mutableListOf(left, right)
     override fun name(): String = "+" }
 
@@ -189,7 +205,8 @@ data class Addition(override var left: Expression,
 data class Subtraction(override var left: Expression,
                        override var right: Expression,
                        override var position: Position,
-                       override var parent: Node? = null): BinaryExpression {
+                       override var parent: Node? = null,
+                       override var castTo: Type? = null): BinaryExpression {
     override fun children(): MutableList<out PrintableTreeNode> = mutableListOf(left, right)
     override fun name(): String = "-" }
 
@@ -197,22 +214,26 @@ data class Subtraction(override var left: Expression,
 
 //---Literals
 //------Integer
-data class IntLit(var varue: String, override var position: Position, override var parent: Node? = null): Expression {
+data class IntLit(var varue: String, override var position: Position, override var parent: Node? = null,
+                  override var castTo: Type? = null): Expression {
     override fun children(): MutableList<out PrintableTreeNode> = mutableListOf()
     override fun name(): String = varue }
 
 //------Double
-data class DoubleLit(var varue: String, override var position: Position, override var parent: Node? = null): Expression {
+data class DoubleLit(var varue: String, override var position: Position, override var parent: Node? = null,
+                     override var castTo: Type? = null): Expression {
     override fun children(): MutableList<out PrintableTreeNode> = mutableListOf()
     override fun name(): String = varue }
 
 //------ Boolean
-data class BooleanLit(var varue: String, override var position: Position, override var parent: Node? = null): Expression {
+data class BooleanLit(var varue: String, override var position: Position, override var parent: Node? = null,
+                      override var castTo: Type? = null): Expression {
     override fun children(): MutableList<out PrintableTreeNode> = mutableListOf()
     override fun name(): String = varue }
 
 //------String
-data class StringLit(var varue: String, override var position: Position, override var parent: Node? = null): Expression {
+data class StringLit(var varue: String, override var position: Position, override var parent: Node? = null,
+                     override var castTo: Type? = null): Expression {
     override fun children(): MutableList<out PrintableTreeNode> = mutableListOf()
     override fun name(): String = varue }
 
