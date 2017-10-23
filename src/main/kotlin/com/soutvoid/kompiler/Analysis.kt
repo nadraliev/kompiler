@@ -50,6 +50,7 @@ fun Expression.analyze() {
         is FunctionCall -> analyze()
         is VarReference -> analyze()
         is ArrayInit -> analyze()
+        is ArrayAccess -> analyze()
         is Range -> analyze()
         is Comparison -> analyze()
         is Multiplication -> analyze()
@@ -65,8 +66,7 @@ fun FunctionCall.analyze() {
     val declaration = closestParentIs<ClassDeclaration>()
             ?.children()
             ?.filterIsInstance<FunctionDeclaration>()
-            ?.filter { it.name == name && it.parameters == parameters }
-            ?.firstOrNull()
+            ?.find { it.name == name && it.parameters == parameters }
     if (declaration == null)
         printNoSuchFunctionError(position.startLine, position.startIndexInLine, this)
 }
@@ -78,6 +78,17 @@ fun VarReference.analyze() {
 
 fun ArrayInit.analyze() {
     //nothing to analyze
+}
+
+fun ArrayAccess.analyze() {
+    val declaration = getVisibleVarDeclarations().find { it.varName == arrayName }
+    if (declaration == null )
+        printUnresolvedReferenceError(position.startLine, position.startIndexInLine, arrayName)
+    else {
+        if (declaration.type !is ArrayType)
+            printReferenceIsNotAnArray(position.startLine, position.startIndexInLine, arrayName)
+    }
+    index.analyze()
 }
 
 fun Range.analyze() {

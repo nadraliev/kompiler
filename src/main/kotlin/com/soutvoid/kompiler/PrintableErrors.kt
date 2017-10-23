@@ -28,3 +28,7 @@ fun printUnresolvedReferenceError(line: Int, charInLine: Int, reference: String)
 fun printNoSuchFunctionError(line: Int, charInLine: Int, funcCall: FunctionCall) {
     printlnError("Can't find function with name ${funcCall.name} and parameters \"${funcCall.parameters?.toStringNames()}\" called at $line:$charInLine")
 }
+
+fun printReferenceIsNotAnArray(line: Int, charInLine: Int, name: String) {
+    printlnError("Reference $name at $line:$charInLine is not an array")
+}
