@@ -23,6 +23,7 @@ class Test {
         if (boo)
         var right: Int = 3
         var arr: Array<Int> = Array<Int>(5)
+        var plus: Array<Int> = arr + arr;
         while (true) {
             arr[1+1] = 1;
         }

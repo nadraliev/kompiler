@@ -16,6 +16,7 @@ fun ClassDeclaration.analyze() {
 }
 
 fun VarDeclaration.analyze() {
+    value.analyze()
     val exploredValueType = value.exploreType()
     if (type != exploredValueType)
         printTypeMismatchError(position.startLine, position.startIndexInLine, type, exploredValueType)
@@ -80,7 +81,10 @@ fun Range.analyze() {
 fun Comparison.analyze() {
     val leftType = left.exploreType()
     val rightType = right.exploreType()
-    if (resolveType(leftType, rightType) == null)
+    val resolvedType = resolveType(leftType, rightType)
+    if (resolvedType is ArrayType)
+        printOperationDoesNotSupportError(position.startLine, position.startIndexInLine, name(), resolvedType)
+    if (resolvedType == null)
         printIncompatibleTypesError(position.startLine, position.startIndexInLine, leftType, rightType)
 }
 
@@ -91,7 +95,8 @@ fun Multiplication.analyze() {
     if (resolvedType == null)
         printIncompatibleTypesError(position.startLine, position.startIndexInLine, leftType, rightType)
     else {
-        if (resolvedType == BooleanType || resolvedType == StringType || resolvedType == RangeType || resolvedType == UnitType)
+        if (resolvedType == BooleanType || resolvedType == StringType || resolvedType == RangeType || resolvedType == UnitType ||
+                resolvedType is ArrayType)
             printOperationDoesNotSupportError(position.startLine, position.startIndexInLine, name(), resolvedType)
     }
 }
@@ -103,7 +108,8 @@ fun Division.analyze() {
     if (resolvedType == null)
         printIncompatibleTypesError(position.startLine, position.startIndexInLine, leftType, rightType)
     else {
-        if (resolvedType == BooleanType || resolvedType == StringType || resolvedType == RangeType || resolvedType == UnitType)
+        if (resolvedType == BooleanType || resolvedType == StringType || resolvedType == RangeType || resolvedType == UnitType ||
+                resolvedType is ArrayType)
             printOperationDoesNotSupportError(position.startLine, position.startIndexInLine, name(), resolvedType)
     }
 }
@@ -115,7 +121,8 @@ fun Addition.analyze() {
     if (resolvedType == null)
         printIncompatibleTypesError(position.startLine, position.startIndexInLine, leftType, rightType)
     else {
-        if (resolvedType == BooleanType || resolvedType == RangeType || resolvedType == UnitType)
+        if (resolvedType == BooleanType || resolvedType == RangeType || resolvedType == UnitType ||
+                resolvedType is ArrayType)
             printOperationDoesNotSupportError(position.startLine, position.startIndexInLine, name(), resolvedType)
     }
 }
@@ -127,7 +134,8 @@ fun Subtraction.analyze() {
     if (resolvedType == null)
         printIncompatibleTypesError(position.startLine, position.startIndexInLine, leftType, rightType)
     else {
-        if (resolvedType == BooleanType || resolvedType == StringType || resolvedType == RangeType || resolvedType == UnitType)
+        if (resolvedType == BooleanType || resolvedType == StringType || resolvedType == RangeType || resolvedType == UnitType ||
+                resolvedType is ArrayType)
             printOperationDoesNotSupportError(position.startLine, position.startIndexInLine, name(), resolvedType)
     }
 }
@@ -197,6 +205,7 @@ fun resolveType(type1: Type?, type2: Type?): Type? {
             is StringType -> resolveByString(t2)
             is UnitType -> resolveByUnit(t2)
             is RangeType -> resolveByRange(t2)
+            is ArrayType -> if (type1 == type2) type1 else null
             else -> throw IllegalArgumentException(t1.javaClass.canonicalName)
         }
     }
