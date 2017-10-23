@@ -4,7 +4,7 @@ import io.bretty.console.tree.PrintableTreeNode
 import org.antlr.v4.runtime.ParserRuleContext
 import kotlin.reflect.KClass
 
-fun List<Any>?.join(list: List<Any>?): List<Any> {
+infix fun List<Any>?.join(list: List<Any>?): List<Any> {
     val firstList = this ?: listOf()
     val secondList = list ?: listOf()
     return firstList.plus(secondList)
@@ -15,7 +15,7 @@ fun <T,R> ifNotNull(param1: T?, param2: R?, action: (param1: T, param2: R) -> Un
         action(param1, param2)
 }
 
-fun List<Any>.plusNotNull(newElement: Any?): List<Any> =
+infix fun List<Any>.plusNotNull(newElement: Any?): List<Any> =
         if (newElement != null) this.plus(newElement) else this
 
 fun List<PrintableTreeNode>?.toStringNames(separator: CharSequence = ","): String {

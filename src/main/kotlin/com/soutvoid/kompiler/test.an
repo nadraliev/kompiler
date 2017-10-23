@@ -20,10 +20,10 @@ class Test {
 
     fun test2(param: Double, param2: Int) {
         var boo: Boolean = 5 < 3
-        if (boo)
         var right: Int = 3
         var arr: Array<Int> = Array<Int>(5)
         var plus: Array<Int> = arr + arr;
+        var cast: Double = right + 2.0
         while (true) {
             arr[1+1] = 1;
         }

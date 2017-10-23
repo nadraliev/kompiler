@@ -82,7 +82,7 @@ fun Range.analyze() {
 fun Comparison.analyze() {
     val leftType = left.exploreType()
     val rightType = right.exploreType()
-    val resolvedType = areTypesCompatible(leftType, rightType)
+    val resolvedType = resolveType(left, right, leftType, rightType)
     if (resolvedType is ArrayType)
         printOperationDoesNotSupportError(position.startLine, position.startIndexInLine, name(), resolvedType)
     if (resolvedType == null)
@@ -92,7 +92,7 @@ fun Comparison.analyze() {
 fun Multiplication.analyze() {
     val leftType = left.exploreType()
     val rightType = right.exploreType()
-    val resolvedType = areTypesCompatible(leftType, rightType)
+    val resolvedType = resolveType(left, right, leftType, rightType)
     if (resolvedType == null)
         printIncompatibleTypesError(position.startLine, position.startIndexInLine, leftType, rightType)
     else {
@@ -105,7 +105,7 @@ fun Multiplication.analyze() {
 fun Division.analyze() {
     val leftType = left.exploreType()
     val rightType = right.exploreType()
-    val resolvedType = areTypesCompatible(leftType, rightType)
+    val resolvedType = resolveType(left, right, leftType, rightType)
     if (resolvedType == null)
         printIncompatibleTypesError(position.startLine, position.startIndexInLine, leftType, rightType)
     else {
@@ -118,7 +118,7 @@ fun Division.analyze() {
 fun Addition.analyze() {
     val leftType = left.exploreType()
     val rightType = right.exploreType()
-    val resolvedType = areTypesCompatible(leftType, rightType)
+    val resolvedType = resolveType(left, right, leftType, rightType)
     if (resolvedType == null)
         printIncompatibleTypesError(position.startLine, position.startIndexInLine, leftType, rightType)
     else {
@@ -131,7 +131,7 @@ fun Addition.analyze() {
 fun Subtraction.analyze() {
     val leftType = left.exploreType()
     val rightType = right.exploreType()
-    val resolvedType = areTypesCompatible(leftType, rightType)
+    val resolvedType = resolveType(left, right, leftType, rightType)
     if (resolvedType == null)
         printIncompatibleTypesError(position.startLine, position.startIndexInLine, leftType, rightType)
     else {
@@ -182,10 +182,10 @@ fun Expression.exploreType(): Type? = when (this) {
     is ArrayInit -> ArrayType(type, position, parent)
     is Range -> RangeType
     is EqualsExpression, is NotEqualsExpression, is LessExpression, is GreaterExpression, is LessOrEqualsExpression, is GreaterOrEqualsExpression -> BooleanType
-    is Multiplication -> areTypesCompatible(left.exploreType(), right.exploreType())
-    is Division -> areTypesCompatible(left.exploreType(), right.exploreType())
-    is Addition -> areTypesCompatible(left.exploreType(), right.exploreType())
-    is Subtraction -> areTypesCompatible(left.exploreType(), right.exploreType())
+    is Multiplication -> resolveType(left, right, left.exploreType(), right.exploreType())
+    is Division -> resolveType(left, right, left.exploreType(), right.exploreType())
+    is Addition -> resolveType(left, right, left.exploreType(), right.exploreType())
+    is Subtraction -> resolveType(left, right, left.exploreType(), right.exploreType())
     is IntLit -> IntType
     is DoubleLit -> DoubleType
     is BooleanLit -> BooleanType
@@ -193,14 +193,18 @@ fun Expression.exploreType(): Type? = when (this) {
     else -> throw UnsupportedOperationException(this.javaClass.canonicalName)
 }
 
-fun maybeCast(expr1: Expression, expr2: Expression,
-              type1: Type?, type2: Type?, castType: Type?): Type? {
+fun resolveType(expr1: Expression, expr2: Expression,
+                type1: Type?, type2: Type?): Type? {
     val compatibleType = areTypesCompatible(type1, type2)
     compatibleType?.let { return it }
 
     val autoCastType = isAutoCastPossible(type1, type2)
     autoCastType?.let {
-
+        if (type1 != it)
+            expr1 castTo it
+        if (type2 != it)
+            expr2 castTo it
+        return it
     }
     return null
 }
@@ -234,9 +238,9 @@ fun areTypesCompatible(type1: Type?, type2: Type?): Type? {
 
 fun resolveByInt(type: Type): Type? = when (type) {
     is IntType -> IntType
-    is DoubleType -> null
+    is DoubleType -> DoubleType
     is BooleanType -> null
-    is StringType -> null
+    is StringType -> StringType
     is UnitType -> null
     is RangeType -> null
     else -> throw IllegalArgumentException(type.javaClass.canonicalName)
@@ -246,7 +250,7 @@ fun resolveByDouble(type: Type): Type? = when (type) {
     is IntType -> DoubleType
     is DoubleType -> DoubleType
     is BooleanType -> null
-    is StringType -> null
+    is StringType -> StringType
     is UnitType -> null
     is RangeType -> null
     else -> throw IllegalArgumentException(type.javaClass.canonicalName)
@@ -256,7 +260,7 @@ fun resolveByBoolean(type: Type): Type? = when (type) {
     is IntType -> null
     is DoubleType -> null
     is BooleanType -> BooleanType
-    is StringType -> null
+    is StringType -> StringType
     is UnitType -> null
     is RangeType -> null
     else -> throw IllegalArgumentException(type.javaClass.canonicalName)
