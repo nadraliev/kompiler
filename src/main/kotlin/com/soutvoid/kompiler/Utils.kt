@@ -23,10 +23,12 @@ fun List<PrintableTreeNode>?.toStringNames(separator: CharSequence = ","): Strin
     return map { it.name() }.joinToString(separator)
 }
 
-data class Position(val line: Int, val indexInLine: Int)
+data class Position(val startLine: Int, val startIndexInLine: Int,
+                    val endLine: Int, val endIndexInLine: Int)
 
 fun ParserRuleContext.considerPosition(): Position =
-        Position(start.line, start.charPositionInLine)
+        Position(start.line, start.charPositionInLine,
+                stop.line, stop.charPositionInLine)
 
 fun <T> T.fillInParents(): T where T : Node {
     children().map { it as Node }.forEach { it.parent = this }

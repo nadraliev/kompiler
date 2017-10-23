@@ -6,7 +6,7 @@ fun printlnError(errorMessage: String) {
 
 fun printDuplicatesError(elementName: String, positions: List<Position>) {
     printlnError("Duplicating $elementName at positions: " +
-            positions.map { it.line.toString() + ":" + it.indexInLine }.joinToString(","))
+            positions.map { it.startLine.toString() + ":" + it.startIndexInLine }.joinToString(","))
 }
 
 fun printTypeMismatchError(line: Int, charInLine: Int, expected: Type?, got: Type?) {

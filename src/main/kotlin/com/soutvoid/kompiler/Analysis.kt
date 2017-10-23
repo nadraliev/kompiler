@@ -18,7 +18,7 @@ fun ClassDeclaration.analyze() {
 fun VarDeclaration.analyze() {
     val exploredValueType = value.exploreType()
     if (type != exploredValueType)
-        printTypeMismatchError(position.line, position.indexInLine, type, exploredValueType)
+        printTypeMismatchError(position.startLine, position.startIndexInLine, type, exploredValueType)
 }
 
 fun FunctionDeclaration.analyze() {
@@ -26,10 +26,10 @@ fun FunctionDeclaration.analyze() {
     returnExpression?.analyze()
     val returnExpressionType = returnExpression?.exploreType() ?: UnitType
     if (returnExpression == null && returnType != UnitType)
-        printTypeMismatchError(position.line, position.indexInLine, returnType, UnitType)
+        printTypeMismatchError(position.startLine, position.startIndexInLine, returnType, UnitType)
     returnExpression?.let {
         if (returnExpressionType != returnType)
-            printTypeMismatchError(it.position.line, it.position.indexInLine, returnType, returnExpressionType)
+            printTypeMismatchError(it.position.startLine, it.position.startIndexInLine, returnType, returnExpressionType)
     }
 }
 
@@ -66,7 +66,7 @@ fun FunctionCall.analyze() {
 
 fun VarReference.analyze() {
     if (getVisibleVarDeclarations().find { it.varName == varName } == null)
-        printUnresolvedReference(position.line, position.indexInLine, varName)
+        printUnresolvedReference(position.startLine, position.startIndexInLine, varName)
 }
 
 fun ArrayInit.analyze() {
@@ -81,7 +81,7 @@ fun Comparison.analyze() {
     val leftType = left.exploreType()
     val rightType = right.exploreType()
     if (resolveType(leftType, rightType) == null)
-        printIncompatibleTypesError(position.line, position.indexInLine, leftType, rightType)
+        printIncompatibleTypesError(position.startLine, position.startIndexInLine, leftType, rightType)
 }
 
 fun Multiplication.analyze() {
@@ -89,10 +89,10 @@ fun Multiplication.analyze() {
     val rightType = right.exploreType()
     val resolvedType = resolveType(leftType, rightType)
     if (resolvedType == null)
-        printIncompatibleTypesError(position.line, position.indexInLine, leftType, rightType)
+        printIncompatibleTypesError(position.startLine, position.startIndexInLine, leftType, rightType)
     else {
         if (resolvedType == BooleanType || resolvedType == StringType || resolvedType == RangeType || resolvedType == UnitType)
-            printOperationDoesNotSupportError(position.line, position.indexInLine, name(), resolvedType)
+            printOperationDoesNotSupportError(position.startLine, position.startIndexInLine, name(), resolvedType)
     }
 }
 
@@ -101,10 +101,10 @@ fun Division.analyze() {
     val rightType = right.exploreType()
     val resolvedType = resolveType(leftType, rightType)
     if (resolvedType == null)
-        printIncompatibleTypesError(position.line, position.indexInLine, leftType, rightType)
+        printIncompatibleTypesError(position.startLine, position.startIndexInLine, leftType, rightType)
     else {
         if (resolvedType == BooleanType || resolvedType == StringType || resolvedType == RangeType || resolvedType == UnitType)
-            printOperationDoesNotSupportError(position.line, position.indexInLine, name(), resolvedType)
+            printOperationDoesNotSupportError(position.startLine, position.startIndexInLine, name(), resolvedType)
     }
 }
 
@@ -113,10 +113,10 @@ fun Addition.analyze() {
     val rightType = right.exploreType()
     val resolvedType =resolveType(leftType, rightType)
     if (resolvedType == null)
-        printIncompatibleTypesError(position.line, position.indexInLine, leftType, rightType)
+        printIncompatibleTypesError(position.startLine, position.startIndexInLine, leftType, rightType)
     else {
         if (resolvedType == BooleanType || resolvedType == RangeType || resolvedType == UnitType)
-            printOperationDoesNotSupportError(position.line, position.indexInLine, name(), resolvedType)
+            printOperationDoesNotSupportError(position.startLine, position.startIndexInLine, name(), resolvedType)
     }
 }
 
@@ -125,10 +125,10 @@ fun Subtraction.analyze() {
     val rightType = right.exploreType()
     val resolvedType =resolveType(leftType, rightType)
     if (resolvedType == null)
-        printIncompatibleTypesError(position.line, position.indexInLine, leftType, rightType)
+        printIncompatibleTypesError(position.startLine, position.startIndexInLine, leftType, rightType)
     else {
         if (resolvedType == BooleanType || resolvedType == StringType || resolvedType == RangeType || resolvedType == UnitType)
-            printOperationDoesNotSupportError(position.line, position.indexInLine, name(), resolvedType)
+            printOperationDoesNotSupportError(position.startLine, position.startIndexInLine, name(), resolvedType)
     }
 }
 
@@ -136,21 +136,21 @@ fun SimpleAssignment.analyze() {
     val expectedType = getVisibleVarDeclarations().find { it.varName == varName }?.type
     val actualType = value.exploreType()
     if (expectedType != actualType)
-        printTypeMismatchError(position.line, position.indexInLine, expectedType, actualType)
+        printTypeMismatchError(position.startLine, position.startIndexInLine, expectedType, actualType)
 }
 
 fun ArrayAssignment.analyze() {
     val expectedType = getVisibleVarDeclarations().find { it.varName == arrayElement.arrayName }?.type
     val actualType = value.exploreType()
     if (expectedType != actualType)
-        printTypeMismatchError(position.line, position.indexInLine, expectedType, actualType)
+        printTypeMismatchError(position.startLine, position.startIndexInLine, expectedType, actualType)
 }
 
 fun IfStatement.analyze() {
     expression.analyze()
     val actualType = expression.exploreType()
     if (actualType != BooleanType)
-        printTypeMismatchError(expression.position.line, expression.position.indexInLine, BooleanType, actualType)
+        printTypeMismatchError(expression.position.startLine, expression.position.startIndexInLine, BooleanType, actualType)
     statements.forEach { it.analyze() }
 }
 
@@ -158,7 +158,7 @@ fun WhileLoop.analyze() {
     factor.analyze()
     val actualType = factor.exploreType()
     if (actualType != BooleanType)
-        printTypeMismatchError(factor.position.line, factor.position.indexInLine, BooleanType, actualType)
+        printTypeMismatchError(factor.position.startLine, factor.position.startIndexInLine, BooleanType, actualType)
     statements.forEach { it.analyze() }
 }
 
