@@ -9,7 +9,7 @@ interface Node : PrintableTreeNode {
 interface Expression: Node, Statement
 interface Statement: Node
 
-abstract class Type(override var position: Position = Position(0,0), override var parent: Node? = null): Node {
+abstract class Type(override var position: Position = Position(0,0, 0, 0), override var parent: Node? = null): Node {
     override fun children(): MutableList<out PrintableTreeNode> = mutableListOf()
     override fun name(): String = javaClass.simpleName }
 
