@@ -40,7 +40,17 @@ data class FunctionDeclaration(var name: String,
                                override var position: Position,
                                override var parent: Node? = null): Node {
     override fun children(): MutableList<out PrintableTreeNode> = (listOf<Statement>() join statements plusNotNull returnExpression).map { it as Node }.toMutableList()
-    override fun name(): String = "function $name(${parameters.toStringNames()}) : ${returnType.name()}" }
+    override fun name(): String = "function $name(${parameters.toStringNames()}) : ${returnType.name()}"
+    override fun equals(other: Any?): Boolean {
+        other.let {
+            return it is FunctionDeclaration
+                && it.name == name
+                && it.parameters == parameters
+                && it.returnType == returnType
+        }
+        return false
+    }
+}
 
 
 
@@ -50,7 +60,16 @@ data class Parameter(var name: String,
                      override var position: Position,
                      override var parent: Node? = null): Node {
     override fun children(): MutableList<out PrintableTreeNode> = mutableListOf()
-    override fun name(): String = "$name : ${type.name()}" }
+    override fun name(): String = "$name : ${type.name()}"
+    override fun equals(other: Any?): Boolean {
+        other.let {
+            return it is Parameter
+                && it.name == name
+                && it.type == type
+        }
+        return false
+    }
+}
 
 
 

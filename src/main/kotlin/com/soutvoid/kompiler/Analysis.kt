@@ -8,7 +8,7 @@ fun ClassDeclaration.analyze() {
         it.forEach { it.analyze() }
     }
     functions?.let {
-        it.findDuplicatesBy { element1, element2 -> element1.name == element2.name }.forEach {
+        it.findDuplicatesBy { element1, element2 -> element1 == element2 }.forEach {
             printDuplicatesError("functions", it.map { it.position })
         }
         it.forEach { it.analyze() }

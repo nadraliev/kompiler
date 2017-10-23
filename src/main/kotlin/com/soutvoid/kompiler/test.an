@@ -32,4 +32,8 @@ class Test {
     fun test3(param: Int): Int {
 
     }
+
+    fun test3(param: Int): Int {
+
+    }
 }
