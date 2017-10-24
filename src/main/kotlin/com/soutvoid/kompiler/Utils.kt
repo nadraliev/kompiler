@@ -47,6 +47,18 @@ fun <T> List<T>.findDuplicatesBy(predicate: (element1: T, element2: T) -> Boolea
     return result
 }
 
+inline fun <T, reified R> List<T>.findDuplicatesIs(crossinline predicate: (element1: R, element2: R) -> Boolean): List<List<R>> {
+    return findDuplicatesBy { element1, element2 ->
+        element1 is R && element2 is R && predicate(element1, element2)
+    }.map { it.map { it as R } }
+}
+
+inline fun <T: Node> List<T>.checkForDuplicateDeclarations() {
+    findDuplicatesIs<Node, VarDeclaration> { element1, element2 ->  element1.varName == element2.varName }.forEach {
+        printDuplicatesError("properties", it.map { it.position })
+    }
+}
+
 fun Node.closestParent(predicate: (parent: Node) -> Boolean): Node? {
     parent?.let {
         return if (predicate(it))

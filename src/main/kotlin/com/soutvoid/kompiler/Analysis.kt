@@ -2,9 +2,7 @@ package com.soutvoid.kompiler
 
 fun ClassDeclaration.analyze() {
     properties?.let {
-        it.findDuplicatesBy { element1, element2 -> element1.varName == element2.varName }.forEach {
-            printDuplicatesError("properties", it.map { it.position })
-        }
+        it.checkForDuplicateDeclarations()
         it.forEach { it.analyze() }
     }
     functions?.let {
@@ -24,6 +22,9 @@ fun VarDeclaration.analyze() {
 
 fun FunctionDeclaration.analyze() {
     statements?.forEach { it.analyze() }
+    statements?.let {
+        it.checkForDuplicateDeclarations()
+    }
     returnExpression?.analyze()
     val returnExpressionType = returnExpression?.exploreType() ?: UnitType
     if (returnExpression == null && returnType != UnitType)
@@ -177,6 +178,7 @@ fun IfStatement.analyze() {
     if (actualType != BooleanType)
         printTypeMismatchError(expression.position.startLine, expression.position.startIndexInLine, BooleanType, actualType)
     statements.forEach { it.analyze() }
+    statements.checkForDuplicateDeclarations()
 }
 
 fun WhileLoop.analyze() {
@@ -185,11 +187,13 @@ fun WhileLoop.analyze() {
     if (actualType != BooleanType)
         printTypeMismatchError(factor.position.startLine, factor.position.startIndexInLine, BooleanType, actualType)
     statements.forEach { it.analyze() }
+    statements.checkForDuplicateDeclarations()
 }
 
 fun ForLoop.analyze() {
     iterable.analyze()
     statements?.forEach { it.analyze() }
+    statements?.let { it.checkForDuplicateDeclarations() }
 }
 
 fun Expression.exploreType(): Type? = when (this) {
