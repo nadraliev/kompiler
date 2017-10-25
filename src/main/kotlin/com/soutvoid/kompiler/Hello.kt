@@ -23,11 +23,14 @@ fun main(args: Array<String>) {
     parser.addParseListener(KotlinListener())
     val tree = parser.classDeclaration()
 
-    showSyntaxTree(parser, tree)
+    //showSyntaxTree(parser, tree)
 
     val treeAst = tree.toAst()
     treeAst.analyze()
     println(TreePrinter.toString(treeAst))
+
+    if (!thereWasError)
+        treeAst.generate()
 }
 
 fun openSource(): String {

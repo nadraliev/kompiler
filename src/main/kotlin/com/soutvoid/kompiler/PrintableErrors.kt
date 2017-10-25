@@ -1,6 +1,9 @@
 package com.soutvoid.kompiler
 
+var thereWasError = false
+
 fun printlnError(errorMessage: String) {
+    thereWasError = true
     println("\u001B[31m $errorMessage \u001B[0m")
 }
 
