@@ -2,7 +2,7 @@ package com.soutvoid.kompiler
 
 fun ClassDeclaration.analyze() {
     properties?.let {
-        it.checkForDuplicateDeclarations()
+        it.checkForDuplicateVarDeclarations()
         it.forEach { it.analyze() }
     }
     functions?.let {
@@ -23,7 +23,7 @@ fun VarDeclaration.analyze() {
 fun FunctionDeclaration.analyze() {
     statements?.forEach { it.analyze() }
     statements?.let {
-        it.checkForDuplicateDeclarations()
+        it.checkForDuplicateVarDeclarations()
     }
     returnExpression?.analyze()
     val returnExpressionType = returnExpression?.exploreType() ?: UnitType
@@ -64,16 +64,14 @@ fun Expression.analyze() {
 }
 
 fun FunctionCall.analyze() {
-    val declaration = closestParentIs<ClassDeclaration>()
-            ?.children()
-            ?.filterIsInstance<FunctionDeclaration>()
-            ?.find { it.name == name && it.parameters == parameters }
+    val declaration = getVisibleNodesIs<FunctionDeclaration>()
+            .find { it.name == name && it.parameters == parameters }
     if (declaration == null)
         printNoSuchFunctionError(position.startLine, position.startIndexInLine, this)
 }
 
 fun VarReference.analyze() {
-    if (getVisibleVarDeclarations().find { it.varName == varName } == null)
+    if (getVisibleNodesIs<VarDeclaration>().find { it.varName == varName } == null)
         printUnresolvedReferenceError(position.startLine, position.startIndexInLine, varName)
 }
 
@@ -82,7 +80,7 @@ fun ArrayInit.analyze() {
 }
 
 fun ArrayAccess.analyze() {
-    val declaration = getVisibleVarDeclarations().find { it.varName == arrayName }
+    val declaration = getVisibleNodesIs<VarDeclaration>().find { it.varName == arrayName }
     if (declaration == null )
         printUnresolvedReferenceError(position.startLine, position.startIndexInLine, arrayName)
     else {
@@ -159,14 +157,14 @@ fun Subtraction.analyze() {
 }
 
 fun SimpleAssignment.analyze() {
-    val expectedType = getVisibleVarDeclarations().find { it.varName == varName }?.type
+    val expectedType = getVisibleNodesIs<VarDeclaration>().find { it.varName == varName }?.type
     val actualType = value.exploreType()
     if (expectedType != actualType)
         printTypeMismatchError(position.startLine, position.startIndexInLine, expectedType, actualType)
 }
 
 fun ArrayAssignment.analyze() {
-    val expectedType = getVisibleVarDeclarations().find { it.varName == arrayElement.arrayName }?.type
+    val expectedType = getVisibleNodesIs<VarDeclaration>().find { it.varName == arrayElement.arrayName }?.type
     val actualType = value.exploreType()
     if (expectedType != actualType)
         printTypeMismatchError(position.startLine, position.startIndexInLine, expectedType, actualType)
@@ -178,7 +176,7 @@ fun IfStatement.analyze() {
     if (actualType != BooleanType)
         printTypeMismatchError(expression.position.startLine, expression.position.startIndexInLine, BooleanType, actualType)
     statements.forEach { it.analyze() }
-    statements.checkForDuplicateDeclarations()
+    statements.checkForDuplicateVarDeclarations()
 }
 
 fun WhileLoop.analyze() {
@@ -187,18 +185,18 @@ fun WhileLoop.analyze() {
     if (actualType != BooleanType)
         printTypeMismatchError(factor.position.startLine, factor.position.startIndexInLine, BooleanType, actualType)
     statements.forEach { it.analyze() }
-    statements.checkForDuplicateDeclarations()
+    statements.checkForDuplicateVarDeclarations()
 }
 
 fun ForLoop.analyze() {
     iterable.analyze()
     statements?.forEach { it.analyze() }
-    statements?.let { it.checkForDuplicateDeclarations() }
+    statements?.let { it.checkForDuplicateVarDeclarations() }
 }
 
 fun Expression.exploreType(): Type? = when (this) {
     is FunctionCall -> closestParentIs<ClassDeclaration>()?.functions?.find { it.name == name }?.returnType
-    is VarReference -> getVisibleVarDeclarations().find { it.varName == varName }?.type
+    is VarReference -> getVisibleNodesIs<VarDeclaration>().find { it.varName == varName }?.type
     is ArrayInit -> ArrayType(type, position, parent)
     is Range -> RangeType
     is EqualsExpression, is NotEqualsExpression, is LessExpression, is GreaterExpression, is LessOrEqualsExpression, is GreaterOrEqualsExpression -> BooleanType

@@ -53,7 +53,7 @@ inline fun <T, reified R> List<T>.findDuplicatesIs(crossinline predicate: (eleme
     }.map { it.map { it as R } }
 }
 
-inline fun <T: Node> List<T>.checkForDuplicateDeclarations() {
+inline fun <T: Node> List<T>.checkForDuplicateVarDeclarations() {
     findDuplicatesIs<Node, VarDeclaration> { element1, element2 ->  element1.varName == element2.varName }.forEach {
         printDuplicatesError("properties", it.map { it.position })
     }
@@ -75,11 +75,11 @@ inline fun <reified T> Node.closestParentIs(): T? {
     else null
 }
 
-fun Node.getVisibleVarDeclarations(): List<VarDeclaration> {
-    val result = mutableListOf<VarDeclaration>()
+inline fun <reified T> Node.getVisibleNodesIs(): List<T> {
+    val result = mutableListOf<T>()
     var parentNode: Node? = parent
     while (parentNode != null) {
-        result.addAll(parentNode.children().filterIsInstance<VarDeclaration>())
+        result.addAll(parentNode.children().filterIsInstance<T>())
         parentNode = parentNode.parent
     }
     return result
