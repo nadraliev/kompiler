@@ -1,5 +1,18 @@
 package com.soutvoid.kompiler
 
+fun File.analyze() {
+    classes.findDuplicatesBy { element1, element2 -> element1.name == element2.name }.forEach {
+        printDuplicatesError("classes", it.map { it.position })
+    }
+    classes.forEach { it.analyze() }
+    properties.checkForDuplicateVarDeclarations()
+    properties.forEach { it.analyze() }
+    functions.findDuplicatesBy { element1, element2 -> element1 == element2 }.forEach {
+        printDuplicatesError("functions", it.map { it.position })
+    }
+    functions.forEach { it.analyze() }
+}
+
 fun ClassDeclaration.analyze() {
     properties?.let {
         it.checkForDuplicateVarDeclarations()

@@ -2,6 +2,12 @@ parser grammar KotlinParser;
 
 options {tokenVocab=KotlinLexer; }
 
+file
+    : (classDeclaration
+    | propertyDeclaration
+    | functionDeclaration)*
+    ;
+
 classDeclaration
     : 'class' SimpleName
     classBody

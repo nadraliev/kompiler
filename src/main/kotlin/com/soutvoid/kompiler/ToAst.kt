@@ -2,6 +2,15 @@ package com.soutvoid.kompiler
 
 import com.soutvoid.kompiler.KotlinParser.*
 
+fun FileContext.toAst(name: String): File =
+        File(
+                name,
+                classDeclaration()?.map { it.toAst() }?: listOf(),
+                propertyDeclaration()?.map { it.toAst() }?: listOf(),
+                functionDeclaration()?.map { it.toAst() }?: listOf(),
+                considerPosition()
+        ).fillInParents()
+
 fun ClassDeclarationContext.toAst(): ClassDeclaration =
         ClassDeclaration(
                 SimpleName().text,

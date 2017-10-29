@@ -21,16 +21,18 @@ fun main(args: Array<String>) {
     val tokenStream = CommonTokenStream(lexer)
     val parser = KotlinParser(tokenStream)
     parser.addParseListener(KotlinListener())
-    val tree = parser.classDeclaration()
+    val tree = parser.file()
 
     //showSyntaxTree(parser, tree)
 
-    val treeAst = tree.toAst()
+    val treeAst = tree.toAst(File(filePath).name)
     treeAst.analyze()
     println(TreePrinter.toString(treeAst))
 
-    if (!thereWasError)
-        treeAst.generate()
+    if (!thereWasError) {
+        //generate code
+    }
+
 }
 
 fun openSource(): String {
