@@ -2,8 +2,8 @@ package com.soutvoid.kompiler
 
 import com.soutvoid.kompiler.KotlinParser.*
 
-fun FileContext.toAst(name: String): File =
-        File(
+fun FileContext.toAst(name: String): FileNode =
+        FileNode(
                 name,
                 classDeclaration()?.map { it.toAst() }?: listOf(),
                 propertyDeclaration()?.map { it.toAst() }?: listOf(),

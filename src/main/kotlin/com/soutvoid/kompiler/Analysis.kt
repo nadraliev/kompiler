@@ -1,6 +1,6 @@
 package com.soutvoid.kompiler
 
-fun File.analyze() {
+fun FileNode.analyze() {
     classes.findDuplicatesBy { element1, element2 -> element1.name == element2.name }.forEach {
         printDuplicatesError("classes", it.map { it.position })
     }

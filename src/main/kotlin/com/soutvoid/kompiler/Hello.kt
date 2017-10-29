@@ -30,7 +30,7 @@ fun main(args: Array<String>) {
     println(TreePrinter.toString(treeAst))
 
     if (!thereWasError) {
-        //generate code
+        treeAst.generate()
     }
 
 }

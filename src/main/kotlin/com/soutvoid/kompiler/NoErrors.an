@@ -1,3 +1,5 @@
+var shit: Int = 1
+
 class TestClass {
 
 }

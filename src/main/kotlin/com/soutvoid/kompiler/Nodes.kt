@@ -22,13 +22,13 @@ abstract class Type(override var position: Position = Position(0, 0, 0, 0), over
     override fun name(): String = javaClass.simpleName
 }
 
-//File
-data class File(var name: String,
-                var classes: List<ClassDeclaration>,
-                var properties: List<VarDeclaration>,
-                var functions: List<FunctionDeclaration>,
-                override var position: Position,
-                override var parent: Node? = null) : Node {
+//FileNode
+data class FileNode(var name: String,
+                    var classes: List<ClassDeclaration>,
+                    var properties: List<VarDeclaration>,
+                    var functions: List<FunctionDeclaration>,
+                    override var position: Position,
+                    override var parent: Node? = null) : Node {
     override fun children(): MutableList<out PrintableTreeNode> = (classes + properties + functions).toMutableList()
     override fun name(): String = name }
 
@@ -85,13 +85,24 @@ data class Parameter(var name: String,
 
 
 //Types
-object IntType : Type()
+object IntType : Type() {
+    override fun name(): String = "Integer" }
 
-object DoubleType : Type()
-object BooleanType : Type()
-object StringType : Type()
-object UnitType : Type()
-object RangeType : Type()
+object DoubleType : Type() {
+    override fun name(): String = "Double"}
+
+object BooleanType : Type() {
+    override fun name(): String = "Boolean"}
+
+object StringType : Type() {
+    override fun name(): String = "String"}
+
+object UnitType : Type() {
+    override fun name(): String = "void"}
+
+object RangeType : Type() {
+    override fun name(): String = "Range"}
+
 data class ArrayType(var type: Type, override var position: Position, override var parent: Node? = null) : Type() {
     override fun children(): MutableList<out PrintableTreeNode> = mutableListOf()
     override fun name(): String = "Array<${type.name()}>"
@@ -262,31 +273,31 @@ data class Subtraction(override var left: Expression,
 
 //---Literals
 //------Integer
-data class IntLit(var varue: String, override var position: Position, override var parent: Node? = null,
+data class IntLit(var value: String, override var position: Position, override var parent: Node? = null,
                   override var castTo: Type? = null) : Expression() {
     override fun children(): MutableList<out PrintableTreeNode> = mutableListOf()
-    override fun name(): String = varue
+    override fun name(): String = value
 }
 
 //------Double
-data class DoubleLit(var varue: String, override var position: Position, override var parent: Node? = null,
+data class DoubleLit(var value: String, override var position: Position, override var parent: Node? = null,
                      override var castTo: Type? = null) : Expression() {
     override fun children(): MutableList<out PrintableTreeNode> = mutableListOf()
-    override fun name(): String = varue
+    override fun name(): String = value
 }
 
 //------ Boolean
-data class BooleanLit(var varue: String, override var position: Position, override var parent: Node? = null,
+data class BooleanLit(var value: String, override var position: Position, override var parent: Node? = null,
                       override var castTo: Type? = null) : Expression() {
     override fun children(): MutableList<out PrintableTreeNode> = mutableListOf()
-    override fun name(): String = varue
+    override fun name(): String = value
 }
 
 //------String
-data class StringLit(var varue: String, override var position: Position, override var parent: Node? = null,
+data class StringLit(var value: String, override var position: Position, override var parent: Node? = null,
                      override var castTo: Type? = null) : Expression() {
     override fun children(): MutableList<out PrintableTreeNode> = mutableListOf()
-    override fun name(): String = varue
+    override fun name(): String = value
 }
 
 
