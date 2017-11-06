@@ -67,7 +67,7 @@ fun LoopContext.toAst(): Statement = when (this) {
     is WhileStatementContext -> WhileLoop(whileLoop().expression().toAst(),
             whileLoop().block()?.statements()?.statement()?.map { it.toAst() } ?: listOf(whileLoop().statement().toAst()),
             considerPosition()).fillInParents()
-    is ForStatementContext -> ForLoop(forLoop().identifier().text,
+    is ForStatementContext -> ForLoop(forLoop().identifier().toAst(),
             forLoop().expression().toAst(),
             forLoop().block()?.statements()?.statement()?.map { it.toAst() } ?: listOf(forLoop().statement().toAst()),
             considerPosition()).fillInParents()

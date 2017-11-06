@@ -2,7 +2,16 @@ package com.soutvoid.kompiler
 
 import io.bretty.console.tree.PrintableTreeNode
 import org.antlr.v4.runtime.ParserRuleContext
+import java.util.*
 import kotlin.reflect.KClass
+
+fun <T: Any> Any.safecast(clazz: KClass<out T>): T? {
+    try {
+        return clazz.javaObjectType.cast(this)
+    } catch (e: Exception) {
+        return null
+    }
+}
 
 infix fun List<Any>?.join(list: List<Any>?): List<Any> {
     val firstList = this ?: listOf()
@@ -81,6 +90,18 @@ inline fun <reified T> Node.getVisibleNodesIs(): List<T> {
     while (parentNode != null) {
         result.addAll(parentNode.children().filterIsInstance<T>())
         parentNode = parentNode.parent
+    }
+    return result
+}
+
+inline fun <reified T> Node.filterChildrenIs(): List<T> {
+    val result = mutableListOf<T>()
+    val childrenStack = Stack<Node>()
+    children().map { it as Node }.forEach { childrenStack.push(it) }
+    while (!childrenStack.empty()) {
+        val child = childrenStack.pop()
+        if (child is T) result.add(child)
+        child.children().map { it as Node }.forEach { childrenStack.push(it) }
     }
     return result
 }

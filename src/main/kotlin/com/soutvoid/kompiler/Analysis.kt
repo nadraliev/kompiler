@@ -1,6 +1,7 @@
 package com.soutvoid.kompiler
 
 fun FileNode.analyze() {
+    filterChildrenIs<Expression>().forEach { it.getType() }  //fill in types for all expressions
     classes.findDuplicatesBy { element1, element2 -> element1.name == element2.name }.forEach {
         printDuplicatesError("classes", it.map { it.position })
     }
@@ -28,7 +29,7 @@ fun ClassDeclaration.analyze() {
 
 fun VarDeclaration.analyze() {
     value.analyze()
-    val exploredValueType = value.exploreType()
+    val exploredValueType = value.getType()
     if (type != exploredValueType)
         printTypeMismatchError(position.startLine, position.startIndexInLine, type, exploredValueType)
 }
@@ -39,7 +40,7 @@ fun FunctionDeclaration.analyze() {
         it.checkForDuplicateVarDeclarations()
     }
     returnExpression?.analyze()
-    val returnExpressionType = returnExpression?.exploreType() ?: UnitType
+    val returnExpressionType = returnExpression?.getType() ?: UnitType
     if (returnExpression == null && returnType != UnitType)
         printTypeMismatchError(position.startLine, position.startIndexInLine, returnType, UnitType)
     returnExpression?.let {
@@ -84,7 +85,8 @@ fun FunctionCall.analyze() {
 }
 
 fun VarReference.analyze() {
-    if (getVisibleNodesIs<VarDeclaration>().find { it.varName == varName } == null)
+    if (getVisibleNodesIs<VarDeclaration>().find { it.varName == varName } == null
+            && getVisibleNodesIs<ForLoop>().find { it.iterator.varName == varName } == null)
         printUnresolvedReferenceError(position.startLine, position.startIndexInLine, varName)
 }
 
@@ -108,84 +110,84 @@ fun Range.analyze() {
 }
 
 fun Comparison.analyze() {
-    val leftType = left.exploreType()
-    val rightType = right.exploreType()
+    val leftType = left.getType()
+    val rightType = right.getType()
     val resolvedType = resolveType(left, right, leftType, rightType)
     if (resolvedType is ArrayType)
-        printOperationDoesNotSupportError(position.startLine, position.startIndexInLine, name(), resolvedType)
+        printOperationDoesNotSupportError(position.startLine, position.startIndexInLine, javaClass.simpleName, resolvedType)
     if (resolvedType == null)
         printIncompatibleTypesError(position.startLine, position.startIndexInLine, leftType, rightType)
 }
 
 fun Multiplication.analyze() {
-    val leftType = left.exploreType()
-    val rightType = right.exploreType()
+    val leftType = left.getType()
+    val rightType = right.getType()
     val resolvedType = resolveType(left, right, leftType, rightType)
     if (resolvedType == null)
         printIncompatibleTypesError(position.startLine, position.startIndexInLine, leftType, rightType)
     else {
-        if (resolvedType == BooleanType || resolvedType == StringType || resolvedType == RangeType || resolvedType == UnitType ||
+        if (resolvedType == BooleanType || resolvedType == StringType || resolvedType is RangeType || resolvedType == UnitType ||
                 resolvedType is ArrayType)
-            printOperationDoesNotSupportError(position.startLine, position.startIndexInLine, name(), resolvedType)
+            printOperationDoesNotSupportError(position.startLine, position.startIndexInLine, javaClass.simpleName, resolvedType)
     }
 }
 
 fun Division.analyze() {
-    val leftType = left.exploreType()
-    val rightType = right.exploreType()
+    val leftType = left.getType()
+    val rightType = right.getType()
     val resolvedType = resolveType(left, right, leftType, rightType)
     if (resolvedType == null)
         printIncompatibleTypesError(position.startLine, position.startIndexInLine, leftType, rightType)
     else {
-        if (resolvedType == BooleanType || resolvedType == StringType || resolvedType == RangeType || resolvedType == UnitType ||
+        if (resolvedType == BooleanType || resolvedType == StringType || resolvedType is RangeType || resolvedType == UnitType ||
                 resolvedType is ArrayType)
-            printOperationDoesNotSupportError(position.startLine, position.startIndexInLine, name(), resolvedType)
+            printOperationDoesNotSupportError(position.startLine, position.startIndexInLine, javaClass.simpleName, resolvedType)
     }
 }
 
 fun Addition.analyze() {
-    val leftType = left.exploreType()
-    val rightType = right.exploreType()
+    val leftType = left.getType()
+    val rightType = right.getType()
     val resolvedType = resolveType(left, right, leftType, rightType)
     if (resolvedType == null)
         printIncompatibleTypesError(position.startLine, position.startIndexInLine, leftType, rightType)
     else {
-        if (resolvedType == BooleanType || resolvedType == RangeType || resolvedType == UnitType ||
+        if (resolvedType == BooleanType || resolvedType is RangeType || resolvedType == UnitType ||
                 resolvedType is ArrayType)
-            printOperationDoesNotSupportError(position.startLine, position.startIndexInLine, name(), resolvedType)
+            printOperationDoesNotSupportError(position.startLine, position.startIndexInLine, javaClass.simpleName, resolvedType)
     }
 }
 
 fun Subtraction.analyze() {
-    val leftType = left.exploreType()
-    val rightType = right.exploreType()
+    val leftType = left.getType()
+    val rightType = right.getType()
     val resolvedType = resolveType(left, right, leftType, rightType)
     if (resolvedType == null)
         printIncompatibleTypesError(position.startLine, position.startIndexInLine, leftType, rightType)
     else {
-        if (resolvedType == BooleanType || resolvedType == StringType || resolvedType == RangeType || resolvedType == UnitType ||
+        if (resolvedType == BooleanType || resolvedType == StringType || resolvedType is RangeType || resolvedType == UnitType ||
                 resolvedType is ArrayType)
-            printOperationDoesNotSupportError(position.startLine, position.startIndexInLine, name(), resolvedType)
+            printOperationDoesNotSupportError(position.startLine, position.startIndexInLine, javaClass.simpleName, resolvedType)
     }
 }
 
 fun SimpleAssignment.analyze() {
     val expectedType = getVisibleNodesIs<VarDeclaration>().find { it.varName == varName }?.type
-    val actualType = value.exploreType()
+    val actualType = value.getType()
     if (expectedType != actualType)
         printTypeMismatchError(position.startLine, position.startIndexInLine, expectedType, actualType)
 }
 
 fun ArrayAssignment.analyze() {
     val expectedType = getVisibleNodesIs<VarDeclaration>().find { it.varName == arrayElement.arrayName }?.type
-    val actualType = value.exploreType()
+    val actualType = value.getType()
     if (expectedType != actualType)
         printTypeMismatchError(position.startLine, position.startIndexInLine, expectedType, actualType)
 }
 
 fun IfStatement.analyze() {
     expression.analyze()
-    val actualType = expression.exploreType()
+    val actualType = expression.getType()
     if (actualType != BooleanType)
         printTypeMismatchError(expression.position.startLine, expression.position.startIndexInLine, BooleanType, actualType)
     statements.forEach { it.analyze() }
@@ -194,7 +196,7 @@ fun IfStatement.analyze() {
 
 fun WhileLoop.analyze() {
     factor.analyze()
-    val actualType = factor.exploreType()
+    val actualType = factor.getType()
     if (actualType != BooleanType)
         printTypeMismatchError(factor.position.startLine, factor.position.startIndexInLine, BooleanType, actualType)
     statements.forEach { it.analyze() }
@@ -202,16 +204,26 @@ fun WhileLoop.analyze() {
 }
 
 fun ForLoop.analyze() {
+    if (iterable.getType() !is IterableType)
+        printIsNotIterableError(iterable.position.startLine, iterable.position.startIndexInLine)
+    iterator.analyze()
     iterable.analyze()
     statements?.forEach { it.analyze() }
     statements?.let { it.checkForDuplicateVarDeclarations() }
 }
 
+fun Expression.getType(): Type? {
+    if (type == null)
+        type = exploreType()
+    return type
+}
+
 fun Expression.exploreType(): Type? = when (this) {
     is FunctionCall -> closestParentIs<ClassDeclaration>()?.functions?.find { it.name == name }?.returnType
-    is VarReference -> getVisibleNodesIs<VarDeclaration>().find { it.varName == varName }?.type
-    is ArrayInit -> ArrayType(type, position, parent)
-    is Range -> RangeType
+    is VarReference -> exploreType()
+    is ArrayInit -> ArrayType(innerType, position, parent)
+    is ArrayAccess -> getVisibleNodesIs<VarDeclaration>().find { it.type is ArrayType }?.type
+    is Range -> RangeType(IntType)
     is EqualsExpression, is NotEqualsExpression, is LessExpression, is GreaterExpression, is LessOrEqualsExpression, is GreaterOrEqualsExpression -> BooleanType
     is Multiplication -> resolveType(left, right, left.exploreType(), right.exploreType())
     is Division -> resolveType(left, right, left.exploreType(), right.exploreType())
@@ -222,6 +234,15 @@ fun Expression.exploreType(): Type? = when (this) {
     is BooleanLit -> BooleanType
     is StringLit -> StringType
     else -> throw UnsupportedOperationException(this.javaClass.canonicalName)
+}
+
+fun VarReference.exploreType(): Type? {
+    var exploredType = getVisibleNodesIs<VarDeclaration>().find { it.varName == varName }?.type
+    if (exploredType == null) {
+        exploredType = (getVisibleNodesIs<ForLoop>().firstOrNull()?.iterable?.getType() as? IterableType)
+                ?.innerType
+    }
+    return exploredType
 }
 
 fun resolveType(expr1: Expression, expr2: Expression,
@@ -250,7 +271,7 @@ fun isAutoCastPossible(type1: Type?, type2: Type?): Type? {
             is BooleanType -> resolveByBoolean(t2)
             is StringType -> resolveByString(t2)
             is UnitType -> resolveByUnit(t2)
-            is RangeType -> resolveByRange(t2)
+            is RangeType -> if (type1 == type2) type1 else null
             is ArrayType -> if (type1 == type2) type1 else null
             else -> throw IllegalArgumentException(t1.javaClass.canonicalName)
         }
@@ -314,15 +335,5 @@ fun resolveByUnit(type: Type): Type? = when (type) {
     is StringType -> null
     is UnitType -> UnitType
     is RangeType -> null
-    else -> throw IllegalArgumentException(type.javaClass.canonicalName)
-}
-
-fun resolveByRange(type: Type): Type? = when (type) {
-    is IntType -> null
-    is DoubleType -> null
-    is BooleanType -> null
-    is StringType -> null
-    is UnitType -> null
-    is RangeType -> RangeType
     else -> throw IllegalArgumentException(type.javaClass.canonicalName)
 }

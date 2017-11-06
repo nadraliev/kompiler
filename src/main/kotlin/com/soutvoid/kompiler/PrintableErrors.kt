@@ -35,3 +35,7 @@ fun printNoSuchFunctionError(line: Int, charInLine: Int, funcCall: FunctionCall)
 fun printReferenceIsNotAnArray(line: Int, charInLine: Int, name: String) {
     printlnError("Reference $name at $line:$charInLine is not an array")
 }
+
+fun printIsNotIterableError(line: Int, charInLine: Int) {
+    printlnError("Expected iterable at $line:$charInLine")
+}
