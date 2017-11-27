@@ -36,9 +36,7 @@ fun VarDeclaration.analyze() {
 
 fun FunctionDeclaration.analyze() {
     statements?.forEach { it.analyze() }
-    statements?.let {
-        it.checkForDuplicateVarDeclarations()
-    }
+    statements?.checkForDuplicateVarDeclarations()
     returnExpression?.analyze()
     val returnExpressionType = returnExpression?.getType() ?: UnitType
     if (returnExpression == null && returnType != UnitType)
@@ -239,7 +237,7 @@ fun Expression.exploreType(): Type? = when (this) {
 fun VarReference.exploreType(): Type? {
     var exploredType = getVisibleNodesIs<VarDeclaration>().find { it.varName == varName }?.type
     if (exploredType == null) {
-        exploredType = (getVisibleNodesIs<ForLoop>().firstOrNull()?.iterable?.getType() as? IterableType)
+        exploredType = (getVisibleNodesIs<ForLoop>().find { it.iterator.varName == varName }?.iterable?.getType() as? IterableType)
                 ?.innerType
     }
     return exploredType

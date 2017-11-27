@@ -70,7 +70,6 @@ data class FunctionDeclaration(var name: String,
             return it is FunctionDeclaration
                     && it.name == name
                     && it.parameters == parameters
-                    && it.returnType == returnType
         }
         return false
     }
