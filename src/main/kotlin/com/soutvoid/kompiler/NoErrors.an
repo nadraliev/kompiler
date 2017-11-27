@@ -1,5 +1,9 @@
 var shit: Int = 1
 
+fun main(): Int {
+return 1
+}
+
 class TestClass {
 
 }

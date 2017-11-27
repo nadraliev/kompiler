@@ -105,3 +105,8 @@ inline fun <reified T> Node.filterChildrenIs(): List<T> {
     }
     return result
 }
+
+fun Type.getJavaType(): Class<*>? = when(this) {
+    is IntType, is BooleanType, is DoubleType, is StringType -> findClassByName(name())
+    else -> throw throw UnsupportedOperationException(this.javaClass.canonicalName)
+}

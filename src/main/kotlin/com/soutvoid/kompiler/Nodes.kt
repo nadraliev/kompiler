@@ -108,7 +108,7 @@ object StringType : Type() {
     override fun name(): String = "String"}
 
 object UnitType : Type() {
-    override fun name(): String = "void"}
+    override fun name(): String = "Void"}
 
 abstract class NestedType: Type() {
     abstract var innerType: Type
