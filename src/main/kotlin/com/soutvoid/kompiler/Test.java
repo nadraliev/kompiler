@@ -2,8 +2,11 @@ package com.soutvoid.kompiler;
 
 public class Test {
 
-    static int b =3;
+    static int b =3000000;
 
+    public static String[][] func() {
+        return new String[1][1];
+    }
 
     public int meth(int a) {
         b =3;

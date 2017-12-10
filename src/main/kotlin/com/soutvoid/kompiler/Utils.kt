@@ -2,6 +2,7 @@ package com.soutvoid.kompiler
 
 import io.bretty.console.tree.PrintableTreeNode
 import org.antlr.v4.runtime.ParserRuleContext
+import java.io.FileOutputStream
 import java.util.*
 import kotlin.reflect.KClass
 
@@ -113,3 +114,13 @@ fun Type.getJavaType(): Class<*>? = when(this) {
 
 fun FileNode.getClassName(): String =
         name.replace("an", "An").replace(".", "")
+
+fun ByteArray.writeClassToFile(name: String) {
+    val fos = FileOutputStream(name + ".class")
+    fos.write(this)
+    fos.close()
+}
+
+fun FunctionDeclaration.getJvmDescription(): String =
+        "("+ parameters.joinToString(separator = ",", transform = { it.type.getDescriptor() }) +
+                ")" + returnType.getDescriptor()

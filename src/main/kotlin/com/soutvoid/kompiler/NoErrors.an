@@ -1,5 +1,5 @@
 var shit: Int = 1
 
-fun meth(a: Int): Int {
+fun meth(a: Array<Array<Int>>): Int {
 return 1
 }
