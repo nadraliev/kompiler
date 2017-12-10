@@ -110,3 +110,6 @@ fun Type.getJavaType(): Class<*>? = when(this) {
     is IntType, is BooleanType, is DoubleType, is StringType -> findClassByName(name())
     else -> throw throw UnsupportedOperationException(this.javaClass.canonicalName)
 }
+
+fun FileNode.getClassName(): String =
+        name.replace("an", "An").replace(".", "")

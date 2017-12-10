@@ -6,6 +6,7 @@ import org.antlr.v4.runtime.CharStreams
 import org.antlr.v4.runtime.CommonTokenStream
 import org.antlr.v4.runtime.tree.Tree
 import java.io.File
+import java.io.FileOutputStream
 import java.nio.file.Files
 import javax.swing.JFileChooser
 import javax.swing.JFrame
@@ -30,7 +31,10 @@ fun main(args: Array<String>) {
     println(TreePrinter.toString(treeAst))
 
     if (!thereWasError) {
-        treeAst.generate()
+        val bytes = treeAst.generate()
+        val fos = FileOutputStream(treeAst.getClassName() + ".class")
+        fos.write(bytes)
+        fos.close()
     }
 
 }
