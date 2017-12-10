@@ -8,7 +8,7 @@ public class Test {
         b =3;
         int a =1;
         a = 10;
-        while (a > 2) {
+        for (int i = 0; i < 5; i++) {
             a = 1;
             int c =3;
             c = 21;

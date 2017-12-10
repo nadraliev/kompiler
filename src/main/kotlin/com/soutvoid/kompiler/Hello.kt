@@ -28,6 +28,7 @@ fun main(args: Array<String>) {
 
     val treeAst = tree.toAst(File(filePath).name)
     treeAst.analyze()
+    treeAst.indexate()
     println(TreePrinter.toString(treeAst))
 
     if (!thereWasError) {

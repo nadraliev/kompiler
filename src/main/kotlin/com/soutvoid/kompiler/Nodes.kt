@@ -7,6 +7,10 @@ interface Node : PrintableTreeNode {
     var position: Position
 }
 
+interface ContainsIndexes {
+    var vars: MutableMap<String, Int>
+}
+
 abstract class Expression : Node, Statement {
     abstract var castTo: Type?
     abstract var type: Type?
@@ -62,7 +66,8 @@ data class FunctionDeclaration(var name: String,
                                var statements: List<Statement>?,
                                var returnExpression: Expression?,
                                override var position: Position,
-                               override var parent: Node? = null) : Node {
+                               override var parent: Node? = null,
+                               override var vars: MutableMap<String, Int> = mutableMapOf()) : Node, ContainsIndexes {
     override fun children(): MutableList<out PrintableTreeNode> = (listOf<Statement>() join statements plusNotNull returnExpression).map { it as Node }.toMutableList()
     override fun name(): String = "function $name(${parameters.toStringNames()}) : ${returnType.name()}"
     override fun equals(other: Any?): Boolean {
@@ -379,7 +384,8 @@ data class IfStatement(var expression: Expression,
 data class WhileLoop(var factor: Expression,
                      var statements: List<Statement>,
                      override var position: Position,
-                     override var parent: Node? = null) : Statement {
+                     override var parent: Node? = null,
+                     override var vars: MutableMap<String, Int> = mutableMapOf()) : Statement, ContainsIndexes {
     override fun children(): MutableList<out PrintableTreeNode> = (listOf(factor) join statements).map { it as Node }.toMutableList()
     override fun name(): String = "while"
 }
@@ -389,7 +395,8 @@ data class ForLoop(var iterator: VarReference,
                    var iterable: Expression,
                    var statements: List<Statement>?,
                    override var position: Position,
-                   override var parent: Node? = null) : Statement {
+                   override var parent: Node? = null,
+                   override var vars: MutableMap<String, Int> = mutableMapOf()) : Statement, ContainsIndexes {
     override fun children(): MutableList<out PrintableTreeNode> = (listOf(iterator) join listOf(iterable) join statements).map { it as Node }.toMutableList()
     override fun name(): String = "for"
 }
