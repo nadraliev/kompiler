@@ -40,6 +40,9 @@ fun main(args: Array<String>) {
 fun openSource(): String {
     val jFileChooser = JFileChooser()
     jFileChooser.currentDirectory = File(System.getProperty("user.dir"))
+    val sourcesDir = File("src/main/kotlin/com/soutvoid/kompiler")
+    if (sourcesDir.exists())
+        jFileChooser.currentDirectory = sourcesDir
     val returnVal = jFileChooser.showOpenDialog(null)
     if (returnVal == JFileChooser.APPROVE_OPTION)
         return jFileChooser.selectedFile.absolutePath
