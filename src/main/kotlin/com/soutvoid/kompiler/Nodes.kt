@@ -61,7 +61,7 @@ data class ClassDeclaration(var name: String,
 
 //Function
 data class FunctionDeclaration(var name: String,
-                               var parameters: List<Parameter>?,
+                               var parameters: List<Parameter>,
                                var returnType: Type,
                                var statements: List<Statement>?,
                                var returnExpression: Expression?,

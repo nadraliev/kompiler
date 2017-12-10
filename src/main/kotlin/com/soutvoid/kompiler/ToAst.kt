@@ -22,7 +22,7 @@ fun ClassDeclarationContext.toAst(): ClassDeclaration =
 fun FunctionDeclarationContext.toAst(): FunctionDeclaration =
         FunctionDeclaration(
                 SimpleName().text,
-                functionParameters()?.functionParameter()?.map { it.parameter().toAst() },
+                functionParameters()?.functionParameter()?.map { it.parameter().toAst() } ?: emptyList(),
                 type()?.toAst() ?: UnitType,
                 statements()?.statement()?.map { it.toAst() },
                 expression()?.toAst(),

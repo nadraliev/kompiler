@@ -32,10 +32,7 @@ fun main(args: Array<String>) {
     println(TreePrinter.toString(treeAst))
 
     if (!thereWasError) {
-        val bytes = treeAst.generate()
-        val fos = FileOutputStream(treeAst.getClassName() + ".class")
-        fos.write(bytes)
-        fos.close()
+        treeAst.compileToFile()
     }
 
 }

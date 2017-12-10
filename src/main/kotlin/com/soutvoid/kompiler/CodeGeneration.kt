@@ -4,33 +4,79 @@ import net.bytebuddy.ByteBuddy
 import net.bytebuddy.description.modifier.Ownership
 import net.bytebuddy.description.modifier.Visibility
 import net.bytebuddy.implementation.FixedValue
-import org.objectweb.asm.ClassWriter
-import org.objectweb.asm.Label
+import org.objectweb.asm.*
 import org.objectweb.asm.Opcodes.*
 import java.io.File
+import java.io.FileOutputStream
 
-fun FileNode.generate(): ByteArray {
-    val cw = ClassWriter(ClassWriter.COMPUTE_FRAMES or ClassWriter.COMPUTE_MAXS)
-    cw.visit(V1_8, ACC_PUBLIC, getClassName(), null, "java/lang/Object", null)
-    val mainMethodWriter = cw.visitMethod(ACC_PUBLIC or ACC_STATIC, "main", "([Ljava/lang/String;)V", null, null)
-    mainMethodWriter.visitCode()
-    // labels are used by ASM to mark points in the code
-    val methodStart = Label()
-    val methodEnd = Label()
-    // with this call we indicate to what point in the method the label methodStart corresponds
-    mainMethodWriter.visitLabel(methodStart)
+fun FileNode.compileToFile() {
+    compileStaticMembersToFile()
+}
 
-    mainMethodWriter.visitLocalVariable("variable", "I", null, methodStart, methodEnd, 0)
-    mainMethodWriter.visitLdcInsn(300)
-    mainMethodWriter.visitVarInsn(ISTORE, 0)
+fun FileNode.compileStaticMembersToFile() {
+    val classWriter = ClassWriter(ClassWriter.COMPUTE_FRAMES or ClassWriter.COMPUTE_MAXS)
 
+    classWriter.visit(V1_8, ACC_PUBLIC, getClassName(), null, "java/lang/Object", null)
 
-    mainMethodWriter.visitLabel(methodEnd)
-    // And we had the return instruction
-    mainMethodWriter.visitInsn(RETURN)
-    mainMethodWriter.visitEnd()
-    mainMethodWriter.visitMaxs(1, 2)
-    cw.visitEnd()
+    properties.forEach {
+        it.visitField(classWriter, ACC_PUBLIC or ACC_STATIC)
+    }
 
-    return cw.toByteArray()
+    functions.forEach {
+        it.visitMethod(classWriter, ACC_PUBLIC or ACC_STATIC)
+    }
+
+    classWriter.visitEnd()
+
+    classWriter.toByteArray().writeClassToFile(getClassName())
+}
+
+fun ClassDeclaration.compileToFile() {
+
+}
+
+fun VarDeclaration.visitField(classWriter: ClassWriter, access: Int) {
+    val fieldVisitor = classWriter.visitField(access,
+            varName, type.toSandyType().jvmDescription, null, null)
+    fieldVisitor.visitEnd()
+}
+
+fun FunctionDeclaration.visitMethod(classWriter: ClassWriter, access: Int) {
+    val description = "("+
+            parameters.joinToString(separator = ",", transform = { it.type.toSandyType().jvmDescription }) +
+            ")" + returnType.toSandyType().jvmDescription
+    val methodVisitor = classWriter.visitMethod(access, name, description, null, null)
+    methodVisitor.visitEnd()
+}
+
+fun ByteArray.writeClassToFile(name: String) {
+    val fos = FileOutputStream(name + ".class")
+    fos.write(this)
+    fos.close()
+}
+
+interface SandyType {
+    val jvmDescription: String
+}
+
+fun Type.toSandyType(): SandyType = when(this) {
+    is IntType -> IntTypeSandy
+    is DoubleType -> DoubleTypeSandy
+    is UnitType -> UnitTypeSandy
+    else -> throw UnsupportedOperationException()
+}
+
+object IntTypeSandy: SandyType {
+    override val jvmDescription: String
+        get() = "I"
+}
+
+object DoubleTypeSandy: SandyType {
+    override val jvmDescription: String
+        get() = "D"
+}
+
+object UnitTypeSandy: SandyType {
+    override val jvmDescription: String
+        get() = "V"
 }

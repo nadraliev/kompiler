@@ -1,21 +1,5 @@
 var shit: Int = 1
 
-fun main(): Int {
-    var a: Int = 1
-    var b: Int = 2
-    while (true) {
-        var c: Int= 3
-        while (true) {
-            var d: Int = 4
-        }
-        var f: Int = 5
-        for (i in 1..24) {
-            var z: Int = 6
-        }
-    }
-    return 1
-}
-
-class TestClass {
-
+fun meth(a: Int): Int {
+return 1
 }
