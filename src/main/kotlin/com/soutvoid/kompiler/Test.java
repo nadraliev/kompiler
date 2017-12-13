@@ -2,7 +2,7 @@ package com.soutvoid.kompiler;
 
 public class Test {
 
-    public void meth(int a) {
+    public static void main(String[] args) {
         JavaFunctions.print("shit");
     }
 

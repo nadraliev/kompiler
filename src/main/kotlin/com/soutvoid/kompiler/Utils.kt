@@ -20,7 +20,7 @@ infix fun List<Any>?.join(list: List<Any>?): List<Any> {
     return firstList.plus(secondList)
 }
 
-fun <T,R> ifNotNull(param1: T?, param2: R?, action: (param1: T, param2: R) -> Unit) {
+inline fun <T,R> ifNotNull(param1: T?, param2: R?, action: (param1: T, param2: R) -> Unit) {
     if (param1 != null && param2 != null)
         action(param1, param2)
 }
@@ -107,6 +107,17 @@ inline fun <reified T> Node.filterChildrenIs(): List<T> {
     return result
 }
 
+fun FunctionDeclaration.isDeclarationOf(funcCall: FunctionCall): Boolean {
+    ifNotNull(parameters, funcCall.parameters) { declarationParams, callParams ->
+        if (declarationParams.size != callParams.size) return false
+        declarationParams.forEachIndexed { index, parameter ->
+            if (parameter.type != callParams[index].type) return false
+        }
+        return true
+    }
+    return false
+}
+
 fun Type.getJavaType(): Class<*>? = when(this) {
     is IntType, is BooleanType, is DoubleType, is StringType -> findClassByName(name())
     else -> throw throw UnsupportedOperationException(this.javaClass.canonicalName)
@@ -115,8 +126,8 @@ fun Type.getJavaType(): Class<*>? = when(this) {
 fun FileNode.getClassName(): String =
         name.replace("an", "An").replace(".", "")
 
-fun ByteArray.writeClassToFile(name: String) {
-    val fos = FileOutputStream(name + ".class")
+fun ByteArray.writeClassToFile(path: String, name: String) {
+    val fos = FileOutputStream(path + "/" + name + ".class")
     fos.write(this)
     fos.close()
 }

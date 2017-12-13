@@ -11,11 +11,11 @@ import java.io.FileOutputStream
 
 const val DEFAULT_PACKAGE = "com/soutvoid/kompiler/"
 
-fun FileNode.compileToFile() {
-    compileStaticMembersToFile()
+fun FileNode.compileToFile(path: String) {
+    compileStaticMembersToFile(path)
 }
 
-fun FileNode.compileStaticMembersToFile() {
+fun FileNode.compileStaticMembersToFile(path: String) {
     val classWriter = ClassWriter(ClassWriter.COMPUTE_FRAMES or ClassWriter.COMPUTE_MAXS)
 
     classWriter.visit(V1_8, ACC_PUBLIC, DEFAULT_PACKAGE + getClassName(), null, "java/lang/Object", null)
@@ -24,7 +24,8 @@ fun FileNode.compileStaticMembersToFile() {
         it.visitField(classWriter, ACC_PUBLIC or ACC_STATIC)
     }
 
-    properties.visitClinit(classWriter, DEFAULT_PACKAGE + getClassName())
+    if (properties.isNotEmpty())
+        properties.visitClinit(classWriter, DEFAULT_PACKAGE + getClassName())
 
     functions.forEach {
         it.visitMethod(classWriter, ACC_PUBLIC or ACC_STATIC)
@@ -32,7 +33,7 @@ fun FileNode.compileStaticMembersToFile() {
 
     classWriter.visitEnd()
 
-    classWriter.toByteArray().writeClassToFile(getClassName())
+    classWriter.toByteArray().writeClassToFile(path, getClassName())
 }
 
 fun ClassDeclaration.compileToFile() {
@@ -47,6 +48,10 @@ fun VarDeclaration.visitField(classWriter: ClassWriter, access: Int) {
 
 fun FunctionDeclaration.visitMethod(classWriter: ClassWriter, access: Int) {
     val methodVisitor = classWriter.visitMethod(access, name, getJvmDescription(), null, null)
+    methodVisitor.visitCode()
+    statements?.forEach { it.visit(methodVisitor) }
+    methodVisitor.visitInsn(RETURN)
+    methodVisitor.visitMaxs(-1,-1)
     methodVisitor.visitEnd()
 }
 
@@ -61,6 +66,13 @@ fun List<VarDeclaration>.visitClinit(classWriter: ClassWriter, className: String
     methodVisitor.visitEnd()
 }
 
+fun Statement.visit(methodVisitor: MethodVisitor) {
+    when(this) {
+        is Expression -> push(methodVisitor)
+        else -> throw UnsupportedOperationException()
+    }
+}
+
 fun Expression.push(methodVisitor: MethodVisitor) {
     val vars = closestParentIs<ContainsIndexes>()?.vars
     vars ?: return
@@ -68,7 +80,28 @@ fun Expression.push(methodVisitor: MethodVisitor) {
         is IntLit -> methodVisitor.visitLdcInsn(value.toInt())
         is DoubleLit -> methodVisitor.visitLdcInsn(value.toDouble())
         is BooleanLit -> methodVisitor.visitLdcInsn(value.toBoolean())
+        is StringLit -> methodVisitor.visitLdcInsn(value)
+        is FunctionCall -> push(methodVisitor)
         else -> throw UnsupportedOperationException()
+    }
+}
+
+fun FunctionCall.push(methodVisitor: MethodVisitor) {
+    val isStatic = parent !is ClassDeclaration
+    val javaFuncDeclaration = javaFunctions.find { it.isDeclarationOf(this) }
+    if (javaFuncDeclaration != null)
+        pushJavaFuncCall(methodVisitor, javaFuncDeclaration)
+}
+
+fun FunctionCall.pushJavaFuncCall(methodVisitor: MethodVisitor, declaration: FunctionDeclaration) {
+    ifNotNull(declaration.annotation?.parameter, parameters) { annotationValue, funcCallParams ->
+        if (annotationValue is StringLit) {
+            val className = annotationValue.value.substringBefore(".")
+            val funcName = annotationValue.value.substringAfter(".")
+            val str = funcCallParams[0] as StringLit
+            str.push(methodVisitor)
+            methodVisitor.visitMethodInsn(INVOKESTATIC, className, funcName, declaration.getJvmDescription(), false)
+        }
     }
 }
 
@@ -90,6 +123,6 @@ fun ArrayType.getDescriptor(): String {
     }
     var descriptor = ""
     repeat(depth) {descriptor += "["}
-    descriptor += "L${innerType.getDescriptor()};"
+    descriptor += innerType.getDescriptor()
     return descriptor
 }

@@ -122,7 +122,7 @@ fun LiteralConstantContext.toAst(): Expression = when (this) {
     is IntLitContext -> IntLit(IntegerLiteral().text, considerPosition()).fillInParents()
     is DoubleLitContext -> DoubleLit(DoubleLiteral().text, considerPosition()).fillInParents()
     is BooleanLitContext -> BooleanLit(BooleanLiteral().text, considerPosition()).fillInParents()
-    is StringLitContext -> StringLit(StringLiteral().text, considerPosition()).fillInParents()
+    is StringLitContext -> StringLit(StringLiteral().text.drop(1).dropLast(1), considerPosition()).fillInParents()
     else -> throw UnsupportedOperationException(this.javaClass.canonicalName)
 }
 

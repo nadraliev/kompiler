@@ -102,7 +102,6 @@ data class Parameter(var name: String,
     override fun equals(other: Any?): Boolean {
         other.let {
             return it is Parameter
-                    && it.name == name
                     && it.type == type
         }
         return false

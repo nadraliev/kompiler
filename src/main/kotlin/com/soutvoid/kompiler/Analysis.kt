@@ -103,9 +103,9 @@ fun Expression.analyze() {
 
 fun FunctionCall.analyze() {
     var declaration = getVisibleNodesIs<FunctionDeclaration>()
-            .find { it.name == name && it.parameters == parameters }
+            .find { it.isDeclarationOf(this) }
     if (declaration == null)
-        declaration = javaFunctions.find { it.name == name && it.parameters == parameters }
+        declaration = javaFunctions.find { it.isDeclarationOf(this) }
     if (declaration == null)
         printNoSuchFunctionError(position.startLine, position.startIndexInLine, this)
 }

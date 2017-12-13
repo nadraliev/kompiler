@@ -33,7 +33,7 @@ fun main(args: Array<String>) {
     println(TreePrinter.toString(treeAst))
 
     if (!thereWasError) {
-        treeAst.compileToFile()
+        treeAst.compileToFile(File(filePath).parent)
     }
 
 }
