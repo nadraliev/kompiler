@@ -102,8 +102,10 @@ fun Expression.analyze() {
 }
 
 fun FunctionCall.analyze() {
-    val declaration = getVisibleNodesIs<FunctionDeclaration>()
+    var declaration = getVisibleNodesIs<FunctionDeclaration>()
             .find { it.name == name && it.parameters == parameters }
+    if (declaration == null)
+        declaration = javaFunctions.find { it.name == name && it.parameters == parameters }
     if (declaration == null)
         printNoSuchFunctionError(position.startLine, position.startIndexInLine, this)
 }

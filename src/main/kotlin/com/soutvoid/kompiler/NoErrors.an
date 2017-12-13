@@ -1,5 +1,6 @@
 var shit: Int = 1
 
 fun meth(a: Array<Array<Int>>): Int {
+print("Shit")
 return 1
 }

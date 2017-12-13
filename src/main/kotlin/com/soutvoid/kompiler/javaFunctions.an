@@ -1,2 +1,2 @@
-@JavaFunction("System.out.print")
+@JavaFunction("com/soutvoid/kompiler/JavaFunctions.print")
 abstract fun print(str: String)
