@@ -18,8 +18,13 @@ classBody
     | functionDeclaration)* '}'
     ;
 
+annotation
+    : AT SimpleName ('(' literalConstant ')')?
+    ;
+
 functionDeclaration
-    : 'fun' SimpleName
+    : annotation?
+    'fun' SimpleName
     functionParameters
     (':' type)?
     '{' statements ('return' expression)? '}'

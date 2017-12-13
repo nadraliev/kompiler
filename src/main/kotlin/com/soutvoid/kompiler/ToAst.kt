@@ -19,9 +19,15 @@ fun ClassDeclarationContext.toAst(): ClassDeclaration =
                 considerPosition(),
                 null).fillInParents()
 
+fun AnnotationContext.toAst(): Annotation =
+        Annotation(SimpleName().text,
+                literalConstant()?.toAst() as Literal?,
+                considerPosition()).fillInParents()
+
 fun FunctionDeclarationContext.toAst(): FunctionDeclaration =
         FunctionDeclaration(
                 SimpleName().text,
+                annotation()?.toAst(),
                 functionParameters()?.functionParameter()?.map { it.parameter().toAst() } ?: emptyList(),
                 type()?.toAst() ?: UnitType,
                 statements()?.statement()?.map { it.toAst() },

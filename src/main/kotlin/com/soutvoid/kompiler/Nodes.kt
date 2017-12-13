@@ -58,9 +58,18 @@ data class ClassDeclaration(var name: String,
     override fun name(): String = "class $name"
 }
 
+//Annotation
+data class Annotation(var name: String,
+                      var parameter: Literal?,
+                      override var position: Position,
+                      override var parent: Node? = null) : Node {
+    override fun children(): MutableList<out PrintableTreeNode> = mutableListOf()
+    override fun name(): String = "@$name(${parameter?.name() ?: ""})"
+}
 
 //Function
 data class FunctionDeclaration(var name: String,
+                               var annotation: Annotation? = null,
                                var parameters: List<Parameter>,
                                var returnType: Type,
                                var statements: List<Statement>?,
@@ -68,7 +77,8 @@ data class FunctionDeclaration(var name: String,
                                override var position: Position,
                                override var parent: Node? = null,
                                override var vars: MutableMap<String, Int> = mutableMapOf()) : Node, ContainsIndexes {
-    override fun children(): MutableList<out PrintableTreeNode> = (listOf<Statement>() join statements plusNotNull returnExpression).map { it as Node }.toMutableList()
+    override fun children(): MutableList<out PrintableTreeNode> = (listOf<Statement>() plusNotNull annotation
+            join statements plusNotNull returnExpression).map { it as Node }.toMutableList()
     override fun name(): String = "function $name(${parameters.toStringNames()}) : ${returnType.name()}"
     override fun equals(other: Any?): Boolean {
         other.let {
@@ -311,10 +321,13 @@ data class Subtraction(override var left: Expression,
 
 
 //---Literals
+
+interface Literal: Node
+
 //------Integer
 data class IntLit(var value: String, override var position: Position, override var parent: Node? = null,
                   override var castTo: Type? = null,
-                  override var type: Type? = null) : Expression() {
+                  override var type: Type? = null) : Expression(), Literal {
     override fun children(): MutableList<out PrintableTreeNode> = mutableListOf()
     override fun name(): String = value + typeOrBlank() + castToOrBlank()
 }
@@ -322,7 +335,7 @@ data class IntLit(var value: String, override var position: Position, override v
 //------Double
 data class DoubleLit(var value: String, override var position: Position, override var parent: Node? = null,
                      override var castTo: Type? = null,
-                     override var type: Type? = null) : Expression() {
+                     override var type: Type? = null) : Expression(), Literal {
     override fun children(): MutableList<out PrintableTreeNode> = mutableListOf()
     override fun name(): String = value + typeOrBlank() + castToOrBlank()
 }
@@ -330,7 +343,7 @@ data class DoubleLit(var value: String, override var position: Position, overrid
 //------ Boolean
 data class BooleanLit(var value: String, override var position: Position, override var parent: Node? = null,
                       override var castTo: Type? = null,
-                      override var type: Type? = null) : Expression() {
+                      override var type: Type? = null) : Expression(), Literal {
     override fun children(): MutableList<out PrintableTreeNode> = mutableListOf()
     override fun name(): String = value + typeOrBlank() + castToOrBlank()
 }
@@ -338,7 +351,7 @@ data class BooleanLit(var value: String, override var position: Position, overri
 //------String
 data class StringLit(var value: String, override var position: Position, override var parent: Node? = null,
                      override var castTo: Type? = null,
-                     override var type: Type? = null) : Expression() {
+                     override var type: Type? = null) : Expression(), Literal {
     override fun children(): MutableList<out PrintableTreeNode> = mutableListOf()
     override fun name(): String = value + typeOrBlank() + castToOrBlank()
 }

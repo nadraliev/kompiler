@@ -34,7 +34,14 @@ fun VarDeclaration.analyze() {
         printTypeMismatchError(position.startLine, position.startIndexInLine, type, exploredValueType)
 }
 
+fun Annotation.analyze() {
+    val annotation = annotationsList.find { it.first == name && it.second.isInstance(parameter) }
+    if (annotation == null)
+        printNoSuchAnnotationError(position.startLine, position.startIndexInLine, name)
+}
+
 fun FunctionDeclaration.analyze() {
+    annotation?.analyze()
     statements?.forEach { it.analyze() }
     statements?.checkForDuplicateVarDeclarations()
     returnExpression?.analyze()

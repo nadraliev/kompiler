@@ -39,3 +39,7 @@ fun printReferenceIsNotAnArray(line: Int, charInLine: Int, name: String) {
 fun printIsNotIterableError(line: Int, charInLine: Int) {
     printlnError("Expected iterable at $line:$charInLine")
 }
+
+fun printNoSuchAnnotationError(line: Int, charInLine: Int, annotationName: String) {
+    printlnError("Can't resolve annotation $annotationName at $line:$charInLine")
+}
