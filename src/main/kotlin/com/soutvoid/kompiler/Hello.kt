@@ -12,6 +12,7 @@ import javax.swing.JFileChooser
 import javax.swing.JFrame
 
 var annotationsList = listOf("JavaFunction" to StringLit::class)
+var javaFunctions: List<FunctionDeclaration> = emptyList()
 
 fun main(args: Array<String>) {
 

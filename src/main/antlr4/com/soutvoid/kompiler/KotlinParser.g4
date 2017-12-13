@@ -24,10 +24,18 @@ annotation
 
 functionDeclaration
     : annotation?
-    'fun' SimpleName
+    functionModificator? 'fun' SimpleName
     functionParameters
     (':' type)?
-    '{' statements ('return' expression)? '}'
+    body=functionBody?
+    ;
+
+functionModificator
+    : 'abstract'
+    ;
+
+functionBody
+    : '{' statements ('return' expression)? '}'
     ;
 
 functionParameters

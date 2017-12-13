@@ -42,6 +42,15 @@ fun Annotation.analyze() {
 
 fun FunctionDeclaration.analyze() {
     annotation?.analyze()
+    modificator?.let {
+        if (modificator is Abstract && statements != null)
+            printAbstractFunctionNotEmptyError(it.position.startLine, it.position.startIndexInLine, name)
+        else if (modificator !is Abstract && statements == null) {
+            printFunctionWithoutBodyError(position.startLine, position.startIndexInLine, name)
+        }
+    }
+    if (modificator == null && statements == null)
+        printFunctionWithoutBodyError(position.startLine, position.startIndexInLine, name)
     statements?.forEach { it.analyze() }
     statements?.checkForDuplicateVarDeclarations()
     returnExpression?.analyze()

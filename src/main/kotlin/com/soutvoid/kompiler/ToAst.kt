@@ -1,6 +1,7 @@
 package com.soutvoid.kompiler
 
 import com.soutvoid.kompiler.KotlinParser.*
+import javax.naming.OperationNotSupportedException
 
 fun FileContext.toAst(name: String): FileNode =
         FileNode(
@@ -24,14 +25,20 @@ fun AnnotationContext.toAst(): Annotation =
                 literalConstant()?.toAst() as Literal?,
                 considerPosition()).fillInParents()
 
+fun FunctionModificatorContext.toAst(): FunctionModificator = when(text) {
+    "abstract" -> Abstract(considerPosition()).fillInParents()
+    else -> throw OperationNotSupportedException()
+}
+
 fun FunctionDeclarationContext.toAst(): FunctionDeclaration =
         FunctionDeclaration(
                 SimpleName().text,
                 annotation()?.toAst(),
+                functionModificator()?.toAst(),
                 functionParameters()?.functionParameter()?.map { it.parameter().toAst() } ?: emptyList(),
                 type()?.toAst() ?: UnitType,
-                statements()?.statement()?.map { it.toAst() },
-                expression()?.toAst(),
+                body?.statements()?.statement()?.map { it.toAst() },
+                body?.expression()?.toAst(),
                 considerPosition()).fillInParents()
 
 fun ParameterContext.toAst(): Parameter =

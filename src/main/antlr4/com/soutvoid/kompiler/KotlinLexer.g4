@@ -8,6 +8,7 @@ KEYWORD_var: 'var';
 KEYWORD_val: 'val';
 KEYWORD_class: 'class';
 KEYWORD_function: 'fun';
+KEYWORD_abstract: 'abstract';
 
 TYPE_Int: 'Int';
 TYPE_Boolean: 'Boolean';

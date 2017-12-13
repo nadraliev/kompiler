@@ -70,6 +70,7 @@ data class Annotation(var name: String,
 //Function
 data class FunctionDeclaration(var name: String,
                                var annotation: Annotation? = null,
+                               var modificator: FunctionModificator? = null,
                                var parameters: List<Parameter>,
                                var returnType: Type,
                                var statements: List<Statement>?,
@@ -78,7 +79,7 @@ data class FunctionDeclaration(var name: String,
                                override var parent: Node? = null,
                                override var vars: MutableMap<String, Int> = mutableMapOf()) : Node, ContainsIndexes {
     override fun children(): MutableList<out PrintableTreeNode> = (listOf<Statement>() plusNotNull annotation
-            join statements plusNotNull returnExpression).map { it as Node }.toMutableList()
+            plusNotNull modificator join statements plusNotNull returnExpression).map { it as Node }.toMutableList()
     override fun name(): String = "function $name(${parameters.toStringNames()}) : ${returnType.name()}"
     override fun equals(other: Any?): Boolean {
         other.let {
@@ -108,6 +109,12 @@ data class Parameter(var name: String,
     }
 }
 
+interface FunctionModificator: Node
+
+data class Abstract(override var position: Position, override var parent: Node? = null): FunctionModificator {
+    override fun children(): MutableList<out PrintableTreeNode> = mutableListOf()
+    override fun name(): String = "abstract"
+}
 
 //Types
 object IntType : Type() {
