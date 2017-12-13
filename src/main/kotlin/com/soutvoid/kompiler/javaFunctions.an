@@ -1,0 +1,2 @@
+@JavaFunction("System.out.print")
+abstract fun print(str: String)

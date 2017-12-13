@@ -43,6 +43,7 @@ fun Annotation.analyze() {
 fun FunctionDeclaration.analyze() {
     annotation?.analyze()
     modificator?.let {
+        maybeAddToJavaFunctions()
         if (modificator is Abstract && statements != null)
             printAbstractFunctionNotEmptyError(it.position.startLine, it.position.startIndexInLine, name)
         else if (modificator !is Abstract && statements == null) {
@@ -60,6 +61,15 @@ fun FunctionDeclaration.analyze() {
     returnExpression?.let {
         if (returnExpressionType != returnType)
             printTypeMismatchError(it.position.startLine, it.position.startIndexInLine, returnType, returnExpressionType)
+    }
+}
+
+fun FunctionDeclaration.maybeAddToJavaFunctions() {
+    ifNotNull(modificator, annotation) { modif, ann ->
+        if (modif is Abstract && ann.name == annotationsList[0].first) {
+            if (javaFunctions.find { this == it } == null)
+                javaFunctions.add(this)
+        }
     }
 }
 

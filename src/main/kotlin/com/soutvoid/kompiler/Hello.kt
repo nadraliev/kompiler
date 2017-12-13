@@ -4,6 +4,7 @@ import io.bretty.console.tree.TreePrinter
 import org.antlr.v4.gui.TreeViewer
 import org.antlr.v4.runtime.CharStreams
 import org.antlr.v4.runtime.CommonTokenStream
+import org.antlr.v4.runtime.RuleContext
 import org.antlr.v4.runtime.tree.Tree
 import java.io.File
 import java.io.FileOutputStream
@@ -12,7 +13,7 @@ import javax.swing.JFileChooser
 import javax.swing.JFrame
 
 var annotationsList = listOf("JavaFunction" to StringLit::class)
-var javaFunctions: List<FunctionDeclaration> = emptyList()
+var javaFunctions: MutableList<FunctionDeclaration> = mutableListOf()
 
 fun main(args: Array<String>) {
 
@@ -20,12 +21,9 @@ fun main(args: Array<String>) {
     if (filePath.isEmpty())
         return
 
-    val stream = CharStreams.fromFileName(filePath)
-    val lexer = KotlinLexer(stream)
-    val tokenStream = CommonTokenStream(lexer)
-    val parser = KotlinParser(tokenStream)
-    parser.addParseListener(KotlinListener())
-    val tree = parser.file()
+    searchForJavaFunctions(filePath)
+
+    val tree = getAntlrTree(filePath)
 
     //showSyntaxTree(parser, tree)
 
@@ -50,6 +48,23 @@ fun openSource(): String {
     if (returnVal == JFileChooser.APPROVE_OPTION)
         return jFileChooser.selectedFile.absolutePath
     else return ""
+}
+
+fun searchForJavaFunctions(sourcePath: String) {
+    val sourceFile = File(sourcePath)
+    val sourceDir = File(sourceFile.parent)
+    val anFiles = sourceDir.listFiles { file, s -> s.endsWith(".an", false) }
+    val trees = anFiles.map { getAntlrTree(it.absolutePath).toAst(it.name) }
+    trees.forEach{ it.analyze() }
+}
+
+fun getAntlrTree(filePath: String): KotlinParser.FileContext {
+    val stream = CharStreams.fromFileName(filePath)
+    val lexer = KotlinLexer(stream)
+    val tokenStream = CommonTokenStream(lexer)
+    val parser = KotlinParser(tokenStream)
+    parser.addParseListener(KotlinListener())
+    return parser.file()
 }
 
 fun showSyntaxTree(parser: KotlinParser, tree: Tree) {

@@ -1,8 +1,5 @@
 var shit: Int = 1
 
-@JavaFunction("System.out.print")
-abstract fun print(str: String)
-
 fun meth(a: Array<Array<Int>>): Int {
 return 1
 }
