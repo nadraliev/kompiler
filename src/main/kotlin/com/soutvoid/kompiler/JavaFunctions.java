@@ -5,4 +5,8 @@ public class JavaFunctions {
         System.out.print(str);
     }
 
+    public static void println(String str) {
+        System.out.println(str);
+    }
+
 }

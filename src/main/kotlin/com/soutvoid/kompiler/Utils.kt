@@ -108,6 +108,7 @@ inline fun <reified T> Node.filterChildrenIs(): List<T> {
 }
 
 fun FunctionDeclaration.isDeclarationOf(funcCall: FunctionCall): Boolean {
+    if (name != funcCall.name) return false
     ifNotNull(parameters, funcCall.parameters) { declarationParams, callParams ->
         if (declarationParams.size != callParams.size) return false
         declarationParams.forEachIndexed { index, parameter ->

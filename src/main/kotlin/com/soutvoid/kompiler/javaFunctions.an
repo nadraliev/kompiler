@@ -1,3 +1,5 @@
 @JavaFunction("JavaFunctions.print")
-fun print(str: String) {
-}
+fun print(str: String) {}
+
+@JavaFunction("JavaFunctions.println")
+fun println(str: String) {}
