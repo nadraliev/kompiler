@@ -4,11 +4,8 @@ import io.bretty.console.tree.TreePrinter
 import org.antlr.v4.gui.TreeViewer
 import org.antlr.v4.runtime.CharStreams
 import org.antlr.v4.runtime.CommonTokenStream
-import org.antlr.v4.runtime.RuleContext
 import org.antlr.v4.runtime.tree.Tree
 import java.io.File
-import java.io.FileOutputStream
-import java.nio.file.Files
 import javax.swing.JFileChooser
 import javax.swing.JFrame
 
@@ -21,7 +18,7 @@ fun main(args: Array<String>) {
     if (filePath.isEmpty())
         return
 
-    searchForJavaFunctions(filePath)
+    openJavaFunctionsFile()
 
     val tree = getAntlrTree(filePath)
 
@@ -50,12 +47,12 @@ fun openSource(): String {
     else return ""
 }
 
-fun searchForJavaFunctions(sourcePath: String) {
-    val sourceFile = File(sourcePath)
-    val sourceDir = File(sourceFile.parent)
-    val anFiles = sourceDir.listFiles { file, s -> s.endsWith(".an", false) }
-    val trees = anFiles.map { getAntlrTree(it.absolutePath).toAst(it.name) }
-    trees.forEach{ it.analyze() }
+fun openJavaFunctionsFile() {
+    val path = openSource()
+    if (path.isNotBlank()) {
+        val tree = getAntlrTree(path)
+        tree.toAst(File(path).name).analyze()
+    }
 }
 
 fun getAntlrTree(filePath: String): KotlinParser.FileContext {
