@@ -69,6 +69,15 @@ inline fun <T: Node> List<T>.checkForDuplicateVarDeclarations() {
     }
 }
 
+inline fun Node.checkForConflictsWithJavaFuncs() {
+    filterChildrenIs<FunctionDeclaration>().filterNot {
+        it.annotation != null && it.annotation?.name == annotationsList.first().first
+    }.forEach {
+        if (javaFunctions.contains(it))
+            printJavaFunctionAlreadyExists(it.position.startLine, it.position.startIndexInLine, it.name)
+    }
+}
+
 fun Node.closestParent(predicate: (parent: Node) -> Boolean): Node? {
     parent?.let {
         return if (predicate(it))

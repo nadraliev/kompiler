@@ -43,3 +43,7 @@ fun printIsNotIterableError(line: Int, charInLine: Int) {
 fun printNoSuchAnnotationError(line: Int, charInLine: Int, annotationName: String) {
     printlnError("Can't resolve annotation $annotationName at $line:$charInLine")
 }
+
+fun printJavaFunctionAlreadyExists(line: Int, charInLine: Int, funcName: String) {
+    printlnError("Function $funcName at $line:$charInLine already exists in java functions")
+}

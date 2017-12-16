@@ -2,6 +2,7 @@ package com.soutvoid.kompiler
 
 fun FileNode.analyze() {
     filterChildrenIs<Expression>().forEach { it.getType() }  //fill in types for all expressions
+    checkForConflictsWithJavaFuncs()
     classes.findDuplicatesBy { element1, element2 -> element1.name == element2.name }.forEach {
         printDuplicatesError("classes", it.map { it.position })
     }
