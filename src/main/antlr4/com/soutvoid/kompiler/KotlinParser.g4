@@ -24,14 +24,10 @@ annotation
 
 functionDeclaration
     : annotation?
-    functionModificator? 'fun' SimpleName
+    'fun' SimpleName
     functionParameters
     (':' type)?
-    body=functionBody?
-    ;
-
-functionModificator
-    : 'abstract'
+    body=functionBody
     ;
 
 functionBody

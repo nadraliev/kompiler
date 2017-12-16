@@ -1,4 +1,4 @@
-package com.soutvoid.kompiler;
+
 
 public class Test {
 

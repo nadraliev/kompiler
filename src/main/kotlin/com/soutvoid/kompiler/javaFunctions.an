@@ -1,2 +1,3 @@
-@JavaFunction("com/soutvoid/kompiler/JavaFunctions.print")
-abstract fun print(str: String)
+@JavaFunction("JavaFunctions.print")
+fun print(str: String) {
+}

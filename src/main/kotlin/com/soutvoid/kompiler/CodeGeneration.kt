@@ -9,7 +9,7 @@ import org.objectweb.asm.Opcodes.*
 import java.io.File
 import java.io.FileOutputStream
 
-const val DEFAULT_PACKAGE = "com/soutvoid/kompiler/"
+const val DEFAULT_PACKAGE = ""
 
 fun FileNode.compileToFile(path: String) {
     compileStaticMembersToFile(path)

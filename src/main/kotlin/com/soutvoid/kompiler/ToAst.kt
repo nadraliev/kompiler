@@ -25,16 +25,10 @@ fun AnnotationContext.toAst(): Annotation =
                 literalConstant()?.toAst() as Literal?,
                 considerPosition()).fillInParents()
 
-fun FunctionModificatorContext.toAst(): FunctionModificator = when(text) {
-    "abstract" -> Abstract(considerPosition()).fillInParents()
-    else -> throw OperationNotSupportedException()
-}
-
 fun FunctionDeclarationContext.toAst(): FunctionDeclaration =
         FunctionDeclaration(
                 SimpleName().text,
                 annotation()?.toAst(),
-                functionModificator()?.toAst(),
                 functionParameters()?.functionParameter()?.map { it.parameter().toAst() } ?: emptyList(),
                 type()?.toAst() ?: UnitType,
                 body?.statements()?.statement()?.map { it.toAst() },

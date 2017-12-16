@@ -42,16 +42,7 @@ fun Annotation.analyze() {
 
 fun FunctionDeclaration.analyze() {
     annotation?.analyze()
-    modificator?.let {
-        maybeAddToJavaFunctions()
-        if (modificator is Abstract && statements != null)
-            printAbstractFunctionNotEmptyError(it.position.startLine, it.position.startIndexInLine, name)
-        else if (modificator !is Abstract && statements == null) {
-            printFunctionWithoutBodyError(position.startLine, position.startIndexInLine, name)
-        }
-    }
-    if (modificator == null && statements == null)
-        printFunctionWithoutBodyError(position.startLine, position.startIndexInLine, name)
+    maybeAddToJavaFunctions()
     statements?.forEach { it.analyze() }
     statements?.checkForDuplicateVarDeclarations()
     returnExpression?.analyze()
@@ -65,8 +56,8 @@ fun FunctionDeclaration.analyze() {
 }
 
 fun FunctionDeclaration.maybeAddToJavaFunctions() {
-    ifNotNull(modificator, annotation) { modif, ann ->
-        if (modif is Abstract && ann.name == annotationsList[0].first) {
+    annotation?.let {
+        if (it.name == annotationsList[0].first) {
             if (javaFunctions.find { this == it } == null)
                 javaFunctions.add(this)
         }

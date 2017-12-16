@@ -43,11 +43,3 @@ fun printIsNotIterableError(line: Int, charInLine: Int) {
 fun printNoSuchAnnotationError(line: Int, charInLine: Int, annotationName: String) {
     printlnError("Can't resolve annotation $annotationName at $line:$charInLine")
 }
-
-fun printAbstractFunctionNotEmptyError(line: Int, charInLine: Int, funcName: String) {
-    printlnError("Abstract function $funcName at $line:$charInLine must not have a body")
-}
-
-fun printFunctionWithoutBodyError(line: Int, charInLine: Int, funcName: String) {
-    printlnError("Function $funcName at $line:$charInLine must have a body or be declared abstract")
-}
