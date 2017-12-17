@@ -9,4 +9,8 @@ public class JavaFunctions {
         System.out.println(str);
     }
 
+    public static void println(int val) {
+        System.out.println(val);
+    }
+
 }

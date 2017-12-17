@@ -48,7 +48,9 @@ fun VarDeclaration.visitField(classWriter: ClassWriter, access: Int) {
 
 fun FunctionDeclaration.visitMethod(classWriter: ClassWriter, access: Int) {
     val methodVisitor = classWriter.visitMethod(access, name, getJvmDescription(), null, null)
+    val start = Label()
     methodVisitor.visitCode()
+    methodVisitor.visitLabel(start)
     statements?.forEach { it.visit(methodVisitor) }
     returnExpression?.visit(methodVisitor)
     methodVisitor.visitInsn(RETURN)
@@ -76,7 +78,9 @@ fun Statement.visit(methodVisitor: MethodVisitor) {
 }
 
 fun VarDeclaration.visitLocalVar(methodVisitor: MethodVisitor) {
-
+    value.push(methodVisitor)
+    val index = closestParentIs<ContainsIndexes>()!!.vars.getValue(varName)
+    methodVisitor.visitVarInsn(ISTORE, index)
 }
 
 fun Expression.push(methodVisitor: MethodVisitor) {
@@ -88,8 +92,20 @@ fun Expression.push(methodVisitor: MethodVisitor) {
         is BooleanLit -> methodVisitor.visitLdcInsn(value.toBoolean())
         is StringLit -> methodVisitor.visitLdcInsn(value)
         is FunctionCall -> push(methodVisitor)
+        is VarReference -> push(methodVisitor)
         else -> throw UnsupportedOperationException()
     }
+}
+
+fun VarReference.push(methodVisitor: MethodVisitor) {
+    val index = closestParentIs<ContainsIndexes>()?.vars?.getValue(varName)
+    if (index != null) {
+        methodVisitor.visitVarInsn(ILOAD, index)
+    } else pushGlobalVar(methodVisitor)
+}
+
+fun VarReference.pushGlobalVar(methodVisitor: MethodVisitor) {
+    //TODO implement
 }
 
 fun FunctionCall.push(methodVisitor: MethodVisitor) {
@@ -104,8 +120,8 @@ fun FunctionCall.pushJavaFuncCall(methodVisitor: MethodVisitor, declaration: Fun
         if (annotationValue is StringLit) {
             val className = annotationValue.value.substringBefore(".")
             val funcName = annotationValue.value.substringAfter(".")
-            val str = funcCallParams[0] as StringLit
-            str.push(methodVisitor)
+            val value = funcCallParams[0]
+            value.push(methodVisitor)
             methodVisitor.visitMethodInsn(INVOKESTATIC, className, funcName, declaration.getJvmDescription(), false)
         }
     }

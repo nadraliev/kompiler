@@ -1,4 +1,6 @@
 fun main(args: Array<String>) {
-var dr:String = args[0]
-println("shit")
+var dr: Int = 1000
+var cf: Int = dr
+var fd: Int = cf
+println(fd)
 }

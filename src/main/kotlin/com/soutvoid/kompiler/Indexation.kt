@@ -6,8 +6,8 @@ fun FileNode.indexate() {
 
 fun FunctionDeclaration.indexate() {
     parameters.forEachIndexed { index, parameter -> vars.put(parameter.varName, index) }
-    statements?.filterIsInstance<VarDeclaration>()?.forEachIndexed { index, varDeclaration ->
-        vars.put(varDeclaration.varName, index + maxIndex() + 1)
+    statements?.filterIsInstance<VarDeclaration>()?.forEach {
+        vars.put(it.varName, maxIndex() + 1)
     }
     statements?.filterIsInstance<WhileLoop>()?.forEach {
         it.indexate(maxIndex() + 1)

@@ -3,3 +3,6 @@ fun print(str: String) {}
 
 @JavaFunction("JavaFunctions.println")
 fun println(str: String) {}
+
+@JavaFunction("JavaFunctions.println")
+fun println(value: Int) {}

@@ -4,6 +4,7 @@ public class Test {
 
     public void func(int a) {
         int b =1000;
+        int c = b;
     }
 
 }
