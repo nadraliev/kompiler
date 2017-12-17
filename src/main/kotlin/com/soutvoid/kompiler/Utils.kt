@@ -128,6 +128,20 @@ fun FunctionDeclaration.isDeclarationOf(funcCall: FunctionCall): Boolean {
     return false
 }
 
+fun ContainsIndexes.maxIndex(): Int {
+    return vars.maxBy { it.value }?.value ?: 0
+}
+
+inline fun <reified T: Node> Node.findClosestSiblingIs(): T? {
+    val parent = parent
+    parent?.let {
+        val siblingsOfType = parent.children().filterIsInstance<T>()
+                .filter { it.position.startLine < position.startLine }
+        return siblingsOfType.minBy { position.startLine - it.position.startLine }
+    }
+    return null
+}
+
 fun Node.findVarDeclaration(varName: String): DeclaresVar? {
     //search in for loop
     var declaration: DeclaresVar?

@@ -50,6 +50,7 @@ fun FunctionDeclaration.visitMethod(classWriter: ClassWriter, access: Int) {
     val methodVisitor = classWriter.visitMethod(access, name, getJvmDescription(), null, null)
     methodVisitor.visitCode()
     statements?.forEach { it.visit(methodVisitor) }
+    returnExpression?.visit(methodVisitor)
     methodVisitor.visitInsn(RETURN)
     methodVisitor.visitMaxs(-1,-1)
     methodVisitor.visitEnd()
@@ -69,8 +70,13 @@ fun List<VarDeclaration>.visitClinit(classWriter: ClassWriter, className: String
 fun Statement.visit(methodVisitor: MethodVisitor) {
     when(this) {
         is Expression -> push(methodVisitor)
+        is VarDeclaration -> visitLocalVar(methodVisitor)
         else -> throw UnsupportedOperationException()
     }
+}
+
+fun VarDeclaration.visitLocalVar(methodVisitor: MethodVisitor) {
+
 }
 
 fun Expression.push(methodVisitor: MethodVisitor) {

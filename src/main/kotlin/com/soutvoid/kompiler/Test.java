@@ -1,9 +1,9 @@
-
+package com.soutvoid.kompiler;
 
 public class Test {
 
-    public static void main(String[] args) {
-        JavaFunctions.print("shit");
+    public void func(int a) {
+        int b =1000;
     }
 
 }
