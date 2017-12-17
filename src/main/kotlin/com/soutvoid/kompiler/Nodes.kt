@@ -11,6 +11,11 @@ interface ContainsIndexes {
     var vars: MutableMap<String, Int>
 }
 
+interface DeclaresVar {
+    var varName: String
+    var type: Type?
+}
+
 abstract class Expression : Node, Statement {
     abstract var castTo: Type?
     abstract var type: Type?
@@ -92,12 +97,12 @@ data class FunctionDeclaration(var name: String,
 
 
 //Parameter
-data class Parameter(var name: String,
-                     var type: Type,
+data class Parameter(override var varName: String,
+                     override var type: Type? = null,
                      override var position: Position,
-                     override var parent: Node? = null) : Node {
+                     override var parent: Node? = null) : Node, DeclaresVar {
     override fun children(): MutableList<out PrintableTreeNode> = mutableListOf()
-    override fun name(): String = "$name : ${type.name()}"
+    override fun name(): String = "$varName : ${type?.name()}"
     override fun equals(other: Any?): Boolean {
         other.let {
             return it is Parameter
@@ -356,11 +361,11 @@ data class StringLit(var value: String, override var position: Position, overrid
 
 
 //Statements
-data class VarDeclaration(var varName: String,
-                          var type: Type,
+data class VarDeclaration(override var varName: String,
+                          override var type: Type? = null,
                           var value: Expression,
                           override var position: Position,
-                          override var parent: Node? = null) : Statement {
+                          override var parent: Node? = null) : Statement, DeclaresVar {
     override fun children(): MutableList<out PrintableTreeNode> = mutableListOf(VarReference(varName, position, this), value)
     override fun name(): String = "="
 }
@@ -402,7 +407,7 @@ data class WhileLoop(var factor: Expression,
 }
 
 //------For loop
-data class ForLoop(var iterator: VarReference,
+data class ForLoop(var iterator: ForLoopIterator,
                    var iterable: Expression,
                    var statements: List<Statement>?,
                    override var position: Position,
@@ -410,4 +415,13 @@ data class ForLoop(var iterator: VarReference,
                    override var vars: MutableMap<String, Int> = mutableMapOf()) : Statement, ContainsIndexes {
     override fun children(): MutableList<out PrintableTreeNode> = (listOf(iterator) join listOf(iterable) join statements).map { it as Node }.toMutableList()
     override fun name(): String = "for"
+}
+
+data class ForLoopIterator(override var varName: String,
+                           override var type: Type? = null,
+                           override var position: Position,
+                           override var parent: Node? = null,
+                           override var castTo: Type? = null): DeclaresVar, Expression() {
+    override fun children(): MutableList<out PrintableTreeNode> = mutableListOf()
+    override fun name(): String = "$varName: ${type?.name()}"
 }

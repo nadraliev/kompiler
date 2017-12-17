@@ -42,7 +42,7 @@ fun ClassDeclaration.compileToFile() {
 
 fun VarDeclaration.visitField(classWriter: ClassWriter, access: Int) {
     val fieldVisitor = classWriter.visitField(access,
-            varName, type.getDescriptor(), null, null)
+            varName, type!!.getDescriptor(), null, null)
     fieldVisitor.visitEnd()
 }
 
@@ -60,7 +60,7 @@ fun List<VarDeclaration>.visitClinit(classWriter: ClassWriter, className: String
     methodVisitor.visitCode()
     forEach {
         it.value.push(methodVisitor)
-        methodVisitor.visitFieldInsn(PUTSTATIC, className, it.varName, it.type.getDescriptor())
+        methodVisitor.visitFieldInsn(PUTSTATIC, className, it.varName, it.type!!.getDescriptor())
     }
     methodVisitor.visitInsn(RETURN)
     methodVisitor.visitEnd()

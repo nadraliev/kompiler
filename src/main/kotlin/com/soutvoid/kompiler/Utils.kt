@@ -128,6 +128,28 @@ fun FunctionDeclaration.isDeclarationOf(funcCall: FunctionCall): Boolean {
     return false
 }
 
+fun Node.findVarDeclaration(varName: String): DeclaresVar? {
+    //search in for loop
+    var declaration: DeclaresVar?
+
+    declaration = getVisibleNodesIs<ForLoop>().find { it.iterator.varName == varName }?.iterator
+
+    //search in local function variables
+    if (declaration == null)
+        declaration = closestParentIs<FunctionDeclaration>()
+                ?.children()?.filterIsInstance<VarDeclaration>()?.find { it.varName == varName }
+
+    //search in func params
+    if (declaration == null)
+        declaration = closestParentIs<FunctionDeclaration>()
+                ?.parameters?.find { it.varName == varName }
+
+    //search in all visible vars
+    if (declaration == null)
+        declaration = getVisibleNodesIs<VarDeclaration>().find { it.varName == varName }
+    return declaration
+}
+
 fun Type.getJavaType(): Class<*>? = when(this) {
     is IntType, is BooleanType, is DoubleType, is StringType -> findClassByName(name())
     else -> throw throw UnsupportedOperationException(this.javaClass.canonicalName)
@@ -143,5 +165,5 @@ fun ByteArray.writeClassToFile(path: String, name: String) {
 }
 
 fun FunctionDeclaration.getJvmDescription(): String =
-        "("+ parameters.joinToString(separator = ",", transform = { it.type.getDescriptor() }) +
+        "("+ parameters.joinToString(separator = ",", transform = { it.type!!.getDescriptor() }) +
                 ")" + returnType.getDescriptor()

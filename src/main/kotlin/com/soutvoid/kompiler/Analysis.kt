@@ -103,8 +103,7 @@ fun FunctionCall.analyze() {
 }
 
 fun VarReference.analyze() {
-    if (getVisibleNodesIs<VarDeclaration>().find { it.varName == varName } == null
-            && getVisibleNodesIs<ForLoop>().find { it.iterator.varName == varName } == null)
+    if (findVarDeclaration(varName) == null)
         printUnresolvedReferenceError(position.startLine, position.startIndexInLine, varName)
 }
 
@@ -113,11 +112,12 @@ fun ArrayInit.analyze() {
 }
 
 fun ArrayAccess.analyze() {
-    val declaration = getVisibleNodesIs<VarDeclaration>().find { it.varName == arrayName }
+    val declaration = findVarDeclaration(arrayName)
     if (declaration == null )
         printUnresolvedReferenceError(position.startLine, position.startIndexInLine, arrayName)
     else {
-        if (declaration.type !is ArrayType)
+        val type = declaration.type
+        if (type !is ArrayType)
             printReferenceIsNotAnArray(position.startLine, position.startIndexInLine, arrayName)
     }
     index.analyze()
@@ -230,6 +230,10 @@ fun ForLoop.analyze() {
     statements?.let { it.checkForDuplicateVarDeclarations() }
 }
 
+fun ForLoopIterator.analyze() {
+    //nothing to analyze
+}
+
 fun Expression.getType(): Type? {
     if (type == null)
         type = exploreType()
@@ -238,9 +242,10 @@ fun Expression.getType(): Type? {
 
 fun Expression.exploreType(): Type? = when (this) {
     is FunctionCall -> closestParentIs<ClassDeclaration>()?.functions?.find { it.name == name }?.returnType
+    is ForLoopIterator -> exploreType()
     is VarReference -> exploreType()
     is ArrayInit -> ArrayType(innerType, position, parent)
-    is ArrayAccess -> getVisibleNodesIs<VarDeclaration>().find { it.type is ArrayType }?.type
+    is ArrayAccess -> exploreType()
     is Range -> RangeType(IntType)
     is EqualsExpression, is NotEqualsExpression, is LessExpression, is GreaterExpression, is LessOrEqualsExpression, is GreaterOrEqualsExpression -> BooleanType
     is Multiplication -> resolveType(left, right, left.exploreType(), right.exploreType())
@@ -254,13 +259,18 @@ fun Expression.exploreType(): Type? = when (this) {
     else -> throw UnsupportedOperationException(this.javaClass.canonicalName)
 }
 
+fun ForLoopIterator.exploreType(): Type? {
+    val forLoop = parent as ForLoop
+    return (forLoop.iterable.getType() as? IterableType)?.innerType
+}
+
+fun ArrayAccess.exploreType(): Type? {
+    val declaration = findVarDeclaration(arrayName)
+    return (declaration?.type as? IterableType)?.innerType
+}
+
 fun VarReference.exploreType(): Type? {
-    var exploredType = getVisibleNodesIs<VarDeclaration>().find { it.varName == varName }?.type
-    if (exploredType == null) {
-        exploredType = (getVisibleNodesIs<ForLoop>().find { it.iterator.varName == varName }?.iterable?.getType() as? IterableType)
-                ?.innerType
-    }
-    return exploredType
+    return findVarDeclaration(varName)?.type
 }
 
 fun resolveType(expr1: Expression, expr2: Expression,

@@ -1,3 +1,4 @@
 fun main(args: Array<String>) {
+var dr:String = args[0]
 println("shit")
 }

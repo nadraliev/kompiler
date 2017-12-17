@@ -74,11 +74,17 @@ fun LoopContext.toAst(): Statement = when (this) {
     is WhileStatementContext -> WhileLoop(whileLoop().expression().toAst(),
             whileLoop().block()?.statements()?.statement()?.map { it.toAst() } ?: listOf(whileLoop().statement().toAst()),
             considerPosition()).fillInParents()
-    is ForStatementContext -> ForLoop(forLoop().identifier().toAst(),
-            forLoop().expression().toAst(),
-            forLoop().block()?.statements()?.statement()?.map { it.toAst() } ?: listOf(forLoop().statement().toAst()),
-            considerPosition()).fillInParents()
+    is ForStatementContext -> toAst()
     else -> throw UnsupportedOperationException(this.javaClass.canonicalName)
+}
+
+fun ForStatementContext.toAst(): ForLoop {
+    val forLoopIterator = ForLoopIterator(forLoop().identifier().text, null, considerPosition()).fillInParents()
+    return ForLoop(forLoopIterator,
+            forLoop().expression().toAst(),
+            forLoop().block()?.statements()?.statement()
+                    ?.map { it.toAst() } ?: listOf(forLoop().statement().toAst()),
+            considerPosition()).fillInParents()
 }
 
 fun PropertyDeclarationContext.toAst(): VarDeclaration = VarDeclaration(
