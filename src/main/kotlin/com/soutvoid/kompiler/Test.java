@@ -2,9 +2,8 @@ package com.soutvoid.kompiler;
 
 public class Test {
 
-    public void func(int a) {
-        int b =1000;
-        int c = b;
+    public static void func(int a) {
+        System.out.println(true);
     }
 
 }

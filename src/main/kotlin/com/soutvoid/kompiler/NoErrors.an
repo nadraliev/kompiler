@@ -1,6 +1,6 @@
 fun main(args: Array<String>) {
-var dr: Int = 1000
-var cf: Int = dr
-var fd: Int = cf
-println(fd)
+var dr: Double = 1.5
+println(dr)
+var iss: Boolean = true
+println(iss)
 }

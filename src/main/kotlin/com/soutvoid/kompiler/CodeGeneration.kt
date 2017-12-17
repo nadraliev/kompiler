@@ -80,7 +80,7 @@ fun Statement.visit(methodVisitor: MethodVisitor) {
 fun VarDeclaration.visitLocalVar(methodVisitor: MethodVisitor) {
     value.push(methodVisitor)
     val index = closestParentIs<ContainsIndexes>()!!.vars.getValue(varName)
-    methodVisitor.visitVarInsn(ISTORE, index)
+    methodVisitor.visitVarInsn(getOpcode(ISTORE, type!!.apply {}), index)
 }
 
 fun Expression.push(methodVisitor: MethodVisitor) {
@@ -89,18 +89,77 @@ fun Expression.push(methodVisitor: MethodVisitor) {
     when(this) {
         is IntLit -> methodVisitor.visitLdcInsn(value.toInt())
         is DoubleLit -> methodVisitor.visitLdcInsn(value.toDouble())
-        is BooleanLit -> methodVisitor.visitLdcInsn(value.toBoolean())
+        is BooleanLit -> methodVisitor.visitLdcInsn(value.toBoolean().getInt())
         is StringLit -> methodVisitor.visitLdcInsn(value)
         is FunctionCall -> push(methodVisitor)
         is VarReference -> push(methodVisitor)
+        is Addition -> push(methodVisitor)
+        is Subtraction -> push(methodVisitor)
+        is Division -> push(methodVisitor)
+        is Multiplication -> push(methodVisitor)
         else -> throw UnsupportedOperationException()
     }
 }
 
+fun Addition.push(methodVisitor: MethodVisitor) {
+    left.push(methodVisitor)
+    right.push(methodVisitor)
+    methodVisitor.visitInsn(getOpcode(IADD, type!!.apply {}))
+}
+
+fun Subtraction.push(methodVisitor: MethodVisitor) {
+    left.push(methodVisitor)
+    right.push(methodVisitor)
+    methodVisitor.visitInsn(getOpcode(ISUB, type!!.apply {}))
+}
+
+fun Division.push(methodVisitor: MethodVisitor) {
+    left.push(methodVisitor)
+    right.push(methodVisitor)
+    methodVisitor.visitInsn(getOpcode(IDIV, type!!.apply {}))
+}
+
+fun Multiplication.push(methodVisitor: MethodVisitor) {
+    left.push(methodVisitor)
+    right.push(methodVisitor)
+    methodVisitor.visitInsn(getOpcode(IMUL, type!!.apply {}))
+}
+
+fun EqualsExpression.push(methodVisitor: MethodVisitor) {
+    left.push(methodVisitor)
+    right.push(methodVisitor)
+}
+
+fun NotEqualsExpression.push(methodVisitor: MethodVisitor) {
+    left.push(methodVisitor)
+    right.push(methodVisitor)
+}
+
+fun GreaterExpression.push(methodVisitor: MethodVisitor) {
+    left.push(methodVisitor)
+    right.push(methodVisitor)
+}
+
+fun GreaterOrEqualsExpression.push(methodVisitor: MethodVisitor) {
+    left.push(methodVisitor)
+    right.push(methodVisitor)
+}
+
+fun LessExpression.push(methodVisitor: MethodVisitor) {
+    left.push(methodVisitor)
+    right.push(methodVisitor)
+}
+
+fun LessOrEqualsExpression.push(methodVisitor: MethodVisitor) {
+    left.push(methodVisitor)
+    right.push(methodVisitor)
+}
+
 fun VarReference.push(methodVisitor: MethodVisitor) {
     val index = closestParentIs<ContainsIndexes>()?.vars?.getValue(varName)
+    val type = findVarDeclaration(varName)!!.type!!.apply {}
     if (index != null) {
-        methodVisitor.visitVarInsn(ILOAD, index)
+        methodVisitor.visitVarInsn(getOpcode(ILOAD, type), index)
     } else pushGlobalVar(methodVisitor)
 }
 
@@ -131,6 +190,7 @@ fun Type.getDescriptor(): String = when(this) {
     is IntType -> "I"
     is DoubleType -> "D"
     is UnitType -> "V"
+    is BooleanType -> "Z"
     is StringType -> org.objectweb.asm.Type.getDescriptor(String::class.java)
     is ArrayType -> getDescriptor()
     else -> throw UnsupportedOperationException()
@@ -147,4 +207,27 @@ fun ArrayType.getDescriptor(): String {
     repeat(depth) {descriptor += "["}
     descriptor += innerType.getDescriptor()
     return descriptor
+}
+
+fun getOpcode(intOpcode: Int, type: Type): Int = when(type) {
+    is IntType -> intOpcode
+    is DoubleType -> getDoubleOpcode(intOpcode)
+    is BooleanType -> getBooleanOpcode(intOpcode)
+    else -> throw UnsupportedOperationException()
+}
+
+fun getDoubleOpcode(intOpcode: Int): Int = when(intOpcode) {
+    ILOAD -> DLOAD
+    ISTORE -> DSTORE
+    IADD -> DADD
+    IDIV -> DDIV
+    ISUB -> DSUB
+    IMUL -> DMUL
+    else -> throw UnsupportedOperationException()
+}
+
+fun getBooleanOpcode(intOpcode: Int): Int = when(intOpcode) {
+    ILOAD -> ILOAD
+    ISTORE -> ISTORE
+    else -> throw UnsupportedOperationException()
 }

@@ -181,3 +181,8 @@ fun ByteArray.writeClassToFile(path: String, name: String) {
 fun FunctionDeclaration.getJvmDescription(): String =
         "("+ parameters.joinToString(separator = ",", transform = { it.type!!.getDescriptor() }) +
                 ")" + returnType.getDescriptor()
+
+fun Boolean.getInt(): Int {
+    return if (this) 1
+        else 0
+}

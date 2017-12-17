@@ -13,4 +13,12 @@ public class JavaFunctions {
         System.out.println(val);
     }
 
+    public static void println(boolean val) {
+        System.out.println(val);
+    }
+
+    public static void println(double val) {
+        System.out.println(val);
+    }
+
 }

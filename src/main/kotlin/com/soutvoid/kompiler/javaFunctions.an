@@ -6,3 +6,9 @@ fun println(str: String) {}
 
 @JavaFunction("JavaFunctions.println")
 fun println(value: Int) {}
+
+@JavaFunction("JavaFunctions.println")
+fun println(value: Boolean) {}
+
+@JavaFunction("JavaFunctions.println")
+fun println(value: Double) {}
