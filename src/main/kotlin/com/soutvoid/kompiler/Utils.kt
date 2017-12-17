@@ -121,7 +121,7 @@ fun FunctionDeclaration.isDeclarationOf(funcCall: FunctionCall): Boolean {
     ifNotNull(parameters, funcCall.parameters) { declarationParams, callParams ->
         if (declarationParams.size != callParams.size) return false
         declarationParams.forEachIndexed { index, parameter ->
-            if (parameter.type != callParams[index].type) return false
+            if (parameter.type != callParams[index].getType()) return false
         }
         return true
     }
@@ -179,7 +179,7 @@ fun ByteArray.writeClassToFile(path: String, name: String) {
 }
 
 fun FunctionDeclaration.getJvmDescription(): String =
-        "("+ parameters.joinToString(separator = ",", transform = { it.type!!.getDescriptor() }) +
+        "("+ parameters.fold(String()) { str, param -> str + param.type!!.getDescriptor() } +
                 ")" + returnType.getDescriptor()
 
 fun Boolean.getInt(): Int {

@@ -21,4 +21,12 @@ public class JavaFunctions {
         System.out.println(val);
     }
 
+    public static String toString(int val) {return String.valueOf(val);}
+
+    public static String toString(double val) {return String.valueOf(val);}
+
+    public static String toString(boolean val) {return String.valueOf(val);}
+
+    public static String concat(String base, String addition) {return base.concat(addition);}
+
 }

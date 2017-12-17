@@ -1,6 +1,5 @@
 fun main(args: Array<String>) {
-var dr: Double = 1.5
-println(dr)
-var iss: Boolean = true
-println(iss)
+var dr: Double = 1.5 + 1
+var str: String = concat("Value is ", toString(dr))
+println(str)
 }

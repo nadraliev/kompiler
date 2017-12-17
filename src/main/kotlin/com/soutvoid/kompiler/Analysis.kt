@@ -241,7 +241,7 @@ fun Expression.getType(): Type? {
 }
 
 fun Expression.exploreType(): Type? = when (this) {
-    is FunctionCall -> closestParentIs<ClassDeclaration>()?.functions?.find { it.name == name }?.returnType
+    is FunctionCall -> exploreType()
     is ForLoopIterator -> exploreType()
     is VarReference -> exploreType()
     is ArrayInit -> ArrayType(innerType, position, parent)
@@ -257,6 +257,13 @@ fun Expression.exploreType(): Type? = when (this) {
     is BooleanLit -> BooleanType
     is StringLit -> StringType
     else -> throw UnsupportedOperationException(this.javaClass.canonicalName)
+}
+
+fun FunctionCall.exploreType(): Type? {
+    var type = closestParentIs<ClassDeclaration>()?.functions?.find { it.name == name }?.returnType
+    if (type == null)
+        type = javaFunctions.find { it.isDeclarationOf(this) }?.returnType
+    return type
 }
 
 fun ForLoopIterator.exploreType(): Type? {
@@ -280,10 +287,12 @@ fun resolveType(expr1: Expression, expr2: Expression,
 
     val autoCastType = isAutoCastPossible(type1, type2)
     autoCastType?.let {
-        if (type1 != it)
+        if (type1 != it) {
             expr1 castTo it
-        if (type2 != it)
+        }
+        if (type2 != it) {
             expr2 castTo it
+        }
         return it
     }
     return null

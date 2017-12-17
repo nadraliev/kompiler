@@ -12,3 +12,15 @@ fun println(value: Boolean) {}
 
 @JavaFunction("JavaFunctions.println")
 fun println(value: Double) {}
+
+@JavaFunction("JavaFunctions.toString")
+fun toString(value: Int): String {return ""}
+
+@JavaFunction("JavaFunctions.toString")
+fun toString(value: Double): String {return ""}
+
+@JavaFunction("JavaFunctions.toString")
+fun toString(value: Boolean): String {return ""}
+
+@JavaFunction("JavaFunctions.concat")
+fun concat(base: String, add: String): String {return ""}

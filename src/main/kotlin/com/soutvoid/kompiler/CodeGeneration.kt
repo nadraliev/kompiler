@@ -1,13 +1,7 @@
 package com.soutvoid.kompiler
 
-import net.bytebuddy.ByteBuddy
-import net.bytebuddy.description.modifier.Ownership
-import net.bytebuddy.description.modifier.Visibility
-import net.bytebuddy.implementation.FixedValue
 import org.objectweb.asm.*
 import org.objectweb.asm.Opcodes.*
-import java.io.File
-import java.io.FileOutputStream
 
 const val DEFAULT_PACKAGE = ""
 
@@ -99,6 +93,9 @@ fun Expression.push(methodVisitor: MethodVisitor) {
         is Multiplication -> push(methodVisitor)
         else -> throw UnsupportedOperationException()
     }
+    ifNotNull(type, castTo) { from, to ->
+        methodVisitor.visitInsn(getCastOpcode(from, to))
+    }
 }
 
 fun Addition.push(methodVisitor: MethodVisitor) {
@@ -179,8 +176,7 @@ fun FunctionCall.pushJavaFuncCall(methodVisitor: MethodVisitor, declaration: Fun
         if (annotationValue is StringLit) {
             val className = annotationValue.value.substringBefore(".")
             val funcName = annotationValue.value.substringAfter(".")
-            val value = funcCallParams[0]
-            value.push(methodVisitor)
+            funcCallParams.forEach { it.push(methodVisitor) }
             methodVisitor.visitMethodInsn(INVOKESTATIC, className, funcName, declaration.getJvmDescription(), false)
         }
     }
@@ -213,6 +209,13 @@ fun getOpcode(intOpcode: Int, type: Type): Int = when(type) {
     is IntType -> intOpcode
     is DoubleType -> getDoubleOpcode(intOpcode)
     is BooleanType -> getBooleanOpcode(intOpcode)
+    is StringType -> getObjectReferenceOpcode(intOpcode)
+    else -> throw UnsupportedOperationException()
+}
+
+fun getObjectReferenceOpcode(intOpcode: Int): Int = when(intOpcode) {
+    ILOAD -> ALOAD
+    ISTORE -> ASTORE
     else -> throw UnsupportedOperationException()
 }
 
@@ -229,5 +232,11 @@ fun getDoubleOpcode(intOpcode: Int): Int = when(intOpcode) {
 fun getBooleanOpcode(intOpcode: Int): Int = when(intOpcode) {
     ILOAD -> ILOAD
     ISTORE -> ISTORE
+    else -> throw UnsupportedOperationException()
+}
+
+fun getCastOpcode(from: Type, to: Type): Int = when(from to to) {
+    IntType to DoubleType -> I2D
+    DoubleType to IntType -> D2I
     else -> throw UnsupportedOperationException()
 }
