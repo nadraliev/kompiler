@@ -198,7 +198,7 @@ fun findIndex(varName: String, node: Node): Int {
     return result
 }
 
-fun FunctionDeclaration.getClassName(): String {
+fun Node.getClassName(): String {
     val classDeclaration = closestParentIs<ClassDeclaration>()
     return classDeclaration?.name ?: closestParentIs<FileNode>()!!.getClassName()
 }

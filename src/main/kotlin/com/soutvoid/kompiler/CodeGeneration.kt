@@ -48,7 +48,7 @@ fun FunctionDeclaration.visitMethod(classWriter: ClassWriter, access: Int) {
     statements?.forEach { it.visit(methodVisitor) }
     returnExpression?.visit(methodVisitor)
     methodVisitor.visitInsn(getOpcode(IRETURN, returnType))
-    methodVisitor.visitMaxs(-1,-1)
+    methodVisitor.visitMaxs(-1, -1)
     methodVisitor.visitEnd()
 }
 
@@ -60,11 +60,12 @@ fun List<VarDeclaration>.visitClinit(classWriter: ClassWriter, className: String
         methodVisitor.visitFieldInsn(PUTSTATIC, className, it.varName, it.type!!.getDescriptor())
     }
     methodVisitor.visitInsn(RETURN)
+    methodVisitor.visitMaxs(-1, -1)
     methodVisitor.visitEnd()
 }
 
 fun Statement.visit(methodVisitor: MethodVisitor) {
-    when(this) {
+    when (this) {
         is Expression -> push(methodVisitor)
         is VarDeclaration -> visitLocalVar(methodVisitor)
         is SimpleAssignment -> visit(methodVisitor)
@@ -88,17 +89,16 @@ fun WhileLoop.visit(methodVisitor: MethodVisitor) {
 
 fun ArrayAssignment.visit(methodVisitor: MethodVisitor) {
     val index = findIndex(arrayElement.arrayName, this)
-    val type = (findVarDeclaration(arrayElement.arrayName)!!.type as ArrayType).innerType
-    if (index != -1) {
+    val type = findVarDeclaration(arrayElement.arrayName)!!.type as ArrayType
+    val innerType = type.innerType
+    if (index != -1)
         methodVisitor.visitVarInsn(ALOAD, index)
-        arrayElement.index.push(methodVisitor)
-        value.push(methodVisitor)
-        methodVisitor.visitInsn(getArrayOpcode(IASTORE, type))
-    } else storeToLocalVar(methodVisitor)
-}
+    else
+        methodVisitor.visitFieldInsn(GETSTATIC, getClassName(), arrayElement.arrayName, type.getDescriptor())
+    arrayElement.index.push(methodVisitor)
+    value.push(methodVisitor)
+    methodVisitor.visitInsn(getArrayOpcode(IASTORE, innerType))
 
-fun ArrayAssignment.storeToLocalVar(methodVisitor: MethodVisitor) {
-    //TODO implement
 }
 
 fun IfStatement.visit(methodVisitor: MethodVisitor) {
@@ -117,14 +117,10 @@ fun SimpleAssignment.visit(methodVisitor: MethodVisitor) {
     value.push(methodVisitor)
     val index = findIndex(varName, this)
     val type = findVarDeclaration(varName)!!.type!!.apply {}
-    if (index != -1) {
+    if (index != -1)
         methodVisitor.visitVarInsn(getOpcode(ISTORE, type), index)
-    } else
-        storeToLocalVar(methodVisitor)
-}
-
-fun SimpleAssignment.storeToLocalVar(methodVisitor: MethodVisitor) {
-    //TODO implement
+    else
+        methodVisitor.visitFieldInsn(PUTSTATIC, getClassName(), varName, type.getDescriptor())
 }
 
 fun VarDeclaration.visitLocalVar(methodVisitor: MethodVisitor) {
@@ -134,9 +130,7 @@ fun VarDeclaration.visitLocalVar(methodVisitor: MethodVisitor) {
 }
 
 fun Expression.push(methodVisitor: MethodVisitor) {
-    val vars = closestParentIs<ContainsIndexes>()?.vars
-    vars ?: return
-    when(this) {
+    when (this) {
         is IntLit -> methodVisitor.visitLdcInsn(value.toInt())
         is DoubleLit -> methodVisitor.visitLdcInsn(value.toDouble())
         is BooleanLit -> methodVisitor.visitLdcInsn(value.toBoolean().getInt())
@@ -164,16 +158,15 @@ fun Expression.push(methodVisitor: MethodVisitor) {
 
 fun ArrayAccess.push(methodVisitor: MethodVisitor) {
     val varIndex = findIndex(arrayName, this)
-    val type = (findVarDeclaration(arrayName)!!.type as ArrayType).innerType
-    if (varIndex != -1) {
+    val type = findVarDeclaration(arrayName)!!.type as ArrayType
+    val innerType = type.innerType
+    if (varIndex != -1)
         methodVisitor.visitVarInsn(ALOAD, varIndex)
-        index.push(methodVisitor)
-        methodVisitor.visitInsn(getArrayOpcode(IALOAD, type))
-    } else pushLocalVar(methodVisitor)
-}
+    else
+        methodVisitor.visitFieldInsn(GETSTATIC, getClassName(), arrayName, type.getDescriptor())
+    index.push(methodVisitor)
+    methodVisitor.visitInsn(getArrayOpcode(IALOAD, innerType))
 
-fun ArrayAccess.pushLocalVar(methodVisitor: MethodVisitor) {
-    //TODO implement
 }
 
 fun ArrayInit.push(methodVisitor: MethodVisitor) {
@@ -325,13 +318,10 @@ fun LessOrEqualsExpression.push(methodVisitor: MethodVisitor) {
 fun VarReference.push(methodVisitor: MethodVisitor) {
     val index = findIndex(varName, this)
     val type = findVarDeclaration(varName)!!.type!!.apply {}
-    if (index != -1) {
+    if (index != -1)
         methodVisitor.visitVarInsn(getOpcode(ILOAD, type), index)
-    } else pushGlobalVar(methodVisitor)
-}
-
-fun VarReference.pushGlobalVar(methodVisitor: MethodVisitor) {
-    //TODO implement
+    else
+        methodVisitor.visitFieldInsn(GETSTATIC, getClassName(), varName, type.getDescriptor())
 }
 
 fun FunctionCall.push(methodVisitor: MethodVisitor) {
@@ -361,7 +351,7 @@ fun FunctionCall.pushJavaFuncCall(methodVisitor: MethodVisitor, declaration: Fun
     }
 }
 
-fun Type.getDescriptor(): String = when(this) {
+fun Type.getDescriptor(): String = when (this) {
     is IntType -> "I"
     is DoubleType -> "D"
     is UnitType -> "V"
@@ -379,12 +369,12 @@ fun ArrayType.getDescriptor(): String {
         innerType = innerType.innerType
     }
     var descriptor = ""
-    repeat(depth) {descriptor += "["}
+    repeat(depth) { descriptor += "[" }
     descriptor += innerType.getDescriptor()
     return descriptor
 }
 
-fun getOpcode(intOpcode: Int, type: Type): Int = when(type) {
+fun getOpcode(intOpcode: Int, type: Type): Int = when (type) {
     is IntType -> intOpcode
     is DoubleType -> getDoubleOpcode(intOpcode)
     is BooleanType -> getBooleanOpcode(intOpcode)
@@ -393,19 +383,19 @@ fun getOpcode(intOpcode: Int, type: Type): Int = when(type) {
     else -> throw UnsupportedOperationException()
 }
 
-fun getVoidOpcode(intOpcode: Int): Int = when(intOpcode) {
+fun getVoidOpcode(intOpcode: Int): Int = when (intOpcode) {
     IRETURN -> RETURN
     else -> throw UnsupportedOperationException()
 }
 
-fun getObjectReferenceOpcode(intOpcode: Int): Int = when(intOpcode) {
+fun getObjectReferenceOpcode(intOpcode: Int): Int = when (intOpcode) {
     ILOAD -> ALOAD
     ISTORE -> ASTORE
     IRETURN -> ARETURN
     else -> throw UnsupportedOperationException()
 }
 
-fun getDoubleOpcode(intOpcode: Int): Int = when(intOpcode) {
+fun getDoubleOpcode(intOpcode: Int): Int = when (intOpcode) {
     ILOAD -> DLOAD
     ISTORE -> DSTORE
     IADD -> DADD
@@ -418,13 +408,13 @@ fun getDoubleOpcode(intOpcode: Int): Int = when(intOpcode) {
 
 fun getBooleanOpcode(intOpcode: Int): Int = intOpcode
 
-fun getCastOpcode(from: Type, to: Type): Int = when(from to to) {
+fun getCastOpcode(from: Type, to: Type): Int = when (from to to) {
     IntType to DoubleType -> I2D
     DoubleType to IntType -> D2I
     else -> throw UnsupportedOperationException()
 }
 
-fun getArrayOpcode(intOpcode: Int, type: Type): Int = when(type) {
+fun getArrayOpcode(intOpcode: Int, type: Type): Int = when (type) {
     is IntType -> intOpcode
     is DoubleType -> getDoubleArrayOpcode(intOpcode)
     is BooleanType -> getBooleanArrayOpcode(intOpcode)
@@ -432,13 +422,13 @@ fun getArrayOpcode(intOpcode: Int, type: Type): Int = when(type) {
     else -> throw UnsupportedOperationException()
 }
 
-fun getObjectReferenceArrayOpcode(intOpcode: Int): Int = when(intOpcode) {
+fun getObjectReferenceArrayOpcode(intOpcode: Int): Int = when (intOpcode) {
     IALOAD -> AALOAD
     IASTORE -> AASTORE
     else -> throw UnsupportedOperationException()
 }
 
-fun getDoubleArrayOpcode(intOpcode: Int): Int = when(intOpcode) {
+fun getDoubleArrayOpcode(intOpcode: Int): Int = when (intOpcode) {
     IALOAD -> DALOAD
     IASTORE -> DASTORE
     else -> throw UnsupportedOperationException()
@@ -446,7 +436,7 @@ fun getDoubleArrayOpcode(intOpcode: Int): Int = when(intOpcode) {
 
 fun getBooleanArrayOpcode(intOpcode: Int): Int = intOpcode
 
-fun Type.getAtype(): Int = when(this) {
+fun Type.getAtype(): Int = when (this) {
     is IntType -> T_INT
     is DoubleType -> T_DOUBLE
     is BooleanType -> T_BOOLEAN
