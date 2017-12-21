@@ -191,7 +191,7 @@ fun Subtraction.analyze() {
 }
 
 fun SimpleAssignment.analyze() {
-    val expectedType = getVisibleNodesIs<VarDeclaration>().find { it.varName == varName }?.type
+    val expectedType = findVarDeclaration(varName)?.type
     val actualType = value.getType()
     if (expectedType != actualType)
         printTypeMismatchError(position.startLine, position.startIndexInLine, expectedType, actualType)
@@ -263,7 +263,7 @@ fun Expression.exploreType(): Type? = when (this) {
 }
 
 fun FunctionCall.exploreType(): Type? {
-    var type = closestParentIs<ClassDeclaration>()?.functions?.find { it.name == name }?.returnType
+    var type = getVisibleNodesIs<FunctionDeclaration>().find { it.isDeclarationOf(this) }?.returnType
     if (type == null)
         type = javaFunctions.find { it.isDeclarationOf(this) }?.returnType
     return type

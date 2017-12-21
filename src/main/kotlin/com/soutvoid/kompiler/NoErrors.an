@@ -7,4 +7,14 @@ fun main(args: Array<String>) {
         println(i)
         i = i + 1
     }
+    println(factorial(4))
+}
+
+fun factorial(num: Int): Int {
+    var result: Int = 1
+    while (num > 1) {
+        result = result * num
+        num = num - 1
+    }
+    return result
 }

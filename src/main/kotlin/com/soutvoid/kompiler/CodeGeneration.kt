@@ -47,7 +47,7 @@ fun FunctionDeclaration.visitMethod(classWriter: ClassWriter, access: Int) {
     methodVisitor.visitLabel(start)
     statements?.forEach { it.visit(methodVisitor) }
     returnExpression?.visit(methodVisitor)
-    methodVisitor.visitInsn(RETURN)
+    methodVisitor.visitInsn(getOpcode(IRETURN, returnType))
     methodVisitor.visitMaxs(-1,-1)
     methodVisitor.visitEnd()
 }
@@ -93,7 +93,7 @@ fun ArrayAssignment.visit(methodVisitor: MethodVisitor) {
         methodVisitor.visitVarInsn(ALOAD, index)
         arrayElement.index.push(methodVisitor)
         value.push(methodVisitor)
-        methodVisitor.visitInsn(getArrayOpode(IASTORE, type))
+        methodVisitor.visitInsn(getArrayOpcode(IASTORE, type))
     } else storeToLocalVar(methodVisitor)
 }
 
@@ -168,7 +168,7 @@ fun ArrayAccess.push(methodVisitor: MethodVisitor) {
     if (varIndex != -1) {
         methodVisitor.visitVarInsn(ALOAD, varIndex)
         index.push(methodVisitor)
-        methodVisitor.visitInsn(getArrayOpode(IALOAD, type))
+        methodVisitor.visitInsn(getArrayOpcode(IALOAD, type))
     } else pushLocalVar(methodVisitor)
 }
 
@@ -339,6 +339,14 @@ fun FunctionCall.push(methodVisitor: MethodVisitor) {
     val javaFuncDeclaration = javaFunctions.find { it.isDeclarationOf(this) }
     if (javaFuncDeclaration != null)
         pushJavaFuncCall(methodVisitor, javaFuncDeclaration)
+    else {
+        val declarations = getVisibleNodesIs<FunctionDeclaration>()
+        val declaration = declarations.find { it.isDeclarationOf(this) }
+        parameters?.forEach { it.push(methodVisitor) }
+        if (isStatic) {
+            methodVisitor.visitMethodInsn(INVOKESTATIC, declaration!!.getClassName(), name, declaration.getJvmDescription(), false)
+        }
+    }
 }
 
 fun FunctionCall.pushJavaFuncCall(methodVisitor: MethodVisitor, declaration: FunctionDeclaration) {
@@ -381,12 +389,19 @@ fun getOpcode(intOpcode: Int, type: Type): Int = when(type) {
     is DoubleType -> getDoubleOpcode(intOpcode)
     is BooleanType -> getBooleanOpcode(intOpcode)
     is StringType, is ArrayType -> getObjectReferenceOpcode(intOpcode)
+    is UnitType -> getVoidOpcode(intOpcode)
+    else -> throw UnsupportedOperationException()
+}
+
+fun getVoidOpcode(intOpcode: Int): Int = when(intOpcode) {
+    IRETURN -> RETURN
     else -> throw UnsupportedOperationException()
 }
 
 fun getObjectReferenceOpcode(intOpcode: Int): Int = when(intOpcode) {
     ILOAD -> ALOAD
     ISTORE -> ASTORE
+    IRETURN -> ARETURN
     else -> throw UnsupportedOperationException()
 }
 
@@ -397,6 +412,7 @@ fun getDoubleOpcode(intOpcode: Int): Int = when(intOpcode) {
     IDIV -> DDIV
     ISUB -> DSUB
     IMUL -> DMUL
+    IRETURN -> DRETURN
     else -> throw UnsupportedOperationException()
 }
 
@@ -408,7 +424,7 @@ fun getCastOpcode(from: Type, to: Type): Int = when(from to to) {
     else -> throw UnsupportedOperationException()
 }
 
-fun getArrayOpode(intOpcode: Int, type: Type): Int = when(type) {
+fun getArrayOpcode(intOpcode: Int, type: Type): Int = when(type) {
     is IntType -> intOpcode
     is DoubleType -> getDoubleArrayOpcode(intOpcode)
     is BooleanType -> getBooleanArrayOpcode(intOpcode)

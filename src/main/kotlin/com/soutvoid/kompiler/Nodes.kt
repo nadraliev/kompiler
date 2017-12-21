@@ -83,7 +83,7 @@ data class FunctionDeclaration(var name: String,
                                override var parent: Node? = null,
                                override var vars: MutableMap<String, Int> = mutableMapOf()) : Node, ContainsIndexes {
     override fun children(): MutableList<out PrintableTreeNode> = (listOf<Statement>() plusNotNull annotation
-            join statements plusNotNull returnExpression).map { it as Node }.toMutableList()
+            join parameters join statements plusNotNull returnExpression).map { it as Node }.toMutableList()
     override fun name(): String = "function $name(${parameters.toStringNames()}) : ${returnType.name()}"
     override fun equals(other: Any?): Boolean {
         other.let {
