@@ -5,7 +5,9 @@ public class Test {
     public static void func(int a, int b, int c) {
         double g = 2.5;
         double gf = 4.5 + 1.5;
-        boolean f = g != gf;
+        if (g == gf) {
+            int df = 1;
+        }
     }
 
 }

@@ -1,15 +1,9 @@
 fun main(args: Array<String>) {
-var eq: Boolean = 2 == 1
-var notEq: Boolean = 2 != 1
-var gt: Boolean = 2 > 1
-var ge: Boolean = 2 >= 1
-var lt: Boolean = 2 < 1
-var le: Boolean = 2 <= 1
-println(eq)
-println(notEq)
-println(gt)
-println(ge)
-println(lt)
-println(le)
+if (1 == 2) {
+    println("shit")
+}
+if (1 != 2) {
+    println("not shit")
+}
 
 }

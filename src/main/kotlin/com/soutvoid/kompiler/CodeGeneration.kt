@@ -68,8 +68,17 @@ fun Statement.visit(methodVisitor: MethodVisitor) {
         is Expression -> push(methodVisitor)
         is VarDeclaration -> visitLocalVar(methodVisitor)
         is SimpleAssignment -> visit(methodVisitor)
+        is IfStatement -> visit(methodVisitor)
         else -> throw UnsupportedOperationException()
     }
+}
+
+fun IfStatement.visit(methodVisitor: MethodVisitor) {
+    expression.push(methodVisitor)
+    val notTrue = Label()
+    methodVisitor.visitJumpInsn(IFEQ, notTrue)
+    statements.forEach { it.visit(methodVisitor) }
+    methodVisitor.visitLabel(notTrue)
 }
 
 fun SimpleAssignment.visit(methodVisitor: MethodVisitor) {
