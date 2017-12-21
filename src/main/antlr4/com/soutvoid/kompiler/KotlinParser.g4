@@ -91,7 +91,7 @@ expression
     | left=expression operator=('!=' | '==' | '<' | '>' | '<=' | '>=') right=expression #binaryOperation
     | arrayInitExpr     #arrayInit
     | arrayAccessExpr   #arrayAccess
-    | rangeExpression   #range
+    | expression '..' expression   #range
     ;
 
 arrayInitExpr
@@ -135,10 +135,6 @@ forLoop
     : 'for' '(' identifier 'in' expression ')'
     ( statement
     | block )
-    ;
-
-rangeExpression
-    : IntegerLiteral '..' IntegerLiteral
     ;
 
 literalConstant

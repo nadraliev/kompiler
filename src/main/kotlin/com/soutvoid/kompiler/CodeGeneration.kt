@@ -149,11 +149,87 @@ fun Expression.push(methodVisitor: MethodVisitor) {
         is LessOrEqualsExpression -> push(methodVisitor)
         is ArrayInit -> push(methodVisitor)
         is ArrayAccess -> push(methodVisitor)
+        is Range -> push(methodVisitor)
         else -> throw UnsupportedOperationException()
     }
     ifNotNull(type, castTo) { from, to ->
         methodVisitor.visitInsn(getCastOpcode(from, to))
     }
+}
+
+fun Range.push(methodVisitor: MethodVisitor) {
+    endInclusive.push(methodVisitor)
+    start.push(methodVisitor)
+    methodVisitor.visitInsn(getOpcode(ISUB, start.type!!.apply {}))
+    start.push(methodVisitor)
+    endInclusive.push(methodVisitor)
+    var startLess = Label()
+    methodVisitor.visitJumpInsn(IF_ICMPLT, startLess)
+    methodVisitor.visitInsn(INEG)
+    methodVisitor.visitLabel(startLess)
+    methodVisitor.visitLdcInsn(1)
+    methodVisitor.visitInsn(IADD)
+    methodVisitor.visitIntInsn(NEWARRAY, (type as NestedType).innerType.getAtype())
+
+    val valueIndex = closestParentIs<ContainsIndexes>()?.maxIndex() ?: 1
+    val index = closestParentIs<ContainsIndexes>()?.maxIndex()?.plus(1) ?: 2
+
+    start.push(methodVisitor)
+    methodVisitor.visitVarInsn(ISTORE, valueIndex)
+    methodVisitor.visitLdcInsn(0)
+    methodVisitor.visitVarInsn(ISTORE, index)
+    val beforeLoop = Label()
+    val afterLoop = Label()
+    methodVisitor.visitLabel(beforeLoop)
+    methodVisitor.visitVarInsn(ILOAD, valueIndex)
+    endInclusive.push(methodVisitor)
+
+    methodVisitor.visitLdcInsn(1)
+    start.push(methodVisitor)
+    endInclusive.push(methodVisitor)
+    startLess = Label()
+    val afterIf = Label()
+    methodVisitor.visitJumpInsn(IF_ICMPLT, startLess)
+    methodVisitor.visitInsn(ISUB)
+    methodVisitor.visitJumpInsn(GOTO, afterIf)
+    methodVisitor.visitLabel(startLess)
+    methodVisitor.visitInsn(IADD)
+    methodVisitor.visitLabel(afterIf)
+
+    methodVisitor.visitJumpInsn(IF_ICMPEQ, afterLoop)
+    //load value to array
+    methodVisitor.visitInsn(DUP)
+    methodVisitor.visitVarInsn(ILOAD, index)
+    methodVisitor.visitVarInsn(ILOAD, valueIndex)
+    methodVisitor.visitInsn(IASTORE)
+    //increment index
+    methodVisitor.visitVarInsn(ILOAD, index)
+    methodVisitor.visitLdcInsn(1)
+    methodVisitor.visitInsn(IADD)
+    methodVisitor.visitVarInsn(ISTORE, index)
+
+    //increment/decrement value
+    val increment = Label()
+    val decrement = Label()
+    start.push(methodVisitor)
+    endInclusive.push(methodVisitor)
+    methodVisitor.visitJumpInsn(IF_ICMPGT, decrement)
+    methodVisitor.visitVarInsn(ILOAD, valueIndex)
+    methodVisitor.visitLdcInsn(1)
+    methodVisitor.visitInsn(IADD)
+    methodVisitor.visitVarInsn(ISTORE, valueIndex)
+    methodVisitor.visitJumpInsn(GOTO, beforeLoop)
+
+    methodVisitor.visitLabel(decrement)
+    methodVisitor.visitVarInsn(ILOAD, valueIndex)
+    methodVisitor.visitLdcInsn(1)
+    methodVisitor.visitInsn(ISUB)
+    methodVisitor.visitVarInsn(ISTORE, valueIndex)
+    methodVisitor.visitJumpInsn(GOTO, beforeLoop)
+
+
+    methodVisitor.visitLabel(afterLoop)
+
 }
 
 fun ArrayAccess.push(methodVisitor: MethodVisitor) {

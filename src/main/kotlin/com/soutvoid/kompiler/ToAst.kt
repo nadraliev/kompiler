@@ -109,8 +109,8 @@ fun ExpressionContext.toAst(): Expression = when (this) {
     is ArrayAccessContext -> ArrayAccess(arrayAccessExpr().identifier().text,
             arrayAccessExpr().expression().toAst(),
             considerPosition()).fillInParents()
-    is RangeContext -> Range(rangeExpression().IntegerLiteral(0).text.toInt(),
-            rangeExpression().IntegerLiteral(1).text.toInt(),
+    is RangeContext -> Range(expression(0).toAst(),
+            expression(1).toAst(),
             considerPosition()).fillInParents()
     else -> throw UnsupportedOperationException(this.javaClass.canonicalName)
 }

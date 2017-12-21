@@ -125,7 +125,12 @@ fun ArrayAccess.analyze() {
 }
 
 fun Range.analyze() {
-    //nothing to analyze
+    val startType = start.getType()
+    val endType = endInclusive.getType()
+    if (startType != IntType || endType != IntType)
+        printRangeTypeError(position.startLine, position.startIndexInLine, startType)
+    if (startType != endType)
+        printTypeMismatchError(position.startLine, position.startIndexInLine, startType, endType)
 }
 
 fun Comparison.analyze() {
@@ -249,7 +254,7 @@ fun Expression.exploreType(): Type? = when (this) {
     is VarReference -> exploreType()
     is ArrayInit -> ArrayType(innerType, position, parent)
     is ArrayAccess -> exploreType()
-    is Range -> RangeType(IntType)
+    is Range -> start.getType()?.let { RangeType(it) }
     is EqualsExpression, is NotEqualsExpression, is LessExpression, is GreaterExpression, is LessOrEqualsExpression, is GreaterOrEqualsExpression -> BooleanType
     is Multiplication -> resolveType(left, right, left.exploreType(), right.exploreType())
     is Division -> resolveType(left, right, left.exploreType(), right.exploreType())

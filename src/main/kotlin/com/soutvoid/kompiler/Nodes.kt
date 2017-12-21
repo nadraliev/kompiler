@@ -144,6 +144,7 @@ data class ArrayType(override var innerType: Type, override var position: Positi
     override fun name(): String = "Array<${innerType.name()}>"
     override fun equals(other: Any?): Boolean =
             other?.safecast(this::class)?.innerType == innerType
+            || (other is RangeType && innerType == other.innerType)
 }
 
 
@@ -199,14 +200,14 @@ data class ArrayAccess(var arrayName: String,
 }
 
 //---Range
-data class Range(var start: Int,
-                 var endInclusive: Int,
+data class Range(var start: Expression,
+                 var endInclusive: Expression,
                  override var position: Position,
                  override var parent: Node? = null,
                  override var castTo: Type? = null,
                  override var type: Type? = null) : Expression() {
-    override fun children(): MutableList<out PrintableTreeNode> = mutableListOf()
-    override fun name(): String = "$start..$endInclusive${typeOrBlank()}${castToOrBlank()}"
+    override fun children(): MutableList<out PrintableTreeNode> = mutableListOf(start, endInclusive)
+    override fun name(): String = "Range ${typeOrBlank()}${castToOrBlank()}"
 }
 
 

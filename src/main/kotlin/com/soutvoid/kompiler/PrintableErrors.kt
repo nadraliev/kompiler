@@ -51,3 +51,7 @@ fun printJavaFunctionAlreadyExists(line: Int, charInLine: Int, funcName: String)
 fun printArraySizeError(line: Int, charInLine: Int, arrName: String) {
     printlnError("Array size must be integer more than 0. $arrName at $line:$charInLine")
 }
+
+fun printRangeTypeError(line: Int, charInLine: Int, type: Type?) {
+    printlnError("Range cannot be of type ${type?.name()}. At $line:$charInLine")
+}

@@ -1,5 +1,6 @@
 var field: Array<Int> = Array<Int>(3)
 var fieldNum: Int = 1
+var range: Array<Int> = 1..24
 
 fun main(args: Array<String>) {
     var arr: Array<String> = Array<String>(3)
@@ -14,6 +15,12 @@ fun main(args: Array<String>) {
     field[1] = 4
     fieldNum = 2
     println(concat("Global field is ", toString(fieldNum)))
+
+    i = 0
+    while (i < size(range)) {
+            println(range[i])
+            i = i + 1
+        }
 }
 
 fun factorial(num: Int): Int {
