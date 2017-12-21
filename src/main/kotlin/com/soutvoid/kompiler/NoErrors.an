@@ -2,4 +2,9 @@ fun main(args: Array<String>) {
     var arr: Array<String> = Array<String>(3)
     arr[0] = "shit"
     println(-1.5)
+    var i: Int = 0
+    while (i < size(arr)) {
+        println(i)
+        i = i + 1
+    }
 }

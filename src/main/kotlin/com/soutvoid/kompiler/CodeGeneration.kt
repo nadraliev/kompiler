@@ -70,8 +70,20 @@ fun Statement.visit(methodVisitor: MethodVisitor) {
         is SimpleAssignment -> visit(methodVisitor)
         is IfStatement -> visit(methodVisitor)
         is ArrayAssignment -> visit(methodVisitor)
+        is WhileLoop -> visit(methodVisitor)
         else -> throw UnsupportedOperationException()
     }
+}
+
+fun WhileLoop.visit(methodVisitor: MethodVisitor) {
+    val beforeLoop = Label()
+    val afterLoop = Label()
+    methodVisitor.visitLabel(beforeLoop)
+    factor.push(methodVisitor)
+    methodVisitor.visitJumpInsn(IFEQ, afterLoop)
+    statements.forEach { it.visit(methodVisitor) }
+    methodVisitor.visitJumpInsn(GOTO, beforeLoop)
+    methodVisitor.visitLabel(afterLoop)
 }
 
 fun ArrayAssignment.visit(methodVisitor: MethodVisitor) {
