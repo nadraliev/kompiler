@@ -7,7 +7,7 @@ interface Node : PrintableTreeNode {
     var position: Position
 }
 
-interface ContainsIndexes {
+interface ContainsIndexes: Node {
     var vars: MutableMap<String, Int>
 }
 

@@ -1,5 +1,7 @@
 fun main(args: Array<String>) {
-var dr: Double = 1.5 + 1
-var str: String = concat("Value is ", toString(dr))
+var dr: Int = 2
+
+var strtr: Int = 1
+var str: String = toString(dr)
 println(str)
 }

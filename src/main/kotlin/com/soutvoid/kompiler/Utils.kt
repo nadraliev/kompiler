@@ -186,3 +186,14 @@ fun Boolean.getInt(): Int {
     return if (this) 1
         else 0
 }
+
+fun findIndex(varName: String, node: Node): Int {
+    var result = -1
+    var indexedNode = node.closestParentIs<ContainsIndexes>()
+    while (indexedNode != null) {
+        result = indexedNode.vars.getOrDefault(varName, -1)
+        if (result != -1) return result
+        indexedNode = indexedNode.closestParentIs<ContainsIndexes>()
+    }
+    return result
+}

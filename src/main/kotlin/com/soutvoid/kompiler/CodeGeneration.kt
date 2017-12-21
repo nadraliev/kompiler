@@ -48,7 +48,7 @@ fun FunctionDeclaration.visitMethod(classWriter: ClassWriter, access: Int) {
     statements?.forEach { it.visit(methodVisitor) }
     returnExpression?.visit(methodVisitor)
     methodVisitor.visitInsn(RETURN)
-    methodVisitor.visitMaxs(-1,-1)
+    methodVisitor.visitMaxs(5,5)
     methodVisitor.visitEnd()
 }
 
@@ -67,13 +67,28 @@ fun Statement.visit(methodVisitor: MethodVisitor) {
     when(this) {
         is Expression -> push(methodVisitor)
         is VarDeclaration -> visitLocalVar(methodVisitor)
+        is SimpleAssignment -> visit(methodVisitor)
         else -> throw UnsupportedOperationException()
     }
 }
 
+fun SimpleAssignment.visit(methodVisitor: MethodVisitor) {
+    value.push(methodVisitor)
+    val index = findIndex(varName, this)
+    val type = findVarDeclaration(varName)!!.type!!.apply {}
+    if (index != -1) {
+        methodVisitor.visitVarInsn(getOpcode(ISTORE, type), index)
+    } else
+        storeToLocalVar(methodVisitor)
+}
+
+fun SimpleAssignment.storeToLocalVar(methodVisitor: MethodVisitor) {
+    //TODO implement
+}
+
 fun VarDeclaration.visitLocalVar(methodVisitor: MethodVisitor) {
     value.push(methodVisitor)
-    val index = closestParentIs<ContainsIndexes>()!!.vars.getValue(varName)
+    val index = findIndex(varName, this)
     methodVisitor.visitVarInsn(getOpcode(ISTORE, type!!.apply {}), index)
 }
 
@@ -153,9 +168,9 @@ fun LessOrEqualsExpression.push(methodVisitor: MethodVisitor) {
 }
 
 fun VarReference.push(methodVisitor: MethodVisitor) {
-    val index = closestParentIs<ContainsIndexes>()?.vars?.getValue(varName)
+    val index = findIndex(varName, this)
     val type = findVarDeclaration(varName)!!.type!!.apply {}
-    if (index != null) {
+    if (index != -1) {
         methodVisitor.visitVarInsn(getOpcode(ILOAD, type), index)
     } else pushGlobalVar(methodVisitor)
 }
@@ -177,6 +192,7 @@ fun FunctionCall.pushJavaFuncCall(methodVisitor: MethodVisitor, declaration: Fun
             val className = annotationValue.value.substringBefore(".")
             val funcName = annotationValue.value.substringAfter(".")
             funcCallParams.forEach { it.push(methodVisitor) }
+            val jvm = declaration.getJvmDescription()
             methodVisitor.visitMethodInsn(INVOKESTATIC, className, funcName, declaration.getJvmDescription(), false)
         }
     }
@@ -187,7 +203,7 @@ fun Type.getDescriptor(): String = when(this) {
     is DoubleType -> "D"
     is UnitType -> "V"
     is BooleanType -> "Z"
-    is StringType -> org.objectweb.asm.Type.getDescriptor(String::class.java)
+    is StringType -> "Ljava/lang/String;"
     is ArrayType -> getDescriptor()
     else -> throw UnsupportedOperationException()
 }
