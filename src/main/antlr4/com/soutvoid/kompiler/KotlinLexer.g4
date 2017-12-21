@@ -16,6 +16,7 @@ TYPE_String: 'String';
 TYPE_Array: 'Array';
 
 KEYWORD_if: 'if';
+KEYWORD_else: 'else';
 
 KEYWORD_while: 'while';
 KEYWORD_for: 'for';

@@ -76,9 +76,13 @@ fun Statement.visit(methodVisitor: MethodVisitor) {
 fun IfStatement.visit(methodVisitor: MethodVisitor) {
     expression.push(methodVisitor)
     val notTrue = Label()
+    val isTrue = Label()
     methodVisitor.visitJumpInsn(IFEQ, notTrue)
     statements.forEach { it.visit(methodVisitor) }
+    methodVisitor.visitJumpInsn(GOTO, isTrue)
     methodVisitor.visitLabel(notTrue)
+    elseStatements.forEach { it.visit(methodVisitor) }
+    methodVisitor.visitLabel(isTrue)
 }
 
 fun SimpleAssignment.visit(methodVisitor: MethodVisitor) {

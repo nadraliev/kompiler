@@ -210,6 +210,8 @@ fun IfStatement.analyze() {
         printTypeMismatchError(expression.position.startLine, expression.position.startIndexInLine, BooleanType, actualType)
     statements.forEach { it.analyze() }
     statements.checkForDuplicateVarDeclarations()
+    elseStatements.forEach { it.analyze() }
+    elseStatements.checkForDuplicateVarDeclarations()
 }
 
 fun WhileLoop.analyze() {

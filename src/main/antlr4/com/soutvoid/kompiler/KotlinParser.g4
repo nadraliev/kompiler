@@ -108,8 +108,11 @@ functionCall
 
 ifSt
     : 'if' '(' expression ')'
-    (statement
-    | block)
+    (mainSt=statement
+    | mainBlock=block)
+    ('else'
+    (elseSt=statement
+    | elseBlock=block))?
     ;
 
 block

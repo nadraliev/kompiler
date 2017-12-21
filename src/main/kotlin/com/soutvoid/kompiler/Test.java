@@ -7,6 +7,8 @@ public class Test {
         double gf = 4.5 + 1.5;
         if (g == gf) {
             int df = 1;
+        } else {
+            int ewre = 2;
         }
     }
 

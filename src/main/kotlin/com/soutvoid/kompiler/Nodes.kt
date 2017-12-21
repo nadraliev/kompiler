@@ -388,9 +388,11 @@ data class ArrayAssignment(var arrayElement: ArrayAccess,
 
 data class IfStatement(var expression: Expression,
                        var statements: List<Statement>,
+                       var elseStatements: List<Statement>,
                        override var position: Position,
                        override var parent: Node? = null) : Statement {
-    override fun children(): MutableList<out PrintableTreeNode> = (mutableListOf(expression) join statements).map { it as Node }.toMutableList()
+    override fun children(): MutableList<out PrintableTreeNode> = (mutableListOf(expression)
+            join statements join elseStatements).map { it as Node }.toMutableList()
     override fun name(): String = "if"
 }
 

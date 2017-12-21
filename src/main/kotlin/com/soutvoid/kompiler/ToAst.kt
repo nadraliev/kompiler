@@ -142,5 +142,6 @@ fun BinaryOperationContext.toAst(): Expression = when (operator.text) {
 
 fun IfStContext.toAst(): Statement = IfStatement(
         expression().toAst(),
-        block()?.statements()?.statement()?.map { it.toAst() } ?: listOf(statement().toAst()),
+        mainBlock?.statements()?.statement()?.map { it.toAst() } ?: listOf(mainSt.toAst()),
+        elseBlock?.statements()?.statement()?.map { it.toAst() } ?: listOfNotNull(elseSt?.toAst()),
         considerPosition()).fillInParents()

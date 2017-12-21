@@ -1,8 +1,7 @@
 fun main(args: Array<String>) {
 if (1 == 2) {
     println("shit")
-}
-if (1 != 2) {
+} else {
     println("not shit")
 }
 
