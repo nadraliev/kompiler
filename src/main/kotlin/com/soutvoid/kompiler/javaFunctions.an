@@ -24,3 +24,15 @@ fun toString(value: Boolean): String {return ""}
 
 @JavaFunction("JavaFunctions.concat")
 fun concat(base: String, add: String): String {return ""}
+
+@JavaFunction("JavaFunctions.size")
+fun size(arr: Array<String>): Int {return 0}
+
+@JavaFunction("JavaFunctions.size")
+fun size(arr: Array<Int>): Int {return 0}
+
+@JavaFunction("JavaFunctions.size")
+fun size(arr: Array<Double>): Int {return 0}
+
+@JavaFunction("JavaFunctions.size")
+fun size(arr: Array<Boolean>): Int {return 0}

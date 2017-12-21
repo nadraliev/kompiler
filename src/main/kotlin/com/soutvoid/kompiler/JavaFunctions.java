@@ -29,4 +29,12 @@ public class JavaFunctions {
 
     public static String concat(String base, String addition) {return base.concat(addition);}
 
+    public static int size(String[] arr) {return arr.length;}
+
+    public static int size(int[] arr) {return arr.length;}
+
+    public static int size(boolean[] arr) {return arr.length;}
+
+    public static int size(double[] arr) {return arr.length;}
+
 }

@@ -69,8 +69,24 @@ fun Statement.visit(methodVisitor: MethodVisitor) {
         is VarDeclaration -> visitLocalVar(methodVisitor)
         is SimpleAssignment -> visit(methodVisitor)
         is IfStatement -> visit(methodVisitor)
+        is ArrayAssignment -> visit(methodVisitor)
         else -> throw UnsupportedOperationException()
     }
+}
+
+fun ArrayAssignment.visit(methodVisitor: MethodVisitor) {
+    val index = findIndex(arrayElement.arrayName, this)
+    val type = (findVarDeclaration(arrayElement.arrayName)!!.type as ArrayType).innerType
+    if (index != -1) {
+        methodVisitor.visitVarInsn(ALOAD, index)
+        arrayElement.index.push(methodVisitor)
+        value.push(methodVisitor)
+        methodVisitor.visitInsn(getArrayOpode(IASTORE, type))
+    } else storeToLocalVar(methodVisitor)
+}
+
+fun ArrayAssignment.storeToLocalVar(methodVisitor: MethodVisitor) {
+    //TODO implement
 }
 
 fun IfStatement.visit(methodVisitor: MethodVisitor) {
@@ -125,10 +141,40 @@ fun Expression.push(methodVisitor: MethodVisitor) {
         is GreaterOrEqualsExpression -> push(methodVisitor)
         is LessExpression -> push(methodVisitor)
         is LessOrEqualsExpression -> push(methodVisitor)
+        is ArrayInit -> push(methodVisitor)
+        is ArrayAccess -> push(methodVisitor)
         else -> throw UnsupportedOperationException()
     }
     ifNotNull(type, castTo) { from, to ->
         methodVisitor.visitInsn(getCastOpcode(from, to))
+    }
+}
+
+fun ArrayAccess.push(methodVisitor: MethodVisitor) {
+    val varIndex = findIndex(arrayName, this)
+    val type = (findVarDeclaration(arrayName)!!.type as ArrayType).innerType
+    if (varIndex != -1) {
+        methodVisitor.visitVarInsn(ALOAD, varIndex)
+        index.push(methodVisitor)
+        methodVisitor.visitInsn(getArrayOpode(IALOAD, type))
+    } else pushLocalVar(methodVisitor)
+}
+
+fun ArrayAccess.pushLocalVar(methodVisitor: MethodVisitor) {
+    //TODO implement
+}
+
+fun ArrayInit.push(methodVisitor: MethodVisitor) {
+    methodVisitor.visitLdcInsn(size)
+    if (innerType is ArrayType) {
+        //TODO nested arrays
+    } else {
+        if (innerType is StringType)
+            methodVisitor.visitTypeInsn(ANEWARRAY,
+                    (innerType as StringType).getAtype())
+        else {
+            methodVisitor.visitIntInsn(NEWARRAY, innerType.getAtype())
+        }
     }
 }
 
@@ -322,7 +368,7 @@ fun getOpcode(intOpcode: Int, type: Type): Int = when(type) {
     is IntType -> intOpcode
     is DoubleType -> getDoubleOpcode(intOpcode)
     is BooleanType -> getBooleanOpcode(intOpcode)
-    is StringType -> getObjectReferenceOpcode(intOpcode)
+    is StringType, is ArrayType -> getObjectReferenceOpcode(intOpcode)
     else -> throw UnsupportedOperationException()
 }
 
@@ -342,14 +388,42 @@ fun getDoubleOpcode(intOpcode: Int): Int = when(intOpcode) {
     else -> throw UnsupportedOperationException()
 }
 
-fun getBooleanOpcode(intOpcode: Int): Int = when(intOpcode) {
-    ILOAD -> ILOAD
-    ISTORE -> ISTORE
-    else -> throw UnsupportedOperationException()
-}
+fun getBooleanOpcode(intOpcode: Int): Int = intOpcode
 
 fun getCastOpcode(from: Type, to: Type): Int = when(from to to) {
     IntType to DoubleType -> I2D
     DoubleType to IntType -> D2I
     else -> throw UnsupportedOperationException()
 }
+
+fun getArrayOpode(intOpcode: Int, type: Type): Int = when(type) {
+    is IntType -> intOpcode
+    is DoubleType -> getDoubleArrayOpcode(intOpcode)
+    is BooleanType -> getBooleanArrayOpcode(intOpcode)
+    is StringType, is ArrayType -> getObjectReferenceArrayOpcode(intOpcode)
+    else -> throw UnsupportedOperationException()
+}
+
+fun getObjectReferenceArrayOpcode(intOpcode: Int): Int = when(intOpcode) {
+    IALOAD -> AALOAD
+    IASTORE -> AASTORE
+    else -> throw UnsupportedOperationException()
+}
+
+fun getDoubleArrayOpcode(intOpcode: Int): Int = when(intOpcode) {
+    IALOAD -> DALOAD
+    IASTORE -> DASTORE
+    else -> throw UnsupportedOperationException()
+}
+
+fun getBooleanArrayOpcode(intOpcode: Int): Int = intOpcode
+
+fun Type.getAtype(): Int = when(this) {
+    is IntType -> T_INT
+    is DoubleType -> T_DOUBLE
+    is BooleanType -> T_BOOLEAN
+    else -> throw UnsupportedOperationException()
+}
+
+fun StringType.getAtype(): String = "java/lang/String"
+fun ArrayType.getAtype(): String = getDescriptor()

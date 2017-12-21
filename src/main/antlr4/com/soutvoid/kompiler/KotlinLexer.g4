@@ -32,11 +32,11 @@ DIGIT
 
 
 IntegerLiteral
-    : ('0' | '1' .. '9' DIGIT*)
+    : SUB? ('0' | '1' .. '9' DIGIT*)
     ;
 
 DoubleLiteral
-    : (IntegerLiteral'.'IntegerLiteral);
+    : (IntegerLiteral'.'('0' | '1' .. '9' DIGIT*));
 
 BooleanLiteral
     : 'true'

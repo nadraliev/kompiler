@@ -1,8 +1,5 @@
 fun main(args: Array<String>) {
-if (1 == 2) {
-    println("shit")
-} else {
-    println("not shit")
-}
-
+    var arr: Array<String> = Array<String>(3)
+    arr[0] = "shit"
+    println(-1.5)
 }

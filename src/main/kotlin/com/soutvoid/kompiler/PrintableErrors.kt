@@ -47,3 +47,7 @@ fun printNoSuchAnnotationError(line: Int, charInLine: Int, annotationName: Strin
 fun printJavaFunctionAlreadyExists(line: Int, charInLine: Int, funcName: String) {
     printlnError("Function $funcName at $line:$charInLine already exists in java functions")
 }
+
+fun printArraySizeError(line: Int, charInLine: Int, arrName: String) {
+    printlnError("Array size must be integer more than 0. $arrName at $line:$charInLine")
+}

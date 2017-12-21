@@ -108,7 +108,8 @@ fun VarReference.analyze() {
 }
 
 fun ArrayInit.analyze() {
-    //nothing to analyze
+    if (size < 1)
+        printArraySizeError(position.startLine, position.startIndexInLine, name())
 }
 
 fun ArrayAccess.analyze() {
@@ -197,7 +198,7 @@ fun SimpleAssignment.analyze() {
 }
 
 fun ArrayAssignment.analyze() {
-    val expectedType = getVisibleNodesIs<VarDeclaration>().find { it.varName == arrayElement.arrayName }?.type
+    val expectedType = (findVarDeclaration(arrayElement.arrayName)?.type as? ArrayType)?.innerType
     val actualType = value.getType()
     if (expectedType != actualType)
         printTypeMismatchError(position.startLine, position.startIndexInLine, expectedType, actualType)
