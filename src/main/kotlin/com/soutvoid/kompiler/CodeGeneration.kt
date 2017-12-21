@@ -106,6 +106,12 @@ fun Expression.push(methodVisitor: MethodVisitor) {
         is Subtraction -> push(methodVisitor)
         is Division -> push(methodVisitor)
         is Multiplication -> push(methodVisitor)
+        is EqualsExpression -> push(methodVisitor)
+        is NotEqualsExpression -> push(methodVisitor)
+        is GreaterExpression -> push(methodVisitor)
+        is GreaterOrEqualsExpression -> push(methodVisitor)
+        is LessExpression -> push(methodVisitor)
+        is LessOrEqualsExpression -> push(methodVisitor)
         else -> throw UnsupportedOperationException()
     }
     ifNotNull(type, castTo) { from, to ->
@@ -140,31 +146,109 @@ fun Multiplication.push(methodVisitor: MethodVisitor) {
 fun EqualsExpression.push(methodVisitor: MethodVisitor) {
     left.push(methodVisitor)
     right.push(methodVisitor)
+    val notEqual = Label()
+    val equal = Label()
+    if (left.type is DoubleType || right.type is DoubleType) {
+        methodVisitor.visitInsn(DCMPL)
+        methodVisitor.visitJumpInsn(IFNE, notEqual)
+    } else {
+        methodVisitor.visitJumpInsn(IF_ICMPNE, notEqual)
+    }
+    methodVisitor.visitLdcInsn(1)
+    methodVisitor.visitJumpInsn(GOTO, equal)
+    methodVisitor.visitLabel(notEqual)
+    methodVisitor.visitLdcInsn(0)
+    methodVisitor.visitLabel(equal)
 }
 
 fun NotEqualsExpression.push(methodVisitor: MethodVisitor) {
     left.push(methodVisitor)
     right.push(methodVisitor)
+    val notTrue = Label()
+    val isTrue = Label()
+    if (left.type is DoubleType || right.type is DoubleType) {
+        methodVisitor.visitInsn(DCMPL)
+        methodVisitor.visitJumpInsn(IFEQ, notTrue)
+    } else {
+        methodVisitor.visitJumpInsn(IF_ICMPEQ, notTrue)
+    }
+    methodVisitor.visitLdcInsn(1)
+    methodVisitor.visitJumpInsn(GOTO, isTrue)
+    methodVisitor.visitLabel(notTrue)
+    methodVisitor.visitLdcInsn(0)
+    methodVisitor.visitLabel(isTrue)
 }
 
 fun GreaterExpression.push(methodVisitor: MethodVisitor) {
     left.push(methodVisitor)
     right.push(methodVisitor)
+    val exprIsTrue = Label()
+    val exprIsNotTrue = Label()
+    if (left.type is DoubleType || right.type is DoubleType) {
+        methodVisitor.visitInsn(DCMPL)
+        methodVisitor.visitJumpInsn(IFLE, exprIsNotTrue)
+    } else {
+        methodVisitor.visitJumpInsn(IF_ICMPLE, exprIsNotTrue)
+    }
+    methodVisitor.visitLdcInsn(1)
+    methodVisitor.visitJumpInsn(GOTO, exprIsTrue)
+    methodVisitor.visitLabel(exprIsNotTrue)
+    methodVisitor.visitLdcInsn(0)
+    methodVisitor.visitLabel(exprIsTrue)
 }
 
 fun GreaterOrEqualsExpression.push(methodVisitor: MethodVisitor) {
     left.push(methodVisitor)
     right.push(methodVisitor)
+    val exprIsTrue = Label()
+    val exprIsNotTrue = Label()
+    if (left.type is DoubleType || right.type is DoubleType) {
+        methodVisitor.visitInsn(DCMPL)
+        methodVisitor.visitJumpInsn(IFLT, exprIsNotTrue)
+    } else {
+        methodVisitor.visitJumpInsn(IF_ICMPLT, exprIsNotTrue)
+    }
+    methodVisitor.visitLdcInsn(1)
+    methodVisitor.visitJumpInsn(GOTO, exprIsTrue)
+    methodVisitor.visitLabel(exprIsNotTrue)
+    methodVisitor.visitLdcInsn(0)
+    methodVisitor.visitLabel(exprIsTrue)
 }
 
 fun LessExpression.push(methodVisitor: MethodVisitor) {
     left.push(methodVisitor)
     right.push(methodVisitor)
+    val exprIsTrue = Label()
+    val exprIsNotTrue = Label()
+    if (left.type is DoubleType || right.type is DoubleType) {
+        methodVisitor.visitInsn(DCMPL)
+        methodVisitor.visitJumpInsn(IFGE, exprIsNotTrue)
+    } else {
+        methodVisitor.visitJumpInsn(IF_ICMPGE, exprIsNotTrue)
+    }
+    methodVisitor.visitLdcInsn(1)
+    methodVisitor.visitJumpInsn(GOTO, exprIsTrue)
+    methodVisitor.visitLabel(exprIsNotTrue)
+    methodVisitor.visitLdcInsn(0)
+    methodVisitor.visitLabel(exprIsTrue)
 }
 
 fun LessOrEqualsExpression.push(methodVisitor: MethodVisitor) {
     left.push(methodVisitor)
     right.push(methodVisitor)
+    val exprIsTrue = Label()
+    val exprIsNotTrue = Label()
+    if (left.type is DoubleType || right.type is DoubleType) {
+        methodVisitor.visitInsn(DCMPL)
+        methodVisitor.visitJumpInsn(IFGT, exprIsNotTrue)
+    } else {
+        methodVisitor.visitJumpInsn(IF_ICMPGT, exprIsNotTrue)
+    }
+    methodVisitor.visitLdcInsn(1)
+    methodVisitor.visitJumpInsn(GOTO, exprIsTrue)
+    methodVisitor.visitLabel(exprIsNotTrue)
+    methodVisitor.visitLdcInsn(0)
+    methodVisitor.visitLabel(exprIsTrue)
 }
 
 fun VarReference.push(methodVisitor: MethodVisitor) {

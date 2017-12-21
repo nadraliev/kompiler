@@ -1,8 +1,15 @@
 fun main(args: Array<String>) {
-var dr: Int = 2
+var eq: Boolean = 2 == 1
+var notEq: Boolean = 2 != 1
+var gt: Boolean = 2 > 1
+var ge: Boolean = 2 >= 1
+var lt: Boolean = 2 < 1
+var le: Boolean = 2 <= 1
+println(eq)
+println(notEq)
+println(gt)
+println(ge)
+println(lt)
+println(le)
 
-var strtr: Double = 1.5
-var strtrt: Double = 2.0
-var str: String = toString(strtr)
-println(str)
 }
