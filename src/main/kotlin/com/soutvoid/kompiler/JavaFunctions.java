@@ -23,7 +23,7 @@ public class JavaFunctions {
 
     public static String toString(int val) {return String.valueOf(val);}
 
-    public static String toString(double val) {return String.valueOf(val);}
+    public static String toString(double val) {return Double.toString((double) val);}
 
     public static String toString(boolean val) {return String.valueOf(val);}
 

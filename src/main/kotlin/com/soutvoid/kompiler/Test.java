@@ -2,12 +2,11 @@ package com.soutvoid.kompiler;
 
 public class Test {
 
-    public static void func(int a) {
-        double var1 = 1.5D + (double)1;
-        var1 = 3.0D;
-        String var2 = "sads";
-        String var3 = "Value is " + var1;
-        System.out.println(var3);
+    public static void func(int a, int b, int c) {
+        int f =1;
+        int df= 2;
+        double sfd= 3;
+        double sg = 344;
     }
 
 }

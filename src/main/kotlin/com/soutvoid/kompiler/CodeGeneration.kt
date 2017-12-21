@@ -48,7 +48,7 @@ fun FunctionDeclaration.visitMethod(classWriter: ClassWriter, access: Int) {
     statements?.forEach { it.visit(methodVisitor) }
     returnExpression?.visit(methodVisitor)
     methodVisitor.visitInsn(RETURN)
-    methodVisitor.visitMaxs(5,5)
+    methodVisitor.visitMaxs(-1,-1)
     methodVisitor.visitEnd()
 }
 
