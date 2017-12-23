@@ -88,9 +88,23 @@ fun Expression.analyze() {
         is Division -> analyze()
         is Addition -> analyze()
         is Subtraction -> analyze()
+        is Increment -> analyze()
+        is Decrement -> analyze()
         is IntLit, is DoubleLit, is BooleanLit, is StringLit -> { }//nothing to analyze here
         else -> throw UnsupportedOperationException(this.javaClass.canonicalName)
     }
+}
+
+fun Increment.analyze() {
+    if (expression.getType() !is IntType)
+        printOperationDoesNotSupportError(position.startLine, position.startIndexInLine,
+                name(), expression.getType())
+}
+
+fun Decrement.analyze() {
+    if (expression.getType() !is IntType)
+        printOperationDoesNotSupportError(position.startLine, position.startIndexInLine,
+                name(), expression.getType())
 }
 
 fun FunctionCall.analyze() {
@@ -264,6 +278,8 @@ fun Expression.exploreType(): Type? = when (this) {
     is DoubleLit -> DoubleType
     is BooleanLit -> BooleanType
     is StringLit -> StringType
+    is Increment -> expression.getType()
+    is Decrement -> expression.getType()
     else -> throw UnsupportedOperationException(this.javaClass.canonicalName)
 }
 

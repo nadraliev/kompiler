@@ -92,6 +92,8 @@ expression
     | arrayInitExpr     #arrayInit
     | arrayAccessExpr   #arrayAccess
     | expression '..' expression   #range
+    | '++'expression    #increment
+    | '--'expression    #decrement
     ;
 
 arrayInitExpr

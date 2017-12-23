@@ -112,6 +112,8 @@ fun ExpressionContext.toAst(): Expression = when (this) {
     is RangeContext -> Range(expression(0).toAst(),
             expression(1).toAst(),
             considerPosition()).fillInParents()
+    is IncrementContext -> Increment(expression().toAst(), considerPosition()).fillInParents()
+    is DecrementContext-> Decrement(expression().toAst(), considerPosition()).fillInParents()
     else -> throw UnsupportedOperationException(this.javaClass.canonicalName)
 }
 

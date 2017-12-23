@@ -210,6 +210,28 @@ data class Range(var start: Expression,
     override fun name(): String = "Range ${typeOrBlank()}${castToOrBlank()}"
 }
 
+//---Increment
+data class Increment(val expression: Expression,
+                     override var position: Position,
+                     override var parent: Node? = null,
+                     override var castTo: Type? = null,
+                     override var type: Type? = null): Expression() {
+    override fun children(): MutableList<out PrintableTreeNode> = mutableListOf(expression)
+
+    override fun name(): String = "++"
+}
+
+//---Decrement
+data class Decrement(val expression: Expression,
+                     override var position: Position,
+                     override var parent: Node? = null,
+                     override var castTo: Type? = null,
+                     override var type: Type? = null): Expression() {
+    override fun children(): MutableList<out PrintableTreeNode> = mutableListOf(expression)
+
+    override fun name(): String = "--"
+}
+
 
 //---Binary expressions
 

@@ -20,8 +20,11 @@ fun main(args: Array<String>) {
     println("Iterate through range using while loop:")
     while (i < size(range)) {
             println(range[i])
-            i = i + 1
+            ++i
     }
+
+    val incr: Int = 0
+    println(++incr)
 
     println("Iterate through range using for loop:")
     for (k in 0..4) {

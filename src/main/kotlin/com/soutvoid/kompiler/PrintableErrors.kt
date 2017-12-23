@@ -20,8 +20,8 @@ fun printIncompatibleTypesError(line: Int, charInLine: Int, type1: Type?, type2:
     printlnError("Incompatible types at $line:$charInLine: ${type1?.name()} and ${type2?.name()}")
 }
 
-fun printOperationDoesNotSupportError(line: Int, charInLine: Int, operation: String, type: Type) {
-    printlnError("Operation $operation does not support ${type.name()}: $line:$charInLine")
+fun printOperationDoesNotSupportError(line: Int, charInLine: Int, operation: String, type: Type?) {
+    printlnError("Operation $operation does not support ${type?.name()}: $line:$charInLine")
 }
 
 fun printUnresolvedReferenceError(line: Int, charInLine: Int, reference: String) {

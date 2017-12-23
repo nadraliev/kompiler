@@ -202,3 +202,6 @@ fun Node.getClassName(): String {
     val classDeclaration = closestParentIs<ClassDeclaration>()
     return classDeclaration?.name ?: closestParentIs<FileNode>()!!.getClassName()
 }
+
+fun Node.isStandaloneStatement(): Boolean =
+        parent !is Expression || parent is FunctionDeclaration

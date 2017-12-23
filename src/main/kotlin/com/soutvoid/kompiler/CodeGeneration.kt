@@ -192,10 +192,38 @@ fun Expression.push(methodVisitor: MethodVisitor) {
         is ArrayInit -> push(methodVisitor)
         is ArrayAccess -> push(methodVisitor)
         is Range -> push(methodVisitor)
+        is Increment -> push(methodVisitor)
+        is Decrement -> push(methodVisitor)
         else -> throw UnsupportedOperationException()
     }
     ifNotNull(type, castTo) { from, to ->
         methodVisitor.visitInsn(getCastOpcode(from, to))
+    }
+}
+
+fun Increment.push(methodVisitor: MethodVisitor) {
+    val type = expression.getType() as Type
+    expression.push(methodVisitor)
+    methodVisitor.visitLdcInsn(1)
+    methodVisitor.visitInsn(getOpcode(IADD, expression.getType() as Type))
+    if (expression is VarReference) {
+        val index = findIndex(expression.varName, this)
+        methodVisitor.visitVarInsn(getOpcode(ISTORE, type), index)
+        if (!isStandaloneStatement())
+            methodVisitor.visitVarInsn(getOpcode(ILOAD, type), index)
+    }
+}
+
+fun Decrement.push(methodVisitor: MethodVisitor) {
+    val type = expression.getType() as Type
+    expression.push(methodVisitor)
+    methodVisitor.visitLdcInsn(1)
+    methodVisitor.visitInsn(getOpcode(ISUB, expression.getType() as Type))
+    if (expression is VarReference) {
+        val index = findIndex(expression.varName, this)
+        methodVisitor.visitVarInsn(getOpcode(ISTORE, type), index)
+        if (!isStandaloneStatement())
+            methodVisitor.visitVarInsn(getOpcode(ILOAD, type), index)
     }
 }
 
