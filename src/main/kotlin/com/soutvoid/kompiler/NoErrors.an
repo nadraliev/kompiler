@@ -17,10 +17,16 @@ fun main(args: Array<String>) {
     println(concat("Global field is ", toString(fieldNum)))
 
     i = 0
+    println("Iterate through range using while loop:")
     while (i < size(range)) {
             println(range[i])
             i = i + 1
-        }
+    }
+
+    println("Iterate through range using for loop:")
+    for (k in 0..4) {
+        println(k)
+    }
 }
 
 fun factorial(num: Int): Int {

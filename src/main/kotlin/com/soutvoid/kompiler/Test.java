@@ -6,6 +6,10 @@ public class Test {
 
     public static void func(int a, int b, int c) {
         int[] sdf = {1, 2, 5};
+        for (int i : sdf) {
+            int fsdf = 1;
+        }
+        int ere = 3;
     }
 
 }

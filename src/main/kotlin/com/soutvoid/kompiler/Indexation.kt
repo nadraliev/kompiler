@@ -24,7 +24,7 @@ fun WhileLoop.indexate(startIndex: Int) {
     statements.filterIsInstance<VarDeclaration>().forEachIndexed { index, varDeclaration ->
         vars.put(varDeclaration.varName, startIndex + index)
         if (varDeclaration.type is DoubleType)
-            vars.put("", startIndex + index)
+            vars.put("", startIndex + index + 1)
     }
     statements.filterIsInstance<WhileLoop>().forEach {
         it.indexate(maxIndex() + 1)
@@ -37,9 +37,9 @@ fun WhileLoop.indexate(startIndex: Int) {
 fun ForLoop.indexate(startIndex: Int) {
     vars.put(iterator.varName, startIndex)
     statements?.filterIsInstance<VarDeclaration>()?.forEachIndexed { index, varDeclaration ->
-        vars.put(varDeclaration.varName, startIndex + index + 1)
+        vars.put(varDeclaration.varName, startIndex + index + 4)
         if (varDeclaration.type is DoubleType)
-            vars.put("", startIndex + index)
+            vars.put("", startIndex + index + 5)
     }
     statements?.filterIsInstance<WhileLoop>()?.forEach {
         it.indexate(maxIndex() + 1)

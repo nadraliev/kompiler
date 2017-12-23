@@ -72,8 +72,50 @@ fun Statement.visit(methodVisitor: MethodVisitor) {
         is IfStatement -> visit(methodVisitor)
         is ArrayAssignment -> visit(methodVisitor)
         is WhileLoop -> visit(methodVisitor)
+        is ForLoop -> visit(methodVisitor)
         else -> throw UnsupportedOperationException()
     }
+}
+
+fun ForLoop.visit(methodVisitor: MethodVisitor) {
+    val iteratorIndex = vars[iterator.varName] as Int
+    val arrayCopyIndex = iteratorIndex + 1
+    val arrayLengthIndex = iteratorIndex + 2
+    val currentIndexIndex = iteratorIndex + 3
+    val afterLoop = Label()
+    val beforeLoop = Label()
+    val iteratorType = iterator.type as Type
+    //copy array
+    iterable.push(methodVisitor)
+    methodVisitor.visitVarInsn(ASTORE, arrayCopyIndex)
+
+    //store array length
+    methodVisitor.visitVarInsn(ALOAD, arrayCopyIndex)
+    methodVisitor.visitInsn(ARRAYLENGTH)
+    methodVisitor.visitVarInsn(ISTORE, arrayLengthIndex)
+
+    //store index
+    methodVisitor.visitLdcInsn(0)
+    methodVisitor.visitVarInsn(ISTORE, currentIndexIndex)
+
+    methodVisitor.visitLabel(beforeLoop)
+    //check if current index is less than arr length
+    methodVisitor.visitVarInsn(ILOAD, currentIndexIndex)
+    methodVisitor.visitVarInsn(ILOAD, arrayLengthIndex)
+    methodVisitor.visitJumpInsn(IF_ICMPGE, afterLoop)
+
+    //load current value
+    methodVisitor.visitVarInsn(ALOAD, arrayCopyIndex)
+    methodVisitor.visitVarInsn(ILOAD, currentIndexIndex)
+    methodVisitor.visitInsn(IALOAD)
+    methodVisitor.visitVarInsn(getOpcode(ISTORE, iteratorType), iteratorIndex)
+
+    statements?.forEach { it.visit(methodVisitor) }
+
+    methodVisitor.visitIincInsn(currentIndexIndex, 1)
+    methodVisitor.visitJumpInsn(GOTO, beforeLoop)
+
+    methodVisitor.visitLabel(afterLoop)
 }
 
 fun WhileLoop.visit(methodVisitor: MethodVisitor) {
