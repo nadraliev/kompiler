@@ -48,17 +48,19 @@ fun FunctionDeclaration.analyze() {
         printExternalWithBodyError(position.startLine, position.startIndexInLine, name)
     annotation?.analyze()
     maybeAddToJavaFunctions()
-    statements?.forEach { it.analyze() }
-    statements?.checkForDuplicateVarDeclarations()
-    getReturnStatements().forEach { returnSt ->
-        returnSt.analyze()
-        val returnExpressionType = returnSt.expression?.getType() ?: UnitType
-        if (returnExpressionType != returnType)
+    if (modificators.filterIsInstance<ExternalModificator>().isEmpty()) {
+        statements?.forEach { it.analyze() }
+        statements?.checkForDuplicateVarDeclarations()
+        getReturnStatements().forEach { returnSt ->
+            returnSt.analyze()
+            val returnExpressionType = returnSt.expression?.getType() ?: UnitType
+            if (returnExpressionType != returnType)
                 printTypeMismatchError(returnSt.position.startLine,
                         returnSt.position.startIndexInLine, returnType, returnExpressionType)
+        }
+        if (getReturnStatements().isEmpty() && returnType != UnitType)
+            printTypeMismatchError(position.startLine, position.startIndexInLine, returnType, UnitType)
     }
-    if (getReturnStatements().isEmpty() && returnType != UnitType)
-        printTypeMismatchError(position.startLine, position.startIndexInLine, returnType, UnitType)
 }
 
 fun FunctionDeclaration.maybeAddToJavaFunctions() {

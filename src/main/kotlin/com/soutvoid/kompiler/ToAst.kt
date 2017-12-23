@@ -125,12 +125,24 @@ fun IdentifierContext.toAst(): VarReference
         = VarReference(SimpleName().text, considerPosition()).fillInParents()
 
 fun LiteralConstantContext.toAst(): Expression = when (this) {
-    is IntLitContext -> IntLit(IntegerLiteral().text, considerPosition()).fillInParents()
-    is DoubleLitContext -> DoubleLit(DoubleLiteral().text, considerPosition()).fillInParents()
+    is IntLitContext -> toAst()
+    is DoubleLitContext -> toAst()
     is BooleanLitContext -> BooleanLit(BooleanLiteral().text, considerPosition()).fillInParents()
     is StringLitContext -> StringLit(StringLiteral().text.drop(1).dropLast(1), considerPosition()).fillInParents()
     else -> throw UnsupportedOperationException(this.javaClass.canonicalName)
 }
+
+fun IntLitContext.toAst(): Expression =
+    if (integerLiteral().minus == null)
+        IntLit(integerLiteral().IntegerLiteral().text, considerPosition()).fillInParents()
+    else
+        IntLit("-"+integerLiteral().IntegerLiteral().text, considerPosition()).fillInParents()
+
+fun DoubleLitContext.toAst(): Expression =
+        if (doubleLiteral().minus == null)
+            DoubleLit(doubleLiteral().DoubleLiteral().text, considerPosition()).fillInParents()
+        else
+            DoubleLit("-"+doubleLiteral().DoubleLiteral().text, considerPosition()).fillInParents()
 
 fun BinaryOperationContext.toAst(): Expression = when (operator.text) {
     "*" -> Multiplication(left.toAst(), right.toAst(), considerPosition()).fillInParents()

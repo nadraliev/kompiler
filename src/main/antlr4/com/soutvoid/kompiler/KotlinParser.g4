@@ -148,10 +148,20 @@ forLoop
     ;
 
 literalConstant
-    : IntegerLiteral    #intLit
-    | DoubleLiteral     #doubleLit
+    : integerLiteral    #intLit
+    | doubleLiteral     #doubleLit
     | BooleanLiteral    #booleanLit
     | StringLiteral     #stringLit
+    ;
+
+integerLiteral
+    : IntegerLiteral
+    | minus='-'IntegerLiteral
+    ;
+
+doubleLiteral
+    : DoubleLiteral
+    | minus='-'DoubleLiteral
     ;
 
 

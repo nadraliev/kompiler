@@ -33,7 +33,7 @@ DIGIT
 
 
 IntegerLiteral
-    : SUB? ('0' | '1' .. '9' DIGIT*)
+    : ('0' | '1' .. '9' DIGIT*)
     ;
 
 DoubleLiteral
