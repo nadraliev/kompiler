@@ -205,3 +205,6 @@ fun Node.getClassName(): String {
 
 fun Node.isStandaloneStatement(): Boolean =
         parent !is Expression || parent is FunctionDeclaration
+
+fun FunctionDeclaration.getReturnStatements(): List<Return> =
+        filterChildrenIs<Return>()

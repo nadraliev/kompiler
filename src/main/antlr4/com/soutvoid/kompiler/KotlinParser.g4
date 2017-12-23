@@ -31,7 +31,7 @@ functionDeclaration
     ;
 
 functionBody
-    : '{' statements ('return' expression)? '}'
+    : '{' statements '}'
     ;
 
 functionParameters
@@ -60,7 +60,11 @@ statement
     | assignment    #assignmentStatement
     | ifSt           #ifStatement
     | loop          #loopStatement
+    | returnStatement   #return
     ;
+
+returnStatement
+    : 'return' expression?;
 
 statements
     : ';'* (statement (';'* statement)*)? ';'*

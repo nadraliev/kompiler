@@ -46,14 +46,15 @@ fun FunctionDeclaration.analyze() {
     maybeAddToJavaFunctions()
     statements?.forEach { it.analyze() }
     statements?.checkForDuplicateVarDeclarations()
-    returnExpression?.analyze()
-    val returnExpressionType = returnExpression?.getType() ?: UnitType
-    if (returnExpression == null && returnType != UnitType)
-        printTypeMismatchError(position.startLine, position.startIndexInLine, returnType, UnitType)
-    returnExpression?.let {
+    getReturnStatements().forEach { returnSt ->
+        returnSt.analyze()
+        val returnExpressionType = returnSt.expression?.getType() ?: UnitType
         if (returnExpressionType != returnType)
-            printTypeMismatchError(it.position.startLine, it.position.startIndexInLine, returnType, returnExpressionType)
+                printTypeMismatchError(returnSt.position.startLine,
+                        returnSt.position.startIndexInLine, returnType, returnExpressionType)
     }
+    if (getReturnStatements().isEmpty() && returnType != UnitType)
+        printTypeMismatchError(position.startLine, position.startIndexInLine, returnType, UnitType)
 }
 
 fun FunctionDeclaration.maybeAddToJavaFunctions() {

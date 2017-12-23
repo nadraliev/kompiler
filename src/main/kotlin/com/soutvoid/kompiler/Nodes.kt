@@ -78,12 +78,11 @@ data class FunctionDeclaration(var name: String,
                                var parameters: List<Parameter>,
                                var returnType: Type,
                                var statements: List<Statement>?,
-                               var returnExpression: Expression?,
                                override var position: Position,
                                override var parent: Node? = null,
                                override var vars: MutableMap<String, Int> = mutableMapOf()) : Node, ContainsIndexes {
     override fun children(): MutableList<out PrintableTreeNode> = (listOf<Statement>() plusNotNull annotation
-            join parameters join statements plusNotNull returnExpression).map { it as Node }.toMutableList()
+            join parameters join statements).map { it as Node }.toMutableList()
     override fun name(): String = "function $name(${parameters.toStringNames()}) : ${returnType.name()}"
     override fun equals(other: Any?): Boolean {
         other.let {
@@ -449,4 +448,14 @@ data class ForLoopIterator(override var varName: String,
                            override var castTo: Type? = null): DeclaresVar, Expression() {
     override fun children(): MutableList<out PrintableTreeNode> = mutableListOf()
     override fun name(): String = "$varName: ${type?.name()}"
+}
+
+
+//------Return
+data class Return(val expression: Expression?,
+                  override var position: Position,
+                  override var parent: Node? = null): Statement {
+    override fun children(): MutableList<out PrintableTreeNode> = listOf<Node>()
+            .plusNotNull(expression).map { it as Node }.toMutableList()
+    override fun name(): String = "return"
 }

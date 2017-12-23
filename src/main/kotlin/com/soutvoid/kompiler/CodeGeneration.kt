@@ -46,8 +46,8 @@ fun FunctionDeclaration.visitMethod(classWriter: ClassWriter, access: Int) {
     methodVisitor.visitCode()
     methodVisitor.visitLabel(start)
     statements?.forEach { it.visit(methodVisitor) }
-    returnExpression?.visit(methodVisitor)
-    methodVisitor.visitInsn(getOpcode(IRETURN, returnType))
+    if (returnType is UnitType)
+        methodVisitor.visitInsn(RETURN)
     methodVisitor.visitMaxs(-1, -1)
     methodVisitor.visitEnd()
 }
@@ -73,8 +73,14 @@ fun Statement.visit(methodVisitor: MethodVisitor) {
         is ArrayAssignment -> visit(methodVisitor)
         is WhileLoop -> visit(methodVisitor)
         is ForLoop -> visit(methodVisitor)
+        is Return -> visit(methodVisitor)
         else -> throw UnsupportedOperationException()
     }
+}
+
+fun Return.visit(methodVisitor: MethodVisitor) {
+    expression?.visit(methodVisitor)
+    methodVisitor.visitInsn(getOpcode(IRETURN, expression?.getType() ?: UnitType))
 }
 
 fun ForLoop.visit(methodVisitor: MethodVisitor) {

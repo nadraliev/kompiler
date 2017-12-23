@@ -32,7 +32,6 @@ fun FunctionDeclarationContext.toAst(): FunctionDeclaration =
                 functionParameters()?.functionParameter()?.map { it.parameter().toAst() } ?: emptyList(),
                 type()?.toAst() ?: UnitType,
                 body?.statements()?.statement()?.map { it.toAst() },
-                body?.expression()?.toAst(),
                 considerPosition()).fillInParents()
 
 fun ParameterContext.toAst(): Parameter =
@@ -53,6 +52,7 @@ fun StatementContext.toAst(): Statement = when (this) {
     is ExpressionStatementContext -> expression().toAst()
     is IfStatementContext -> ifSt().toAst()
     is LoopStatementContext -> loop().toAst()
+    is ReturnContext -> Return(returnStatement().expression()?.toAst(), considerPosition()).fillInParents()
     else -> throw UnsupportedOperationException(this.javaClass.canonicalName)
 }
 
