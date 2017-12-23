@@ -1,82 +1,84 @@
 
 
-fun main(args:Array<String>) {
-
-    var arr: Array<Int> =  Array<Int>(10)
-    println(" mass sort\nEnter  mass (10 numbers)")
-    var i:Int=9
-
-    while(i >= 0){
-
+fun enterArr(arr:Array<Int>, sortType:String) {
+    println(concat("Enter  array (10 numbers)\nArray sort:", sortType))
+    var i:Int=0
+    while(i < 10){
         arr[i]=readInt()
-        i=i - 1
+        ++i
     }
+}
 
-quickSort(arr, 0, size(arr) - 1)
+fun printResult(arr:Array<Int>) {
     println("Result")
     for (variable in arr){
-        print(variable)
-        println(" ")
+            print(variable)
+            println(" ")
     }
+}
 
+fun main(args:Array<String>) {
+    var arr: Array<Int> =  Array<Int>(10)
+
+    enterArr(arr, "bubble")
+    bubleSort(arr)
+    printResult(arr)
+
+    enterArr(arr, "quick")
+    quickSort(arr, 0, size(arr) - 1)
+    printResult(arr)
+
+    println("")
     readLine()
-    }
+}
 
 fun bubleSort(arr:  Array<Int>) {
-var i:Int= size(arr) - 1
-var j:Int=0
-  while(i>0){
-  while (j<i){
+    var i:Int= size(arr) - 1
+    var j:Int=0
+    while(i>0) {
+        while (j<i) {
 
-            if( arr[j] > arr[j+1] ){
-               var tmp:Int = arr[j]
+            if( arr[j] > arr[j+1] ) {
+                var tmp:Int = arr[j]
                 arr[j] = arr[j+1]
                 arr[j+1] = tmp
             }
-       j=j+1
-       }
-       j=0
-   i=i - 1
-   }
+            ++j
+        }
+        j=0
+        --i
+    }
 
 }
 
-fun quickSort( mass: Array<Int>, low:Int, high:Int) {
-        if (size( mass) != 0){
+fun quickSort(mass: Array<Int>, low:Int, high:Int) {
+    if (size(mass) != 0) {
 
-        if (low < high){
+        if (low < high) {
 
-
-
-        var middle:Int = low + (high - low) / 2
-        var opora:Int =  mass[middle]
-
-
-        var i:Int = low
-         var j:Int = high
-        while (i <= j) {
-            while ( mass[i] < opora) {
-                i=i+1
+            var middle:Int = low + (high - low) / 2
+            var opora:Int =  mass[middle]
+            var i:Int = low
+            var j:Int = high
+            while (i <= j) {
+                while ( mass[i] < opora) {
+                    ++i
+                }
+                while ( mass[j] > opora) {
+                    --j
+                }
+                if (i <= j) {
+                    var temp:Int = mass[i]
+                    mass[i] = mass[j]
+                    mass[j] = temp
+                    ++i
+                    --j
+                }
             }
-
-            while ( mass[j] > opora) {
-                j=j-1
-            }
-
-            if (i <= j) {
-               var temp:Int =  mass[i]
-                 mass[i] =  mass[j]
-                 mass[j] = temp
-                i=i+1
-                j=j-1
-            }
+            if (low < j)
+                quickSort(mass, low, j)
+            if (high > i)
+                quickSort(mass, i, high)
         }
-
-
-        if (low < j)
-            quickSort( mass, low, j)
-
-        if (high > i)
-            quickSort( mass, i, high)
     }
-}}
+}

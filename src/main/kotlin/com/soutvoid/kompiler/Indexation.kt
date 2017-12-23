@@ -1,5 +1,7 @@
 package com.soutvoid.kompiler
 
+import kotlin.math.max
+
 fun FileNode.indexate() {
     filterChildrenIs<FunctionDeclaration>().forEach { it.indexate() }
 }
@@ -29,13 +31,13 @@ fun WhileLoop.indexate(startIndex: Int) {
             vars.put("", startIndex + index + 1)
     }
     statements.filterIsInstance<WhileLoop>().forEach {
-        it.indexate(maxIndex() + 1)
+        it.indexate(max(maxIndex() + 1, startIndex))
     }
     statements.filterIsInstance<ForLoop>().forEach {
-        it.indexate(maxIndex() + 1)
+        it.indexate(max(maxIndex() + 1, startIndex))
     }
     statements.filterIsInstance<IfStatement>().forEach {
-        it.indexate(maxIndex() + 1)
+        it.indexate(max(maxIndex() + 1, startIndex))
     }
 }
 
@@ -47,13 +49,13 @@ fun ForLoop.indexate(startIndex: Int) {
             vars.put("", startIndex + index + 5)
     }
     statements?.filterIsInstance<WhileLoop>()?.forEach {
-        it.indexate(maxIndex() + 1)
+        it.indexate(max(maxIndex() + 1, startIndex))
     }
     statements?.filterIsInstance<ForLoop>()?.forEach {
-        it.indexate(maxIndex() + 1)
+        it.indexate(max(maxIndex() + 1, startIndex))
     }
     statements?.filterIsInstance<IfStatement>()?.forEach {
-        it.indexate(maxIndex() + 1)
+        it.indexate(max(maxIndex() + 1, startIndex))
     }
 }
 
@@ -64,12 +66,12 @@ fun IfStatement.indexate(startIndex: Int) {
             vars.put("", startIndex + index + 1)
     }
     statements.filterIsInstance<WhileLoop>().forEach {
-        it.indexate(maxIndex() + 1)
+        it.indexate(max(maxIndex() + 1, startIndex))
     }
     statements.filterIsInstance<ForLoop>().forEach {
-        it.indexate(maxIndex() + 1)
+        it.indexate(max(maxIndex() + 1, startIndex))
     }
     statements.filterIsInstance<IfStatement>().forEach {
-        it.indexate(maxIndex() + 1)
+        it.indexate(max(maxIndex() + 1, startIndex))
     }
 }
