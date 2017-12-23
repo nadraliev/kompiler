@@ -420,7 +420,8 @@ data class IfStatement(var expression: Expression,
                        var statements: List<Statement>,
                        var elseStatements: List<Statement>,
                        override var position: Position,
-                       override var parent: Node? = null) : Statement {
+                       override var parent: Node? = null,
+                       override var vars: MutableMap<String, Int> = mutableMapOf()) : Statement, ContainsIndexes {
     override fun children(): MutableList<out PrintableTreeNode> = (mutableListOf(expression)
             join statements join elseStatements).map { it as Node }.toMutableList()
     override fun name(): String = "if"

@@ -17,7 +17,9 @@ fun FunctionDeclaration.indexate() {
     statements?.filterIsInstance<ForLoop>()?.forEach {
         it.indexate(maxIndex() + 1)
     }
-
+    statements?.filterIsInstance<IfStatement>()?.forEach {
+        it.indexate(maxIndex() + 1)
+    }
 }
 
 fun WhileLoop.indexate(startIndex: Int) {
@@ -30,6 +32,9 @@ fun WhileLoop.indexate(startIndex: Int) {
         it.indexate(maxIndex() + 1)
     }
     statements.filterIsInstance<ForLoop>().forEach {
+        it.indexate(maxIndex() + 1)
+    }
+    statements.filterIsInstance<IfStatement>().forEach {
         it.indexate(maxIndex() + 1)
     }
 }
@@ -45,6 +50,26 @@ fun ForLoop.indexate(startIndex: Int) {
         it.indexate(maxIndex() + 1)
     }
     statements?.filterIsInstance<ForLoop>()?.forEach {
+        it.indexate(maxIndex() + 1)
+    }
+    statements?.filterIsInstance<IfStatement>()?.forEach {
+        it.indexate(maxIndex() + 1)
+    }
+}
+
+fun IfStatement.indexate(startIndex: Int) {
+    statements.filterIsInstance<VarDeclaration>().forEachIndexed { index, varDeclaration ->
+        vars.put(varDeclaration.varName, startIndex + index)
+        if (varDeclaration.type is DoubleType)
+            vars.put("", startIndex + index + 1)
+    }
+    statements.filterIsInstance<WhileLoop>().forEach {
+        it.indexate(maxIndex() + 1)
+    }
+    statements.filterIsInstance<ForLoop>().forEach {
+        it.indexate(maxIndex() + 1)
+    }
+    statements.filterIsInstance<IfStatement>().forEach {
         it.indexate(maxIndex() + 1)
     }
 }

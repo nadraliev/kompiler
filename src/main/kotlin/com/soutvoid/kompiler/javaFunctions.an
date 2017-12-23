@@ -1,6 +1,15 @@
 @JavaFunction("JavaFunctions.print")
 external fun print(str: String)
 
+@JavaFunction("JavaFunctions.print")
+external fun print(str: Int)
+
+@JavaFunction("JavaFunctions.print")
+external fun print(str: Boolean)
+
+@JavaFunction("JavaFunctions.print")
+external fun print(str: Double)
+
 @JavaFunction("JavaFunctions.println")
 external fun println(str: String)
 
@@ -36,3 +45,12 @@ external fun size(arr: Array<Double>): Int
 
 @JavaFunction("JavaFunctions.size")
 external fun size(arr: Array<Boolean>): Int
+
+@JavaFunction("JavaFunctions.readLine")
+external fun readLine(): String
+
+@JavaFunction("JavaFunctions.readInt")
+external fun readInt(): Int
+
+@JavaFunction("JavaFunctions.readDouble")
+external fun readDouble(): Double

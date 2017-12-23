@@ -1,7 +1,20 @@
+import java.util.Scanner;
 
 public class JavaFunctions {
 
     public static void print(String str) {
+        System.out.print(str);
+    }
+
+    public static void print(int str) {
+        System.out.print(str);
+    }
+
+    public static void print(double str) {
+        System.out.print(str);
+    }
+
+    public static void print(boolean str) {
         System.out.print(str);
     }
 
@@ -36,5 +49,17 @@ public class JavaFunctions {
     public static int size(boolean[] arr) {return arr.length;}
 
     public static int size(double[] arr) {return arr.length;}
+
+    public static String readLine() {
+        return new Scanner(System.in).nextLine();
+    }
+
+    public static int readInt() {
+        return new Scanner(System.in).nextInt();
+    }
+
+    public static double readDouble() {
+        return new Scanner(System.in).nextDouble();
+    }
 
 }
