@@ -42,6 +42,10 @@ fun Annotation.analyze() {
 }
 
 fun FunctionDeclaration.analyze() {
+    if (modificators.filterIsInstance<ExternalModificator>().isEmpty() && statements == null)
+        printNoFunctionBodyError(position.startLine, position.startIndexInLine, name)
+    if (modificators.filterIsInstance<ExternalModificator>().isNotEmpty() && statements != null)
+        printExternalWithBodyError(position.startLine, position.startIndexInLine, name)
     annotation?.analyze()
     maybeAddToJavaFunctions()
     statements?.forEach { it.analyze() }

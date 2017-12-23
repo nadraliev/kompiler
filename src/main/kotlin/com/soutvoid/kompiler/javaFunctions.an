@@ -1,38 +1,38 @@
 @JavaFunction("JavaFunctions.print")
-fun print(str: String) {}
+external fun print(str: String)
 
 @JavaFunction("JavaFunctions.println")
-fun println(str: String) {}
+external fun println(str: String)
 
 @JavaFunction("JavaFunctions.println")
-fun println(value: Int) {}
+external fun println(value: Int)
 
 @JavaFunction("JavaFunctions.println")
-fun println(value: Boolean) {}
+external fun println(value: Boolean)
 
 @JavaFunction("JavaFunctions.println")
-fun println(value: Double) {}
+external fun println(value: Double)
 
 @JavaFunction("JavaFunctions.toString")
-fun toString(value: Int): String {return ""}
+external fun toString(value: Int): String
 
 @JavaFunction("JavaFunctions.toString")
-fun toString(value: Double): String {return ""}
+external fun toString(value: Double): String
 
 @JavaFunction("JavaFunctions.toString")
-fun toString(value: Boolean): String {return ""}
+external fun toString(value: Boolean): String
 
 @JavaFunction("JavaFunctions.concat")
-fun concat(base: String, add: String): String {return ""}
+external fun concat(base: String, add: String): String
 
 @JavaFunction("JavaFunctions.size")
-fun size(arr: Array<String>): Int {return 0}
+external fun size(arr: Array<String>): Int
 
 @JavaFunction("JavaFunctions.size")
-fun size(arr: Array<Int>): Int {return 0}
+external fun size(arr: Array<Int>): Int
 
 @JavaFunction("JavaFunctions.size")
-fun size(arr: Array<Double>): Int {return 0}
+external fun size(arr: Array<Double>): Int
 
 @JavaFunction("JavaFunctions.size")
-fun size(arr: Array<Boolean>): Int {return 0}
+external fun size(arr: Array<Boolean>): Int

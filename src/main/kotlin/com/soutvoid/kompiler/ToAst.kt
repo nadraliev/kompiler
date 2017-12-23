@@ -32,7 +32,11 @@ fun FunctionDeclarationContext.toAst(): FunctionDeclaration =
                 functionParameters()?.functionParameter()?.map { it.parameter().toAst() } ?: emptyList(),
                 type()?.toAst() ?: UnitType,
                 body?.statements()?.statement()?.map { it.toAst() },
+                listOfNotNull(externalModificator()?.toAst()),
                 considerPosition()).fillInParents()
+
+fun ExternalModificatorContext.toAst(): ExternalModificator =
+        ExternalModificator(considerPosition()).fillInParents()
 
 fun ParameterContext.toAst(): Parameter =
         Parameter(SimpleName().text, type().toAst(), considerPosition()).fillInParents()

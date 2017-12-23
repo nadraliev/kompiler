@@ -22,12 +22,16 @@ annotation
     : AT SimpleName ('(' literalConstant ')')?
     ;
 
+externalModificator
+    : 'external'
+    ;
+
 functionDeclaration
     : annotation?
-    'fun' SimpleName
+    externalModificator? 'fun' SimpleName
     functionParameters
     (':' type)?
-    body=functionBody
+    body=functionBody?
     ;
 
 functionBody

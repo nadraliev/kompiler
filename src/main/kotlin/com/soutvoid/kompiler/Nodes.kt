@@ -7,6 +7,8 @@ interface Node : PrintableTreeNode {
     var position: Position
 }
 
+interface Modificator: Node
+
 interface ContainsIndexes: Node {
     var vars: MutableMap<String, Int>
 }
@@ -72,12 +74,18 @@ data class Annotation(var name: String,
     override fun name(): String = "@$name(${parameter?.name() ?: ""})"
 }
 
+data class ExternalModificator(override var position: Position,
+                               override var parent: Node? = null): Modificator {
+    override fun children(): MutableList<out PrintableTreeNode> = mutableListOf()
+    override fun name(): String = "external" }
+
 //Function
 data class FunctionDeclaration(var name: String,
                                var annotation: Annotation? = null,
                                var parameters: List<Parameter>,
                                var returnType: Type,
                                var statements: List<Statement>?,
+                               var modificators: List<Modificator> = listOf(),
                                override var position: Position,
                                override var parent: Node? = null,
                                override var vars: MutableMap<String, Int> = mutableMapOf()) : Node, ContainsIndexes {

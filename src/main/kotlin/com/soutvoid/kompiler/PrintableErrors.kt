@@ -55,3 +55,11 @@ fun printArraySizeError(line: Int, charInLine: Int, arrName: String) {
 fun printRangeTypeError(line: Int, charInLine: Int, type: Type?) {
     printlnError("Range cannot be of type ${type?.name()}. At $line:$charInLine")
 }
+
+fun printNoFunctionBodyError(line: Int, charInLine: Int, funcName: String) {
+    printlnError("Function $funcName at $line:$charInLine must either have a body or be declared external")
+}
+
+fun printExternalWithBodyError(line: Int, charInLine: Int, funcName: String) {
+    printlnError("Function $funcName at $line:$charInLine declared external and can't have a body")
+}
