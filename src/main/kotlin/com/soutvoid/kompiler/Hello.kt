@@ -14,24 +14,35 @@ var javaFunctions: MutableList<FunctionDeclaration> = mutableListOf()
 
 fun main(args: Array<String>) {
 
-    val filePath = openSource()
-    if (filePath.isEmpty())
-        return
+    getAntlrTree("javaFunctions.an").toAst("javaFunctionsAn").analyze()
 
-    openJavaFunctionsFile()
-
-    val tree = getAntlrTree(filePath)
-
-    //showSyntaxTree(parser, tree)
-
-    val treeAst = tree.toAst(File(filePath).name)
-    treeAst.analyze()
-    treeAst.indexate()
-    println(TreePrinter.toString(treeAst))
-
+    val tree = getAntlrTree(args[1]).toAst(File(args[1]).name)
+    tree.analyze()
+    tree.indexate()
     if (!thereWasError) {
-        treeAst.compileToFile(File(filePath).parent)
+        tree.compileToFile(args[2])
     }
+
+
+//    val filePath = openSource()
+//    if (filePath.isEmpty())
+//        return
+//
+//    openJavaFunctionsFile()
+//
+//    val tree = getAntlrTree(filePath)
+//
+//    //showSyntaxTree(parser, tree)
+//
+//    val treeAst = tree.toAst(File(filePath).name)
+//    treeAst.analyze()
+//    treeAst.indexate()
+//    println(TreePrinter.toString(treeAst))
+//
+//    if (!thereWasError) {
+//        treeAst.compileToFile(File(filePath).parent)
+//    }
+
 
 }
 
