@@ -173,7 +173,10 @@ fun FileNode.getClassName(): String =
         name.replace("an", "An").replace(".", "")
 
 fun ByteArray.writeClassToFile(path: String, name: String) {
-    val fos = FileOutputStream(path + "/" + name + ".class")
+    var dir = ""
+    if (path != "")
+        dir = path + "/"
+    val fos = FileOutputStream(dir + name + ".class")
     fos.write(this)
     fos.close()
 }
