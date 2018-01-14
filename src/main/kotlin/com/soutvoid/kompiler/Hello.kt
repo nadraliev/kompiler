@@ -27,6 +27,9 @@ fun main(args: Array<String>) {
     if (!thereWasError) {
         tree.compileToFile("")
         copyCompiledJavaFunctions()
+        createJar("", tree.getClassName(), listOf(tree.getClassName(), "JavaFunctions"))
+        File(tree.getClassName() + ".class").delete()
+        File("JavaFunctions.class").delete()
     }
 }
 

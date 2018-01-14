@@ -2,8 +2,12 @@ package com.soutvoid.kompiler
 
 import io.bretty.console.tree.PrintableTreeNode
 import org.antlr.v4.runtime.ParserRuleContext
-import java.io.FileOutputStream
+import java.io.*
 import java.util.*
+import java.util.jar.Attributes
+import java.util.jar.JarEntry
+import java.util.jar.JarOutputStream
+import java.util.jar.Manifest
 import kotlin.reflect.KClass
 
 fun <T: Any> Any.safecast(clazz: KClass<out T>): T? {
@@ -179,6 +183,42 @@ fun ByteArray.writeClassToFile(path: String, name: String) {
     val fos = FileOutputStream(dir + name + ".class")
     fos.write(this)
     fos.close()
+}
+
+fun createJar(path: String, mainClassName: String, classesNames: List<String>) {
+    val classes = classesNames.map { "$it.class" }
+    val workingDir = File(path)
+    val manifest = Manifest()
+    manifest.mainAttributes.put(Attributes.Name.MANIFEST_VERSION, "1.0.0")
+    manifest.mainAttributes.put(Attributes.Name("Created-By"), System.getProperty("user.name"))
+    manifest.mainAttributes.put(Attributes.Name.MAIN_CLASS, mainClassName)
+
+    var jos: JarOutputStream? = null
+    try {
+        val jarFile = workingDir.resolve(File(mainClassName + ".jar"))
+        val os = FileOutputStream(jarFile)
+        jos = JarOutputStream(os, manifest)
+    } catch (e: IOException) {
+        e.printStackTrace()
+    }
+
+    var len = 0
+    val buffer = ByteArray(1024)
+    classes.forEach {
+        val je = JarEntry(it)
+        je.time = Calendar.getInstance().timeInMillis
+        jos?.putNextEntry(je)
+
+        val inputStream = BufferedInputStream(FileInputStream(workingDir.resolve(File(it)).absolutePath))
+        len = inputStream.read(buffer, 0, buffer.size)
+        while (len != -1) {
+            jos?.write(buffer, 0, len)
+            len = inputStream.read(buffer, 0, buffer.size)
+        }
+        inputStream.close()
+        jos?.closeEntry()
+    }
+    jos?.close()
 }
 
 fun FunctionDeclaration.getJvmDescription(): String =
